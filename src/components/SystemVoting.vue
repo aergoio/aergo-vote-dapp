@@ -36,7 +36,37 @@
       align="center"
       justify="center"
     >
-    
+      <v-col
+      >
+        <v-text-field
+          v-if="!(fullSelected)"
+          v-model="candidate"
+          v-on:keyup.enter="addSelected({candidate: candidate})"
+          placeholder="Enter candidate"
+        >
+         <v-icon slot="prepend" color="gray">mdi-pencil</v-icon>
+        </v-text-field>
+      </v-col>
+    </v-row>
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col
+      >
+        <v-alert
+          v-if="message.text"
+          v-bind:type="message.type"
+          dismissible
+        >
+          {{message.text}}
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
+      align="center"
+      justify="center"
+    >
       <v-col
             v-for="(item, i) in selections"
             :key="item"
@@ -51,23 +81,25 @@
         </v-chip>
       </v-col>
       <v-col>
-        <v-btn v-on:click="requestVote()">Vote</v-btn>
-        <v-card>
-          {{ resultTxHash }}
-        </v-card>
+        <v-btn v-on:click="addSelected({candidate: candidate});requestVote()">Vote</v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
   name: 'system-voting',
   props: ['id'],
   methods: {
     addSelected (candidate) {
+      if (candidate.candidate === "") {
+        return
+      }
+      if (this.isFullSelected()) {
+        this.message = {type: 'warning', text: 'already selected to the maximum'}
+        return
+      }
       this.selected.push(candidate)
     },
     async requestVote () {
@@ -96,11 +128,17 @@ export default {
       } catch (e) {
         console.error(e)
       }
+    },
+    isFullSelected() {
+      if (this.$props.id == 'BP') {
+        return this.selected.length >= 30
+      }
+      return this.selected.length >= 1
     }
   },
   computed: {
-    allSelected () {
-      return this.selected.length === 2
+    fullSelected () {
+      return this.isFullSelected()
     },
     selections () {
       const selections = []
@@ -109,10 +147,7 @@ export default {
         selections.push(s.candidate)
       }
 
-      return selections
-    },
-    resultTxHash () {
-      return this.txhash
+      return selections.filter((v, i, a) => a.indexOf(v) === i)
     },
     bpNumber () {
       if (this.chainInfo && this.chainInfo.bpnumber) {
@@ -121,13 +156,24 @@ export default {
       return 0
     }
   },
+  watch: {
+    '$route' (to) {
+      this.id = to.params.id
+      this.loadVotes()
+    }
+  },
   created () {
   },
   mounted () {
     this.loadVotes()
   },
+  updated () {
+    console.log("update", this.votesList)
+  },
   data () {
     return {
+      candidate: '',
+      message: {type:'success'},
       //votesList: [{candidate:'test'},{candidate:'test2'}],
       votesList: [],
       tx: JSON.parse(`{
@@ -141,8 +187,7 @@ export default {
         }
       }`),
       txhash: '',
-      selected: [],
-      message: 'Welcome to Your Vue.js App'
+      selected: []
     }
   }
 }

@@ -6,6 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    systemVotings: Object.freeze([
+      { id: 'BP' },
+      { id: 'BPCOUNT' },
+      { id: 'GASPRICE' },
+      { id: 'STAKINGMIN' },
+      { id: 'NAMEPRICE' }
+    ]),
     activeChainId: '',
     activeAccount: null
   },

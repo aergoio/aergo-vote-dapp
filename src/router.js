@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import SystemVoting from './components/SystemVoting'
 
 Vue.use(Router)
 
@@ -10,8 +10,14 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      component: SystemVoting,
+      props: {id: 'BP'}
+    },
+    {
+      path: '/voting/:id',
+      name: 'voting',
+      component: SystemVoting,
+      props: true
     },
     {
       path: '/about',
