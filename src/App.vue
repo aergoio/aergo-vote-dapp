@@ -14,11 +14,15 @@
       app
     >
       <v-list dense>
-        <account/>
+        <v-list-item-group
+          active-class="pink--text"
+        >
+        <account
+        />
         <v-list-item
           v-for="v in systemVotings"
           v-bind:key="v.id"
-          @click="changeRoute(v.id)"
+          @click="changeVotingRoute(v.id)"
         >
           <v-list-item-action>
             <v-icon>mdi-vote</v-icon>
@@ -29,6 +33,7 @@
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
     <v-content>
@@ -55,7 +60,10 @@ export default {
     ...mapState(['systemVotings'])
   },
   methods: {
-    changeRoute(routeName) {
+    changeAccountRoute(address) {
+      return this.$router.push({ name: 'account', params: { id: address}})
+    },
+    changeVotingRoute(routeName) {
       return this.$router.push({ name: 'voting', params: { id: routeName}})
     }
   },

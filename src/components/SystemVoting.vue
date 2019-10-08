@@ -172,6 +172,7 @@ export default {
   },
   mounted () {
     this.loadVotes()
+    this.votesList = []
   },
   updated () {
     console.log("update", this.votesList)

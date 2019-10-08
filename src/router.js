@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import AccountDetail from './components/AccountDetail'
 import SystemVoting from './components/SystemVoting'
 
 Vue.use(Router)
@@ -17,6 +18,12 @@ export default new Router({
       path: '/voting/:id',
       name: 'voting',
       component: SystemVoting,
+      props: true
+    },
+    {
+      path: '/account/:address',
+      name: 'account',
+      component: AccountDetail,
       props: true
     },
     {

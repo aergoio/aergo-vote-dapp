@@ -1,14 +1,17 @@
 <template>
   <v-list-item
     link
-    @click="connectAccount"
   >
     <v-list-item-content>
-      <v-list-item-title class="title">Connect Account</v-list-item-title>
-      <v-list-item-subtitle v-if="account">{{ account.address }}</v-list-item-subtitle>
+      <v-list-item-title class="title" v-if="account">{{ account.address }}</v-list-item-title>
+      <v-list-item-title class="title" v-else>Connect Account</v-list-item-title>
+      <v-list-item-subtitle v-if="account">balance : {{ balance }}</v-list-item-subtitle>
+      <v-list-item-subtitle v-if="account">staked : {{ staked }}</v-list-item-subtitle>
     </v-list-item-content>
 
-    <v-list-item-action>
+    <v-list-item-action
+      @click="connectAccount"
+    >
       <v-icon>mdi-refresh</v-icon>
     </v-list-item-action>
   </v-list-item>
@@ -24,11 +27,27 @@ export default {
       set (v) {
         this.$store.commit('setActiveAccount', v)
       }
+    },
+    staked: {
+      get () {
+        return this.$store.state.staked
+      },
+      set (v) {
+        this.$store.commit('setStaked', v)
+      }
+    },
+    balance: {
+      get () {
+        return this.$store.state.balance
+      },
+      set (v) {
+        this.$store.commit('setBalance', v)
+      }
     }
   },
   methods: {
     async connectAccount () {
-      this.account = await this.$store.dispatch('getActiveAccount')
+      this.account = await this.$store.dispatch('refreshActiveAccount')
       console.log('connect account', this.account)
     }
   },

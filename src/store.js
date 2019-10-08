@@ -14,7 +14,10 @@ export default new Vuex.Store({
       { id: 'NAMEPRICE' }
     ]),
     activeChainId: '',
-    activeAccount: null
+    activeAccount: null,
+    when: '...',
+    staked: '...' ,
+    balance: '...'
   },
   mutations: {
     setActiveChainId (state, chainId) {
@@ -22,7 +25,16 @@ export default new Vuex.Store({
     },
     setActiveAccount (state, account) {
       state.activeAccount = account
-    }
+    },
+    setWhen(state, when) {
+      state.when = when
+    },
+    setStaked (state, staked) {
+      state.staked = staked
+    },
+    setBalance (state, balance) {
+      state.balance = balance
+    },
   },
   actions: {
     async getTopVotes ({ count }, { id }) {
@@ -37,6 +49,15 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
           commit('setActiveAccount', event.detail.account)
+          aergo.getStaking(event.detail.account.address)
+          .then((staked) => {
+            commit('setWhen', staked.when)
+            commit('setStaked', staked.amount.toUnit('aergo').toString())
+          })
+          aergo.getState(event.detail.account.address)
+          .then((as) => {
+            commit('setBalance', as.balance.toUnit('aergo').toString())
+          })
           resolve(event.detail.account)
         }, { once: true })
         window.postMessage({
@@ -44,6 +65,10 @@ export default new Vuex.Store({
           action: 'ACTIVE_ACCOUNT'
         })
       })
+    },
+    refreshActiveAccount ({commit, state}) {
+      commit('setActiveAccount', null)
+      return this.dispatch('getActiveAccount')
     }
   },
 })
