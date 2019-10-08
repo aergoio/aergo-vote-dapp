@@ -106,7 +106,13 @@ export default {
       console.log('request Vote', this.selected)
       let account = await this.$store.dispatch('getActiveAccount')
       this.tx.from = account.address
-      this.tx.payload_json.Args = [this.$props.id].concat(this.selections)
+      if (this.id == 'BP') {
+        this.tx.payload_json.Name = "v1voteBP"
+        this.tx.payload_json.Args = [].concat(this.selections)
+      } else {
+        this.tx.payload_json.Name = "v1voteProposal"
+        this.tx.payload_json.Args = [this.$props.id].concat(this.selections)
+      }
       let data = this.tx
       window.addEventListener('AERGO_SEND_TX_RESULT', function (event) {
         console.log('AERGO_SEND_TX_RESULT', event.detail)
@@ -182,7 +188,7 @@ export default {
         "type": 1,
         "amount": "0 aer",
         "payload_json": {
-          "Name": "v1voteProposal",
+          "Name": "",
           "Args": []
         }
       }`),
