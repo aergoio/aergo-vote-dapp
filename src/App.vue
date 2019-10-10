@@ -18,6 +18,7 @@
           active-class="pink--text"
         >
         <account
+          v-on:emitAccount="changeAccountRoute($event)"
         />
         <v-list-item
           v-for="v in systemVotings"
@@ -61,10 +62,10 @@ export default {
   },
   methods: {
     changeAccountRoute(address) {
-      return this.$router.push({ name: 'account', params: { id: address}})
+      return this.$router.push({ name: 'account', params: { address: address } })
     },
     changeVotingRoute(routeName) {
-      return this.$router.push({ name: 'voting', params: { id: routeName}})
+      return this.$router.push({ name: 'voting', params: { id: routeName } })
     }
   },
   data: () => ({

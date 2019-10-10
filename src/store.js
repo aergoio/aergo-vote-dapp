@@ -37,8 +37,11 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async getTopVotes ({ count }, { id }) {
+    async getTopVotes (context, { count, id }) {
       return aergo.getTopVotes(count, id)
+    },
+    async getAccountVotes (context, { address }) {
+      return aergo.getAccountVotes(address)
     },
     getActiveAccount ({ commit, state }) {
       if (state.activeAccount) {
@@ -65,6 +68,15 @@ export default new Vuex.Store({
           action: 'ACTIVE_ACCOUNT'
         })
       })
+    },
+    async getAccountDetail (context, { address }) {
+      const staked = await aergo.getStaking(address)
+      const state = await aergo.getState(address)
+      return {
+        staked: staked.amount.toUnit('aergo').toString(),
+        when: staked.when,
+        balance: state.balance.toUnit('aergo').toString()
+      }
     },
     refreshActiveAccount ({commit, state}) {
       commit('setActiveAccount', null)

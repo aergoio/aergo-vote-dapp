@@ -3,7 +3,7 @@
     link
   >
     <v-list-item-content>
-      <v-list-item-title class="title" v-if="account">{{ account.address }}</v-list-item-title>
+      <v-list-item-title class="title" v-if="account" @click="emitAccount">{{ account.address }}</v-list-item-title>
       <v-list-item-title class="title" v-else>Connect Account</v-list-item-title>
       <v-list-item-subtitle v-if="account">balance : {{ balance }}</v-list-item-subtitle>
       <v-list-item-subtitle v-if="account">staked : {{ staked }}</v-list-item-subtitle>
@@ -46,9 +46,11 @@ export default {
     }
   },
   methods: {
+    emitAccount: function(){
+      this.$emit('emitAccount', this.account.address);
+    },
     async connectAccount () {
       this.account = await this.$store.dispatch('refreshActiveAccount')
-      console.log('connect account', this.account)
     }
   },
   data () {
