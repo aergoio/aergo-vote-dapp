@@ -166,16 +166,13 @@ export default {
     '$route' (to) {
       this.id = to.params.id
       this.loadVotes()
+      this.selected = []
     }
   },
   created () {
   },
   mounted () {
     this.loadVotes()
-    this.votesList = []
-  },
-  updated () {
-    console.log("update", this.votesList)
   },
   data () {
     return {

@@ -5,23 +5,86 @@
     <v-row
     >
       <v-col class="text-center">
-        <v-card-text v-if="address">
-            <p>{{ address }}</p>
-            <p>staked : {{ staked }}</p>
-            <p>balance : {{ balance }}</p>
-            <p>last action : block No {{ when }}</p>
-            <div v-if="voteHistory">
-            <p
-              v-for="v in voteHistory.getVotingList()"
-              v-bind:key="v.getId()"
+        <v-card
+        >
+          <v-card-title v-if="address">
+            {{ address }}
+          </v-card-title>
+        </v-card>
+        <v-card
+        >
+          <v-card-title>
+            <span class="title font-weight-light">Staked</span>
+          </v-card-title>
+          <v-card-text class="headline font-weight-bold">
+            {{ staked }}
+          </v-card-text>
+        </v-card>
+        <v-card
+        >
+          <v-card-title>
+            <span class="title font-weight-light">Balance</span>
+          </v-card-title>
+          <v-card-text class="headline font-weight-bold">
+            {{ balance }}
+          </v-card-text>
+        </v-card>
+        <v-card
+        >
+          <v-card-title>
+            <span class="title font-weight-light">Last action block No</span>
+          </v-card-title>
+          <v-card-text class="headline font-weight-bold">
+            {{ when }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row
+    >
+      <v-col class="text-center">
+        <div v-if="voteHistory">
+          <v-expansion-panels
+        v-model="votingPanel"
+        multiple
+      >
+        <v-expansion-panel
+          v-for="v in voteHistory.getVotingList()"
+          v-bind:key="v.getId()"
+        >
+          <v-expansion-panel-header> {{ getTextID(v) }} </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-card
             >
-              {{ v }}
-            </p>
-            </div>
-        </v-card-text>
-        <v-card-actions>
-        <v-btn @click="loadAccountVotes()">test</v-btn>
-        </v-card-actions>
+              <v-card-title>
+                <span>
+                  Voting power
+                </span>
+              </v-card-title>
+              <v-card-text>
+                {{ v.getAmount() }}
+              </v-card-text>
+            </v-card>
+            <v-card
+            >
+              <v-card-title>
+                <span>
+                 Vote to
+                </span>
+              </v-card-title>
+              <v-card-text>
+                <div
+                  v-for="c in v.getCandidatesList()"
+                  v-bind:key="c"
+                >
+                {{ c }}
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -69,10 +132,16 @@ export default {
     }
   },
   methods: {
-      async loadAccountVotes () {
-        const result = await this.$store.dispatch('getAccountVotes', { address: this.address })
-        this.voteHistory = result
-      }
+    getTextID(v) {
+        if (v.getId() == 'voteBP') {
+            return 'BP'
+        }
+        return v.getId()
+    },
+    async loadAccountVotes () {
+      const result = await this.$store.dispatch('getAccountVotes', { address: this.address })
+      this.voteHistory = result
+    }
   },
   mounted() {
     this.loadAccountVotes()
@@ -82,6 +151,7 @@ export default {
     })
   },
   data: () => ({
+    votingPanel: [],
     accountDetail : null,
     voteHistory: null
   })
