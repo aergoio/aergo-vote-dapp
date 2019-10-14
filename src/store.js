@@ -13,6 +13,7 @@ export default new Vuex.Store({
       { id: 'STAKINGMIN' },
       { id: 'NAMEPRICE' }
     ]),
+    blocksByHash: {},
     activeChainId: '',
     activeAccount: null,
     when: '...',
@@ -22,6 +23,9 @@ export default new Vuex.Store({
   mutations: {
     setActiveChainId (state, chainId) {
       state.activeChainId = chainId
+    },
+    setBlockDetail (state, {block}) {
+      state.blocksByHash[block.header.blockno] = block;
     },
     setActiveAccount (state, account) {
       state.activeAccount = account
@@ -34,9 +38,24 @@ export default new Vuex.Store({
     },
     setBalance (state, balance) {
       state.balance = balance
-    },
+    }
   },
   actions: {
+    getBlock ({ dispatch, state }, { blockNoOrHash }) {
+      if (state.blocksByHash[blockNoOrHash]) {
+          console.log('return block from cache', blockNoOrHash);
+          return new Promise((resolve) => {
+              resolve(state.blocksByHash[blockNoOrHash]);
+          });
+      }
+      return dispatch('fetchBlock', { blockNoOrHash });
+    },
+    async fetchBlock ({ commit }, { blockNoOrHash }) {
+      const block = Object.freeze(await aergo.getBlock(blockNoOrHash));
+      commit('setBlockDetail', { block });
+      console.log('return block', block);
+      return block;
+    },
     async getTopVotes (context, { count, id }) {
       return aergo.getTopVotes(count, id)
     },

@@ -110,7 +110,7 @@ export default {
         this.tx.payload_json.Name = "v1voteBP"
         this.tx.payload_json.Args = [].concat(this.selections)
       } else {
-        this.tx.payload_json.Name = "v1voteProposal"
+        this.tx.payload_json.Name = "v1voteParam"
         this.tx.payload_json.Args = [this.$props.id].concat(this.selections)
       }
       let data = this.tx

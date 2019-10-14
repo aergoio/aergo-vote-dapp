@@ -32,10 +32,14 @@
         <v-card
         >
           <v-card-title>
-            <span class="title font-weight-light">Last action block No</span>
+            <span class="title font-weight-light">Last action block</span>
           </v-card-title>
           <v-card-text class="headline font-weight-bold">
-            {{ when }}
+            No. {{ when }}
+            {{ accountLastActionTime }}
+          </v-card-text>
+          <v-card-text class="font-weight-bold">
+            (next available action : {{ when + (60*60*24) }})
           </v-card-text>
         </v-card>
       </v-col>
@@ -121,9 +125,14 @@ export default {
     when: {
       get () {
         if (this.accountDetail) {
-            return this.accountDetail.when
+          console.log('try getblock', this.accountDetail.when)
+          this.$store.dispatch('getBlock', { blockNoOrHash: this.accountDetail.when})
+          .then((block) => {
+            this.accountLastActionTime = new Date(block.header.timestamp/1000)
+            })
+          return this.accountDetail.when
         } else {
-            return '...'
+          return '...'
         }
       },
       set (v) {
@@ -153,6 +162,7 @@ export default {
   data: () => ({
     votingPanel: [],
     accountDetail : null,
+    accountLastActionTime: null,
     voteHistory: null
   })
 }
