@@ -102,6 +102,10 @@ export default {
       }
       this.selected.push(candidate)
     },
+    sendTx(event) {
+      console.log('AERGO_SEND_TX_RESULT', event.detail)
+      this.message = {type: 'success', text: 'Result hash: ' + event.detail.hash}
+    },
     async requestVote () {
       console.log('request Vote', this.selected)
       let account = await this.$store.dispatch('getActiveAccount')
@@ -114,10 +118,7 @@ export default {
         this.tx.payload_json.Args = [this.$props.id].concat(this.selections)
       }
       let data = this.tx
-      window.addEventListener('AERGO_SEND_TX_RESULT', function (event) {
-        console.log('AERGO_SEND_TX_RESULT', event.detail)
-        this.txhash = event.detail.hash
-      }, { once: true })
+      window.addEventListener('AERGO_SEND_TX_RESULT', this.sendTx, { once: true })
       window.postMessage({
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',

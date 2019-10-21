@@ -17,7 +17,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@herajs/client": "^0.13.2",
+    "@herajs/client": "^0.13.3",
     "@mdi/font": "^4.4.95",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
