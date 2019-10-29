@@ -128,7 +128,7 @@ export default {
           console.log('try getblock', this.accountDetail.when)
           this.$store.dispatch('getBlock', { blockNoOrHash: this.accountDetail.when})
           .then((block) => {
-            this.accountLastActionTime = new Date(block.header.timestamp/1000)
+            this.accountLastActionTime = new Date(block.header.timestamp/1000000)
             })
           return this.accountDetail.when
         } else {
