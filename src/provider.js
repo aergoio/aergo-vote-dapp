@@ -1,6 +1,8 @@
 import Aergo, { GrpcWebProvider } from '@herajs/client'
 
-const provider = new GrpcWebProvider({url: 'http://localhost:17845'})
-const aergo = new Aergo({}, provider)
+function connectAergo(url) {
+    const provider = new GrpcWebProvider(url)
+    return new Aergo({}, provider)
+}
 
-export default aergo
+export default connectAergo

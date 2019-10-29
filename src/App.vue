@@ -68,6 +68,10 @@ export default {
       return this.$router.push({ name: 'voting', params: { id: routeName } })
     }
   },
+  created() {
+    console.log(process.env)
+    this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
+  },
   data: () => ({
     drawer: false
   }),

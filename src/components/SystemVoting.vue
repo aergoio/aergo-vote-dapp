@@ -167,13 +167,14 @@ export default {
     '$route' (to) {
       this.id = to.params.id
       this.loadVotes()
+      this.candidate = ''
+      this.votesList = []
       this.selected = []
     }
   },
-  created () {
-  },
   mounted () {
     this.loadVotes()
+    this.message = {type: 'success'}
   },
   data () {
     return {

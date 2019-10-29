@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import aergo from './provider'
+import connectAergo from './provider'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    aergo: null,
     systemVotings: Object.freeze([
       { id: 'BP' },
       { id: 'BPCOUNT' },
@@ -21,6 +23,9 @@ export default new Vuex.Store({
     balance: '...'
   },
   mutations: {
+    setAergo(state, url) {
+      state.aergo = connectAergo(url)
+    },
     setActiveChainId (state, chainId) {
       state.activeChainId = chainId
     },
@@ -41,6 +46,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    getAergo({ commit, state }, { url }) {
+      if (state.aergo) {
+        return aergo
+      }
+      commit('setAergo', { url })
+    },
     getBlock ({ dispatch, state }, { blockNoOrHash }) {
       if (state.blocksByHash[blockNoOrHash]) {
           console.log('return block from cache', blockNoOrHash);
@@ -51,16 +62,16 @@ export default new Vuex.Store({
       return dispatch('fetchBlock', { blockNoOrHash });
     },
     async fetchBlock ({ commit }, { blockNoOrHash }) {
-      const block = Object.freeze(await aergo.getBlock(blockNoOrHash));
+      const block = Object.freeze(await this.state.aergo.getBlock(blockNoOrHash));
       commit('setBlockDetail', { block });
       console.log('return block', block);
       return block;
     },
     async getTopVotes (context, { count, id }) {
-      return aergo.getTopVotes(count, id)
+      return this.state.aergo.getTopVotes(count, id)
     },
     async getAccountVotes (context, { address }) {
-      return aergo.getAccountVotes(address)
+      return this.state.aergo.getAccountVotes(address)
     },
     getActiveAccount ({ commit, state }) {
       if (state.activeAccount) {
@@ -71,12 +82,12 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
           commit('setActiveAccount', event.detail.account)
-          aergo.getStaking(event.detail.account.address)
+          state.aergo.getStaking(event.detail.account.address)
           .then((staked) => {
             commit('setWhen', staked.when)
             commit('setStaked', staked.amount.toUnit('aergo').toString())
           })
-          aergo.getState(event.detail.account.address)
+          state.aergo.getState(event.detail.account.address)
           .then((as) => {
             commit('setBalance', as.balance.toUnit('aergo').toString())
           })
@@ -89,8 +100,8 @@ export default new Vuex.Store({
       })
     },
     async getAccountDetail (context, { address }) {
-      const staked = await aergo.getStaking(address)
-      const state = await aergo.getState(address)
+      const staked = await this.state.aergo.getStaking(address)
+      const state = await this.state.aergo.getState(address)
       return {
         staked: staked.amount.toUnit('aergo').toString(),
         when: staked.when,
