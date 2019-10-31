@@ -39,7 +39,7 @@ export default {
     },
     chainId: {
       get () {
-        return this.$store.state.activeChainId
+        return this.$store.state.activeChainId.chainid.magic
       },
       set (v) {
         this.$store.commit('setActiveChainId', v)
@@ -68,12 +68,14 @@ export default {
     },
     async connectAccount () {
       this.account = await this.$store.dispatch('refreshActiveAccount')
-      if (this.$store.state.activeChainId != this.account.chainId ) {
+      if (this.$store.state.activeChainId.chainid.magic != this.account.chainId ) {
         this.message.text = "wrong chain " + this.account.chainId
         this.message.type = 'error'
         this.message.show = true
         this.account = null
+        return
       }
+      this.emitAccount()
     }
   },
   data () {

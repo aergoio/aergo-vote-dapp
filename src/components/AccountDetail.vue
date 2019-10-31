@@ -38,6 +38,7 @@
           </v-card-text>
         </v-card>
         <v-card
+          v-if="when !== 0"
         >
           <v-card-title>
             <span class="title font-weight-light">Last action block</span>
@@ -120,10 +121,10 @@ export default {
     },
     chainId: {
       get () {
-        return this.$store.state.activeChainId
-      },
-      set (v) {
-        this.$store.commit('setActiveChainId', v)
+        if (this.$store.state.activeChainId != "") {
+          return this.$store.state.activeChainId.chainid.magic
+        }
+        return ""
       }
     },
     balance: {
@@ -166,6 +167,19 @@ export default {
     async loadAccountVotes () {
       const result = await this.$store.dispatch('getAccountVotes', { address: this.address })
       this.voteHistory = result
+    }
+  },
+  watch: {
+    '$route' (to) {
+      this.loadAccountVotes()
+      this.$store.dispatch('getAccountDetail', { address: this.address })
+      .then((d) => {
+        this.accountDetail = d
+      })
+      this.votingPanel = []
+      this.accountDetail = null
+      this.accountLastActionTime = null
+      this.votinghistory = null
     }
   },
   mounted() {

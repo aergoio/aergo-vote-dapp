@@ -51,8 +51,8 @@ export default new Vuex.Store({
         return aergo
       }
       commit('setAergo', { url })
-      state.aergo.blockchain().then((result) => {
-        commit('setActiveChainId', result.chainInfo.id.magic)
+      state.aergo.getChainInfo().then((result) => {
+        commit('setActiveChainId', result)
       })
     },
     getBlock ({ dispatch, state }, { blockNoOrHash }) {
