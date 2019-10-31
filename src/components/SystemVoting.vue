@@ -7,6 +7,7 @@
       <v-col class="text-center">
         <v-card v-if="!votesLoad">Loading...</v-card>
         Vote : {{id}}
+        <span v-if="id !== 'BP'">( Current value : {{ current }} )</span>
         <v-simple-table 
           v-if="votesList && votesList.length"
           dense
@@ -157,11 +158,20 @@ export default {
 
       return selections.filter((v, i, a) => a.indexOf(v) === i)
     },
-    bpNumber () {
-      if (this.chainInfo && this.chainInfo.bpnumber) {
-        return this.chainInfo.bpnumber
+    current() {
+      if (this.$store.state.activeChainId) {
+        switch (this.id) {
+          case 'BPCOUNT':
+            return this.$store.state.activeChainId.bpnumber
+          case 'STAKINGMIN':
+            return this.$store.state.activeChainId.stakingminimum.toUnit('aer').toString()
+          case 'GASPRICE':
+            return this.$store.state.activeChainId.gasprice.toUnit('aer').toString()
+          case 'NAMEPRICE':
+            return this.$store.state.activeChainId.nameprice.toUnit('aer').toString()
+        }
       }
-      return 0
+      return this.$store.state.activeChainId
     }
   },
   watch: {
@@ -172,11 +182,11 @@ export default {
       this.votesList = []
       this.votesLoad = false
       this.selected = []
+      this.message = {type: 'success'}
     }
   },
   mounted () {
     this.loadVotes()
-    this.message = {type: 'success'}
   },
   data () {
     return {
