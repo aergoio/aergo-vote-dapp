@@ -5,7 +5,7 @@
     <v-row
     >
       <v-col class="text-center">
-        <v-card v-if="!votesList || !votesList.length">Loading...</v-card>
+        <v-card v-if="!votesLoad">Loading...</v-card>
         Vote : {{id}}
         <v-simple-table 
           v-if="votesList && votesList.length"
@@ -132,6 +132,7 @@ export default {
           vote.amount = Object.freeze(vote.amount) // prevent Vue from adding observer to Amount
         }
         this.votesList = votesList
+        this.votesLoad = true
       } catch (e) {
         console.error(e)
       }
@@ -169,6 +170,7 @@ export default {
       this.loadVotes()
       this.candidate = ''
       this.votesList = []
+      this.votesLoad = false
       this.selected = []
     }
   },
@@ -182,6 +184,7 @@ export default {
       message: {type:'success'},
       //votesList: [{candidate:'test'},{candidate:'test2'}],
       votesList: [],
+      votesLoad: false,
       tx: JSON.parse(`{
         "from": "",
         "to": "aergo.system",

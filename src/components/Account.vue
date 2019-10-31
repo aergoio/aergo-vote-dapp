@@ -5,9 +5,9 @@
     <v-list-item-content>
       <v-list-item-title class="title" v-if="account" @click="emitAccount">{{ account.address }}</v-list-item-title>
       <v-list-item-title class="title" v-else @click="connectAccount">Connect Account</v-list-item-title>
-      <v-list-item-subtitle v-if="account">chainId : {{ chainId }}</v-list-item-subtitle>
-      <v-list-item-subtitle v-if="account">balance : {{ balance }}</v-list-item-subtitle>
-      <v-list-item-subtitle v-if="account">staked : {{ staked }}</v-list-item-subtitle>
+      <v-list-item-subtitle v-if="account" @click="emitAccount">chainId : {{ chainId }}</v-list-item-subtitle>
+      <v-list-item-subtitle v-if="account" @click="emitAccount">balance : {{ balance }}</v-list-item-subtitle>
+      <v-list-item-subtitle v-if="account" @click="emitAccount">staked : {{ staked }}</v-list-item-subtitle>
     </v-list-item-content>
         <v-alert
           v-model="message.show"
