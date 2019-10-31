@@ -5,9 +5,18 @@
     <v-list-item-content>
       <v-list-item-title class="title" v-if="account" @click="emitAccount">{{ account.address }}</v-list-item-title>
       <v-list-item-title class="title" v-else @click="connectAccount">Connect Account</v-list-item-title>
+      <v-list-item-subtitle v-if="account">chainId : {{ chainId }}</v-list-item-subtitle>
       <v-list-item-subtitle v-if="account">balance : {{ balance }}</v-list-item-subtitle>
       <v-list-item-subtitle v-if="account">staked : {{ staked }}</v-list-item-subtitle>
     </v-list-item-content>
+        <v-alert
+          v-model="message.show"
+          v-bind:type="message.type"
+          dismissible
+          dense
+        >
+          {{message.text}}
+        </v-alert>
 
     <v-list-item-action
       @click="connectAccount"
@@ -26,6 +35,14 @@ export default {
       },
       set (v) {
         this.$store.commit('setActiveAccount', v)
+      }
+    },
+    chainId: {
+      get () {
+        return this.$store.state.activeChainId
+      },
+      set (v) {
+        this.$store.commit('setActiveChainId', v)
       }
     },
     staked: {
@@ -51,10 +68,17 @@ export default {
     },
     async connectAccount () {
       this.account = await this.$store.dispatch('refreshActiveAccount')
+      if (this.$store.state.activeChainId != this.account.chainId ) {
+        this.message.text = "wrong chain " + this.account.chainId
+        this.message.type = 'error'
+        this.message.show = true
+        this.account = null
+      }
     }
   },
   data () {
     return {
+      message : {show: false, type: 'success'}
     }
   }
 }

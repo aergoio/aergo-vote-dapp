@@ -30,7 +30,7 @@ export default new Vuex.Store({
       state.activeChainId = chainId
     },
     setBlockDetail (state, {block}) {
-      state.blocksByHash[block.header.blockno] = block;
+      state.blocksByHash[block.header.blockno] = block
     },
     setActiveAccount (state, account) {
       state.activeAccount = account
@@ -51,21 +51,24 @@ export default new Vuex.Store({
         return aergo
       }
       commit('setAergo', { url })
+      state.aergo.blockchain().then((result) => {
+        commit('setActiveChainId', result.chainInfo.id.magic)
+      })
     },
     getBlock ({ dispatch, state }, { blockNoOrHash }) {
       if (state.blocksByHash[blockNoOrHash]) {
-          console.log('return block from cache', blockNoOrHash);
+          //console.log('return block from cache', blockNoOrHash)
           return new Promise((resolve) => {
-              resolve(state.blocksByHash[blockNoOrHash]);
-          });
+              resolve(state.blocksByHash[blockNoOrHash])
+          })
       }
-      return dispatch('fetchBlock', { blockNoOrHash });
+      return dispatch('fetchBlock', { blockNoOrHash })
     },
     async fetchBlock ({ commit }, { blockNoOrHash }) {
-      const block = Object.freeze(await this.state.aergo.getBlock(blockNoOrHash));
-      commit('setBlockDetail', { block });
-      console.log('return block', block);
-      return block;
+      const block = Object.freeze(await this.state.aergo.getBlock(blockNoOrHash))
+      commit('setBlockDetail', { block })
+      //console.log('return block', block)
+      return block
     },
     async getTopVotes (context, { count, id }) {
       return this.state.aergo.getTopVotes(count, id)
@@ -79,7 +82,7 @@ export default new Vuex.Store({
           resolve(state.activeAccount)
         })
       }
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
           commit('setActiveAccount', event.detail.account)
           state.aergo.getStaking(event.detail.account.address)
@@ -92,6 +95,9 @@ export default new Vuex.Store({
             commit('setBalance', as.balance.toUnit('aergo').toString())
           })
           resolve(event.detail.account)
+        }, { once: true })
+        window.addEventListener('AERGO_ACTIVE_ACCOUNT' + '_CANCEL', function() {
+          reject(new Error('request was cancelled by user'))
         }, { once: true })
         window.postMessage({
           type: 'AERGO_REQUEST',

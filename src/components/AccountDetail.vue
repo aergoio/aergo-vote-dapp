@@ -7,9 +7,17 @@
       <v-col class="text-center">
         <v-card
         >
-          <v-card-title v-if="address">
-            {{ address }}
+          <v-card-title>
+            <span class="title font-weight-light">Address</span>
           </v-card-title>
+          <v-card-text
+            v-if="address"
+            class="headline font-weight-bold">
+            {{ address }}
+          </v-card-text>
+          <v-card-subtitle>
+            {{ chainId }}
+          </v-card-subtitle>
         </v-card>
         <v-card
         >
@@ -108,6 +116,14 @@ export default {
       },
       set (v) {
         this.accountDetail.staked = v
+      }
+    },
+    chainId: {
+      get () {
+        return this.$store.state.activeChainId
+      },
+      set (v) {
+        this.$store.commit('setActiveChainId', v)
       }
     },
     balance: {
