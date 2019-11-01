@@ -14,10 +14,8 @@
             v-if="address"
             class="headline font-weight-bold">
             {{ address }}
-          </v-card-text>
-          <v-card-subtitle>
             {{ chainId }}
-          </v-card-subtitle>
+          </v-card-text>
         </v-card>
         <v-card
         >
@@ -25,7 +23,7 @@
             <span class="title font-weight-light">Staked</span>
           </v-card-title>
           <v-card-text class="headline font-weight-bold">
-            {{ staked }}
+            {{ staked }} {{ chance }}
           </v-card-text>
         </v-card>
         <v-card
@@ -104,6 +102,8 @@
 
 </template>
 <script>
+import JSBI from 'jsbi'
+
 export default {
   props: ['address'],
   computed: {
@@ -118,6 +118,12 @@ export default {
       set (v) {
         this.accountDetail.staked = v
       }
+    },
+    chance () {
+        if (this.accountDetail) {
+          return this.accountDetail.chance
+        }
+        return '...'
     },
     chainId: {
       get () {

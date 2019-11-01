@@ -70,6 +70,7 @@ export default {
   },
   created() {
     console.log(process.env)
+    document.title = "Beta · aergo vote"
     this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
   },
   data: () => ({

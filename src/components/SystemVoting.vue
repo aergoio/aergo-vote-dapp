@@ -10,6 +10,8 @@
         <span v-if="id !== 'BP'">( Current value : {{ current }} )</span>
         <v-simple-table 
           v-if="votesList && votesList.length"
+          fixed-header
+          height="360px"
           dense
         >
           <thead>
@@ -81,7 +83,13 @@
         {{ item }}
         </v-chip>
       </v-col>
-      <v-col>
+    </v-row>
+    <v-row
+    >
+      <v-col
+      align="center"
+      justify="center"
+      >
         <v-btn v-on:click="addSelected({candidate: candidate});requestVote()">Vote</v-btn>
       </v-col>
     </v-row>

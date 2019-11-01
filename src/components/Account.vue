@@ -48,9 +48,6 @@ export default {
     staked: {
       get () {
         return this.$store.state.staked
-      },
-      set (v) {
-        this.$store.commit('setStaked', v)
       }
     },
     balance: {

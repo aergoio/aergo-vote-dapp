@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import aergo from './provider'
 import connectAergo from './provider'
+import JSBI from 'jsbi'
 
 Vue.use(Vuex)
+
+String.prototype.splice = function(idx, rem, str) {
+  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+}
 
 export default new Vuex.Store({
   state: {
@@ -110,6 +114,9 @@ export default new Vuex.Store({
       const state = await this.state.aergo.getState(address)
       return {
         staked: staked.amount.toUnit('aergo').toString(),
+        chance : JSBI.divide(staked.amount.value,
+          JSBI.divide(this.state.activeChainId.stakingtotal.value, new JSBI.BigInt(1000000)))
+          .toString().padStart(6, '0').splice(2, 0, ".").replace('00.','0.') + "%",
         when: staked.when,
         balance: state.balance.toUnit('aergo').toString()
       }
