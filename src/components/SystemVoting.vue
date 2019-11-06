@@ -114,6 +114,10 @@ export default {
     sendTx(event) {
       console.log('AERGO_SEND_TX_RESULT', event.detail)
       this.message = {type: 'success', text: 'Result hash: ' + event.detail.hash}
+      setTimeout(()=>{
+        this.loadVotes()
+        this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
+      }, 5000)
     },
     async requestVote () {
       console.log('request Vote', this.selected)
@@ -161,7 +165,7 @@ export default {
       const selections = []
 
       for (const s of this.selected) {
-        selections.push(s.candidate)
+        selections.push(s.candidate.trim())
       }
 
       return selections.filter((v, i, a) => a.indexOf(v) === i)
