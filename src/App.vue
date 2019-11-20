@@ -1,80 +1,96 @@
 <template>
-  <div id="app">
-  <v-app>
-    <v-app-bar
-      app
-      color="indigo"
-      dark
-    >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>AERGO SYSTEM PARAMETER VOTING</v-toolbar-title>
-    </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-    >
-      <v-list dense>
-        <v-list-item-group
-          active-class="pink--text"
-        >
-        <account
-          v-on:emitAccount="changeAccountRoute($event)"
-        />
-        <v-list-item
-          v-for="v in systemVotings"
-          v-bind:key="v.id"
-          @click="changeVotingRoute(v.id)"
-        >
-          <v-list-item-action>
-            <v-icon>mdi-vote</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ v.id }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
-    <v-content>
-    <router-view/>
-    <v-footer
-      color="indigo"
-      app
-    >
-    </v-footer>
-    </v-content>
-  </v-app>
+  <div id="app" class="fill-viewport">
+    <ViewWithSidebar class="fill-viewport">
+      <template #sidebar>
+        <LogoGeneric text="Voting" :size="18" />
+        <SidebarMenu :items="menuItems" />
+        <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
+      </template>
+      <template #default>
+        <router-view />
+      </template>
+    </ViewWithSidebar>
   </div>
 </template>
 <script>
 import Account from '@/components/Account'
 import { mapState } from "vuex"
+import { LogoGeneric } from '@aergoenterprise/lib-components/src/basic';
+import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
+import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/templates';
+import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
+import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitalize';
 
 export default {
   name: 'App',
   components: {
-    Account
+    Account,
+    ViewWithSidebar,
+    SidebarMenu,
+    LogoGeneric,
+    LoginWithAergoConnect,
+  },
+  data() {
+    return {
+      account: null,
+    };
   },
   computed: {
-    ...mapState(['systemVotings'])
+    ...mapState(['systemVotings', 'activeChainId', 'activeAccount']),
+    menuItems() {
+      const votes = this.systemVotings.map((item, index) => {
+        return {
+          id: index,
+          label: capitalize(item.id.toLowerCase()),
+          routeAttrs: {
+            to: { name: 'voting', params: { id: item.id } },
+          },
+        };
+      });
+      if (this.activeAccount) {
+        return votes.concat([
+          {
+            id: 'account',
+            label: 'My Account',
+            routeAttrs: {
+              to: { name: 'account', params: { address: this.activeAccount.address } },
+            },
+          }
+        ]);
+      }
+      return votes;
+    },
   },
   methods: {
-    changeAccountRoute(address) {
-      return this.$router.push({ name: 'account', params: { address: address } })
-    },
-    changeVotingRoute(routeName) {
-      return this.$router.push({ name: 'voting', params: { id: routeName } })
+    async connectAccount () {
+      const account = await this.$store.dispatch('refreshActiveAccount');
+      const chainId = this.activeChainId.chainid.magic;
+      if (chainId != account.chainId) {
+        alert(`The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`);
+        return;
+      }
+      this.account = account;
+      console.log('Logged in', account);
     }
   },
   created() {
-    console.log(process.env)
-    document.title = "Beta · aergo vote"
+    document.title = "Beta · aergo voting"
     this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
   },
-  data: () => ({
-    drawer: false
-  }),
 }
 </script>
+
+<style>
+:root {
+  --color-primary-hue: 324;
+}
+.fill-viewport {
+  height: 100vh;
+}
+.logo-generic {
+  margin: 25px 32px;
+}
+.login-with-aergo-connect {
+  margin: auto 32px 40px 32px;
+}
+</style>
