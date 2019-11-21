@@ -13,7 +13,6 @@
   </div>
 </template>
 <script>
-import Account from '@/components/Account'
 import { mapState } from "vuex"
 import { LogoGeneric } from '@aergoenterprise/lib-components/src/basic';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
@@ -24,7 +23,6 @@ import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitali
 export default {
   name: 'App',
   components: {
-    Account,
     ViewWithSidebar,
     SidebarMenu,
     LogoGeneric,

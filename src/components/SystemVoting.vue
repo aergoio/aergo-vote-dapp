@@ -16,26 +16,16 @@
       <Island>
         <IslandHeader title="Cast your vote" />
         <p>Select candidate(s) from above or enter manually.</p>
+
+        <Alert :type="message.type" v-if="message.text">{{message.text}}</Alert>
       
         <FilterItems :items="selected" :removeItem="removeSelected" />
 
-        <v-text-field
-          v-if="!(fullSelected)"
-          v-model="candidate"
-          v-on:keyup.enter="addSelected({candidate: candidate})"
-          placeholder="Enter candidate manually"
-        >
-          <v-icon slot="prepend" color="gray">mdi-pencil</v-icon>
-        </v-text-field>
+        <div class="candidate-input">
+          <Input size="small" v-if="!fullSelected" v-model="candidate" placeholder="Enter candidate manually" />
+        </div>
 
-        <v-alert
-          v-if="message.text"
-          v-bind:type="message.type"
-          dismissible>
-          {{message.text}}
-        </v-alert>
-
-        <Button type="primary-alt" @click="addSelected({candidate: candidate}); requestVote()" :disabled="!isButtonEnabled">Vote</Button>
+        <Button type="primary-alt" @click="addSelected(candidate); requestVote()" :disabled="!isButtonEnabled">Vote</Button>
       </Island>
     </Vertical>
   </div>
@@ -43,11 +33,12 @@
 
 <script>
 import VoteTable from './VoteTable';
-import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import { ViewTitle, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Filters/FilterItems.vue';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
+import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
 
 export default {
   components: {
@@ -57,16 +48,15 @@ export default {
     VoteTable,
     FilterItems,
     Button,
+    Input,
+    Alert,
   },
   name: 'system-voting',
   props: ['id'],
   methods: {
     addSelected (candidate) {
-      if (candidate.candidate === "") {
-        return;
-      }
       if (this.fullSelected) {
-        this.message = {type: 'warning', text: `Cannot select more than ${this.maxSelections} candidates`}
+        this.message = {type: 'danger', text: `Cannot select more than ${this.maxSelections} candidates`};
         return;
       }
       if (this.selected.indexOf(candidate) !== -1) {
@@ -78,10 +68,17 @@ export default {
     },
     removeSelected(candidate) {
       this.selected = this.selected.filter(item => item !== candidate);
+      if (!this.fullSelected) {
+        this.message = {type: 'success'};
+      }
     },
-    sendTx(event) {
+    onSendTxResult(event) {
       console.log('AERGO_SEND_TX_RESULT', event.detail)
-      this.message = {type: 'success', text: 'Result hash: ' + event.detail.hash}
+      if (event.detail.hash) {
+        this.message = {type: 'success', text: 'Result hash: ' + event.detail.hash};
+      } else {
+        this.message = {type: 'danger', text: 'An error occurred.'};
+      }
       setTimeout(()=>{
         this.loadVotes()
         this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
@@ -99,7 +96,7 @@ export default {
         this.tx.payload_json.Args = [this.$props.id, ...this.selected];
       }
       let data = this.tx;
-      window.addEventListener('AERGO_SEND_TX_RESULT', this.sendTx, { once: true })
+      window.addEventListener('AERGO_SEND_TX_RESULT', this.onSendTxResult, { once: true })
       window.postMessage({
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
@@ -189,5 +186,8 @@ export default {
 <style scoped>
 .current-value-label {
   font-weight: 500;
+}
+.candidate-input {
+  margin: 20px 0;
 }
 </style>
