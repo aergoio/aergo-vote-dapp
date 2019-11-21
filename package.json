@@ -8,26 +8,28 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.3.3",
+    "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
+    "@herajs/client": "^0.16.2",
     "core-js": "^2.6.5",
     "jsbi": "^3.1.1",
-    "typescript": "^3.6.3",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuetify": "^2.0.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@herajs/client": "^0.13.3",
+    "@kazupon/vue-i18n-loader": "^0.4.1",
     "@mdi/font": "^4.4.95",
+    "@typescript-eslint/eslint-plugin": "^2.3.3",
     "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-eslint": "^3.11.0",
+    "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.5.1",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.17.4",
     "sass-loader": "^7.1.0",
+    "typescript": "^3.7.2",
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.2.2"

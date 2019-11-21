@@ -1,13 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import connectAergo from './provider'
-import JSBI from 'jsbi'
 
 Vue.use(Vuex)
-
-function toPercent(value) {
-  return value.slice(0, -4) + "." + value.substring(value.length - 4) + "%"
-}
 
 export default new Vuex.Store({
   state: {
@@ -109,18 +104,17 @@ export default new Vuex.Store({
       })
     },
     async getAccountDetail (context, { address }) {
-      const staked = await this.state.aergo.getStaking(address)
-      const state = await this.state.aergo.getState(address)
+      const [staked, state] = await Promise.all([
+        this.state.aergo.getStaking(address),
+        this.state.aergo.getState(address),
+      ]);
       return {
-        staked: staked.amount.toUnit('aergo').toString(),
-        chance : toPercent(JSBI.divide(staked.amount.value,
-          JSBI.divide(this.state.activeChainId.stakingtotal.value, new JSBI.BigInt(1000000)))
-          .toString().padStart(6, '0')),
+        staked: staked.amount,
         when: staked.when,
-        balance: state.balance.toUnit('aergo').toString()
+        balance: state.balance,
       }
     },
-    refreshActiveAccount ({commit, state}) {
+    refreshActiveAccount ({ commit }) {
       commit('setActiveAccount', null)
       return this.dispatch('getActiveAccount')
     }

@@ -1,162 +1,80 @@
 <template>
-  <v-container
-    fluid
-  >
-    <v-row
-    >
-      <v-col class="text-center">
-        <v-card
-        >
-          <v-card-title>
-            <span class="title font-weight-light">Address</span>
-          </v-card-title>
-          <v-card-text
-            v-if="address"
-            class="headline font-weight-bold">
-            {{ address }}
-            {{ chainId }}
-          </v-card-text>
-        </v-card>
-        <v-card
-        >
-          <v-card-title>
-            <span class="title font-weight-light">Staked</span>
-          </v-card-title>
-          <v-card-text class="headline font-weight-bold">
-            {{ staked }} {{ chance }}
-          </v-card-text>
-        </v-card>
-        <v-card
-        >
-          <v-card-title>
-            <span class="title font-weight-light">Balance</span>
-          </v-card-title>
-          <v-card-text class="headline font-weight-bold">
-            {{ balance }}
-          </v-card-text>
-        </v-card>
-        <v-card
-          v-if="when !== 0"
-        >
-          <v-card-title>
-            <span class="title font-weight-light">Last action block</span>
-          </v-card-title>
-          <v-card-text class="headline font-weight-bold">
-            No. {{ when }}
-            {{ accountLastActionTime }}
-          </v-card-text>
-          <v-card-text class="font-weight-bold">
-            (next available action : {{ when + (60*60*24) }})
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row
-    >
-      <v-col class="text-center">
-        <div v-if="voteHistory">
-          <v-expansion-panels
-        v-model="votingPanel"
-        multiple
-      >
-        <v-expansion-panel
-          v-for="v in voteHistory.getVotingList()"
-          v-bind:key="v.getId()"
-        >
-          <v-expansion-panel-header> {{ getTextID(v) }} </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-card
-            >
-              <v-card-title>
-                <span>
-                  Voting power
-                </span>
-              </v-card-title>
-              <v-card-text>
-                {{ v.getAmount() }}
-              </v-card-text>
-            </v-card>
-            <v-card
-            >
-              <v-card-title>
-                <span>
-                 Vote to
-                </span>
-              </v-card-title>
-              <v-card-text>
-                <div
-                  v-for="c in v.getCandidatesList()"
-                  v-bind:key="c"
-                >
-                {{ c }}
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+  <Vertical base="fill">
+    <ViewTitle>My Account</ViewTitle>
 
+    <Island>
+      <IslandHeader title="Details" />
+
+      <KVTable>
+        <KVTableRow label="Address">{{ address }} <span v-if="activeChainId">({{ activeChainId.chainid.magic }})</span></KVTableRow>
+        <KVTableRow label="Staked balance" v-if="accountDetail">{{ accountDetail.staked.toUnit('aergo').toString() }} ({{chance}} of total)</KVTableRow>
+        <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ accountDetail.balance.toUnit('aergo').toString() }}</KVTableRow>
+        <KVTableRow label="Last staking" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
+        <KVTableRow label="Next staking available" v-if="when">Block no. {{when + (60*60*24)}} (approx. {{accountNextActionTime}})</KVTableRow>
+      </KVTable>
+    </Island>
+
+    <Island v-if="voteHistory">
+      <IslandHeader title="My votes" :annotation="`Total ${totalVotingPower}`" />
+      <div v-if="when">
+        <VoteHistoryTable :items="voteHistory.getVotingList()" />
+      </div>
+      <div v-else>
+        No recorded actions.
+      </div>
+    </Island>
+  </Vertical>
 </template>
 <script>
-import JSBI from 'jsbi'
+import { Vertical } from '@aergoenterprise/lib-components/src/layout';
+import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
+import VoteHistoryTable from './VoteHistoryTable.vue';
+import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composite/tables';
+import { mapState } from "vuex"
+import JSBI from 'jsbi';
+import { Amount } from '@herajs/client';
 
 export default {
   props: ['address'],
+  components: {
+    Island,
+    IslandHeader,
+    ViewTitle,
+    Vertical,
+    VoteHistoryTable,
+    KVTable, KVTableRow,
+  },
   computed: {
-    staked: {
-      get () {
-        if (this.accountDetail) {
-            return this.accountDetail.staked
-        } else {
-            return '...'
-        }
-      },
-      set (v) {
-        this.accountDetail.staked = v
-      }
+    ...mapState(['activeChainId']),
+    totalVotingPower() {
+      return this.voteHistory.getVotingList().map(vote => 
+        new Amount(vote.getAmount(), 'aer')
+      ).reduce((a, b) => a.add(b), new Amount(0));
     },
     chance () {
-        if (this.accountDetail) {
-          return this.accountDetail.chance
+      if (this.accountDetail && this.activeChainId) {
+        // Devide BigInt by 10^18, convert to float, calculate ratio
+        const staked = JSBI.toNumber(this.accountDetail.staked.div(1e18).value);
+        const total = JSBI.toNumber(this.activeChainId.stakingtotal.div(1e18).value);
+        const ratio = staked / total;
+        if (ratio < 0.000001 && staked > 0) {
+          return '<0.0001%';
         }
-        return '...'
-    },
-    chainId: {
-      get () {
-        if (this.$store.state.activeChainId != "") {
-          return this.$store.state.activeChainId.chainid.magic
-        }
-        return ""
+        return `${Math.round(ratio * 100 * 10000)/10000}%`; // precision = 4
       }
-    },
-    balance: {
-      get () {
-        if (this.accountDetail) {
-            return this.accountDetail.balance
-        } else {
-            return '...'
-        }
-      },
-      set (v) {
-        this.accountDetail.balance = v
-      }
+      return '...'
     },
     when: {
       get () {
         if (this.accountDetail) {
-          console.log('try getblock', this.accountDetail.when)
-          this.$store.dispatch('getBlock', { blockNoOrHash: this.accountDetail.when})
-          .then((block) => {
-            this.accountLastActionTime = new Date(block.header.timestamp/1000000)
-            })
-          return this.accountDetail.when
-        } else {
-          return '...'
+          this.$store.dispatch('getBlock', { blockNoOrHash: this.accountDetail.when}).then((block) => {
+            this.accountLastActionTime = new Date(block.header.timestamp/1000000);
+            this.accountNextActionTime = new Date(block.header.timestamp/1000000 + (60*60*24*1000));
+          });
+          return this.accountDetail.when;
         }
+        return '...';
       },
       set (v) {
         this.$store.commit('setWhen', v)
@@ -164,41 +82,33 @@ export default {
     }
   },
   methods: {
-    getTextID(v) {
-        if (v.getId() == 'voteBP') {
-            return 'BP'
-        }
-        return v.getId()
-    },
     async loadAccountVotes () {
-      const result = await this.$store.dispatch('getAccountVotes', { address: this.address })
-      this.voteHistory = result
-    }
+      this.voteHistory = await this.$store.dispatch('getAccountVotes', { address: this.address });
+    },
+    async loadAccountDetail () {
+      this.accountDetail = await this.$store.dispatch('getAccountDetail', { address: this.address });
+    },
   },
   watch: {
     '$route' (to) {
+      this.votingPanel = [];
+      this.accountDetail = null;
+      this.accountLastActionTime = null;
+      this.accountNextActionTime = null;
+      this.voteHistory = null;
       this.loadAccountVotes()
-      this.$store.dispatch('getAccountDetail', { address: this.address })
-      .then((d) => {
-        this.accountDetail = d
-      })
-      this.votingPanel = []
-      this.accountDetail = null
-      this.accountLastActionTime = null
-      this.votinghistory = null
+      this.loadAccountDetail();
     }
   },
   mounted() {
     this.loadAccountVotes()
-    this.$store.dispatch('getAccountDetail', { address: this.address })
-    .then((d) => {
-      this.accountDetail = d
-    })
+    this.loadAccountDetail();
   },
   data: () => ({
     votingPanel: [],
     accountDetail : null,
     accountLastActionTime: null,
+    accountNextActionTime: null,
     voteHistory: null
   })
 }

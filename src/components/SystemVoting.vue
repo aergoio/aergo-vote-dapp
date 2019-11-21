@@ -1,115 +1,83 @@
 <template>
-  <v-container
-    fluid
-  >
-    <v-row
-    >
-      <v-col class="text-center">
-        <v-card v-if="!votesLoad">Loading...</v-card>
-        Vote : {{id}}
-        <span v-if="id !== 'BP'">( Current value : {{ current }} )</span>
-        <v-simple-table 
-          v-if="votesList && votesList.length"
-          fixed-header
-          height="360px"
-          dense
-        >
-          <thead>
-            <tr>
-              <th>Pos.</th>
-              <th>Candidates</th>
-              <th>Votes</th>
-            </tr>
-          </thead>
-          <tr 
-            v-for="(item, index) in votesList"
-            :key="item.candidate">
-            <td>{{index+1}}</td>
-            <td v-on:click="addSelected(item)">
-              {{item.candidate}}
-            </td>
-            <td>
-              {{item.amount.toUnit('aergo').toString()}}
-            </td>
-          </tr>
-        </v-simple-table>
-      </v-col>
-    </v-row>
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-col
-      >
+  <div>
+    <Vertical base="fill">
+      <ViewTitle>Vote: {{id}}</ViewTitle>
+      <Island>
+        <span class="current-value-label">Current value: </span> 
+        <span v-if="id !== 'BP'">{{current}}</span> 
+        <span v-else>candidates 1-{{$store.state.activeChainId.bpnumber}}</span>
+      </Island>
+
+      <Island>
+        <IslandHeader title="Candidates" />
+        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="addSelected" />
+      </Island>
+
+      <Island>
+        <IslandHeader title="Cast your vote" />
+        <p>Select candidate(s) from above or enter manually.</p>
+      
+        <FilterItems :items="selected" :removeItem="removeSelected" />
+
         <v-text-field
           v-if="!(fullSelected)"
           v-model="candidate"
           v-on:keyup.enter="addSelected({candidate: candidate})"
-          placeholder="Enter candidate"
+          placeholder="Enter candidate manually"
         >
-         <v-icon slot="prepend" color="gray">mdi-pencil</v-icon>
+          <v-icon slot="prepend" color="gray">mdi-pencil</v-icon>
         </v-text-field>
-      </v-col>
-    </v-row>
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-col
-      >
+
         <v-alert
           v-if="message.text"
           v-bind:type="message.type"
-          dismissible
-        >
+          dismissible>
           {{message.text}}
         </v-alert>
-      </v-col>
-    </v-row>
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-col
-            v-for="(item, i) in selections"
-            :key="item"
-        class="shrink"
-      >
-        <v-chip
-          class="ma-2"
-          close
-          @click:close="selected.splice(i, 1)"
-        >
-        {{ item }}
-        </v-chip>
-      </v-col>
-    </v-row>
-    <v-row
-    >
-      <v-col
-      align="center"
-      justify="center"
-      >
-        <v-btn v-on:click="addSelected({candidate: candidate});requestVote()">Vote</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+
+        <Button type="primary-alt" @click="addSelected({candidate: candidate}); requestVote()" :disabled="!isButtonEnabled">Vote</Button>
+      </Island>
+    </Vertical>
+  </div>
 </template>
 
 <script>
+import VoteTable from './VoteTable';
+import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import { Vertical } from '@aergoenterprise/lib-components/src/layout';
+import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
+import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Filters/FilterItems.vue';
+import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
+
 export default {
+  components: {
+    Vertical,
+    Island, IslandHeader, 
+    ViewTitle,
+    VoteTable,
+    FilterItems,
+    Button,
+  },
   name: 'system-voting',
   props: ['id'],
   methods: {
     addSelected (candidate) {
       if (candidate.candidate === "") {
-        return
+        return;
       }
-      if (this.isFullSelected()) {
-        this.message = {type: 'warning', text: 'already selected to the maximum'}
-        return
+      if (this.fullSelected) {
+        this.message = {type: 'warning', text: `Cannot select more than ${this.maxSelections} candidates`}
+        return;
       }
-      this.selected.push(candidate)
+      if (this.selected.indexOf(candidate) !== -1) {
+        return;
+      }
+      this.selected.push(candidate);
+      // remove duplicates
+      this.selected = this.selected.filter((v, i, a) => a.indexOf(v) === i);
+    },
+    removeSelected(candidate) {
+      this.selected = this.selected.filter(item => item !== candidate);
     },
     sendTx(event) {
       console.log('AERGO_SEND_TX_RESULT', event.detail)
@@ -120,17 +88,17 @@ export default {
       }, 5000)
     },
     async requestVote () {
-      console.log('request Vote', this.selected)
-      let account = await this.$store.dispatch('getActiveAccount')
+      console.log('Requesting vote', this.selected);
+      let account = await this.$store.dispatch('getActiveAccount');
       this.tx.from = account.address
       if (this.id == 'BP') {
-        this.tx.payload_json.Name = "v1voteBP"
-        this.tx.payload_json.Args = [].concat(this.selections)
+        this.tx.payload_json.Name = "v1voteBP";
+        this.tx.payload_json.Args = [...this.selected];
       } else {
-        this.tx.payload_json.Name = "v1voteDAO"
-        this.tx.payload_json.Args = [this.$props.id].concat(this.selections)
+        this.tx.payload_json.Name = "v1voteDAO";
+        this.tx.payload_json.Args = [this.$props.id, ...this.selected];
       }
-      let data = this.tx
+      let data = this.tx;
       window.addEventListener('AERGO_SEND_TX_RESULT', this.sendTx, { once: true })
       window.postMessage({
         type: 'AERGO_REQUEST',
@@ -150,25 +118,19 @@ export default {
         console.error(e)
       }
     },
-    isFullSelected() {
-      if (this.$props.id == 'BP') {
-        return this.selected.length >= 30
-      }
-      return this.selected.length >= 1
-    }
   },
   computed: {
     fullSelected () {
-      return this.isFullSelected()
+      return this.selected.length >= this.maxSelections
     },
-    selections () {
-      const selections = []
-
-      for (const s of this.selected) {
-        selections.push(s.candidate.trim())
+    maxSelections () {
+      if (this.$props.id == 'BP') {
+        return 30;
       }
-
-      return selections.filter((v, i, a) => a.indexOf(v) === i)
+      return 1;
+    },
+    isButtonEnabled () {
+      return this.selected.length > 0 || this.candidate.trim().length > 0;
     },
     current() {
       if (this.$store.state.activeChainId) {
@@ -183,7 +145,7 @@ export default {
             return this.$store.state.activeChainId.nameprice.toUnit('aer').toString()
         }
       }
-      return this.$store.state.activeChainId
+      return this.$store.state.activeChainId;
     }
   },
   watch: {
@@ -223,3 +185,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.current-value-label {
+  font-weight: 500;
+}
+</style>

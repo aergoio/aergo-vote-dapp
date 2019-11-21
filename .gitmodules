@@ -1,0 +1,3 @@
+[submodule "aergo-enterprise-library"]
+	path = aergo-enterprise-library
+	url = https://971e4847873c9cc70c9b514361a44789c1df4cdf:@github.com/aergoio/aergo-enterprise-library

@@ -2,27 +2,34 @@
 
 ## Project setup
 ```
+git submodule init && git submodule update
 yarn install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn run serve
+yarn serve
+```
+
+Configure Aergo node:
+
+```
+VUE_APP_AERGO_NODE=xxx yarn serve
 ```
 
 ### Compiles and minifies for production
 ```
-yarn run build
+yarn build
 ```
 
 ### Run your tests
 ```
-yarn run test
+yarn test
 ```
 
 ### Lints and fixes files
 ```
-yarn run lint
+yarn lint
 ```
 
 ### Customize configuration
