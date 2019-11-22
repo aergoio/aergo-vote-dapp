@@ -7,7 +7,10 @@
 
       <KVTable>
         <KVTableRow label="Address">{{ address }} <span v-if="activeChainId">({{ activeChainId.chainid.magic }})</span></KVTableRow>
-        <KVTableRow label="Staked balance" v-if="accountDetail">{{ accountDetail.staked.toUnit('aergo').toString() }} ({{chance}} of total)</KVTableRow>
+        <KVTableRow label="Staked balance" v-if="accountDetail">
+          {{ accountDetail.staked.toUnit('aergo').toString() }} ({{chance}} of total)
+          <span v-if="accountDetail.staked.equal(0)" class="note">You need to stake (e.g. in Aergo Connect) to be able to vote.</span>
+        </KVTableRow>
         <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ accountDetail.balance.toUnit('aergo').toString() }}</KVTableRow>
         <KVTableRow label="Last staking" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
         <KVTableRow label="Next staking available" v-if="when">Block no. {{when + (60*60*24)}} (approx. {{accountNextActionTime}})</KVTableRow>
@@ -113,3 +116,8 @@ export default {
   })
 }
 </script>
+<style lang="scss">
+.note {
+  color: #888;
+}
+</style>

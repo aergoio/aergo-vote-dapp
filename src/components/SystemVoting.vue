@@ -55,6 +55,9 @@ export default {
   props: ['id'],
   methods: {
     addSelected (candidate) {
+      if (!candidate) {
+        return;
+      }
       if (this.fullSelected) {
         this.message = {type: 'danger', text: `Cannot select more than ${this.maxSelections} candidates`};
         return;
