@@ -20,11 +20,11 @@
               {{index+1}}
             </Cell>
             <Cell field="candidate">
-              {{item.candidate}}
+              {{padString(item.candidate, maxCandidateLength)}}
               <IconButton type="action" size="small" style="display: inline-block" rounded iconName="btn-add-white" @click="$emit('clickCandidate', item.candidate)" />
             </Cell>
             <Cell field="votes">
-              {{padAmount(item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo')}}
+              {{padString(item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo', maxAmountLength)}}
             </Cell>
           </Row>
         </template>
@@ -71,6 +71,9 @@ export default Vue.extend({
     maxAmountLength(): number {
       // Get the length of the longest amount string
       return Math.max(...this.items.map(item => (item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo').length));
+    },
+    maxCandidateLength(): number {
+      return Math.max(...this.items.map(item => (item.candidate || '').length));
     }
   },
   methods: {
@@ -78,9 +81,9 @@ export default Vue.extend({
       this.from = page.offset;
       this.sort = `${sort.field}:${sort.asc?'asc':'desc'}`;
     },
-    padAmount(amountStr: string): string {
+    padString(amountStr: string, max: number): string {
       // Pad amount with whitespace to make units line up
-      return amountStr.padStart(this.maxAmountLength, " "); // U+2007 Figure Space
+      return amountStr.padStart(max, " "); // U+2007 Figure Space
     },
   },
 });

@@ -76,7 +76,11 @@ export default Vue.extend({
     },
     displayAmount(vote: any): string {
       // Pad amount with whitespace to make units line up
-      return new Amount(vote.getAmount(), 'aer').toUnit('aergo').toString().padStart(this.maxAmountLength, " "); // U+2007 Figure Space
+      try {
+        return new Amount(vote.getAmount(), 'aer').toUnit('aergo').toString().padStart(this.maxAmountLength, " "); // U+2007 Figure Space
+      } catch(e) {
+        return ''; // old API
+      }
     },
     getTextID(v: any) {
       if (v.getId() == 'voteBP') {

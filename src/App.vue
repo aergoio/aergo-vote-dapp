@@ -2,7 +2,9 @@
   <div id="app" class="fill-viewport">
     <ViewWithSidebar class="fill-viewport">
       <template #sidebar>
-        <LogoGeneric text="Voting" :size="18" />
+        <router-link :to="{ name: 'about' }">
+          <LogoGeneric text="Voting" :size="18" />
+        </router-link>
         <SidebarMenu :items="menuItems" />
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
       </template>
@@ -45,18 +47,15 @@ export default {
           },
         };
       });
-      if (this.activeAccount) {
-        return votes.concat([
-          {
-            id: 'account',
-            label: 'My Account',
-            routeAttrs: {
-              to: { name: 'account', params: { address: this.activeAccount.address } },
-            },
-          }
-        ]);
-      }
-      return votes;
+      return [
+        {
+          id: 'account',
+          label: 'My Account',
+          routeAttrs: {
+            to: this.activeAccount ? { name: 'account', params: { address: this.activeAccount.address } } : { name: 'login' },
+          },
+        }
+      ].concat(votes);
     },
   },
   methods: {
@@ -88,7 +87,7 @@ export default {
 .logo-generic {
   margin: 25px 32px;
 }
-.login-with-aergo-connect {
+.view-sidebar .login-with-aergo-connect {
   margin: auto 32px 40px 32px;
 }
 </style>

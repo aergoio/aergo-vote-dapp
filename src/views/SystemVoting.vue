@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import VoteTable from './VoteTable';
+import VoteTable from '../components/VoteTable';
 import { ViewTitle, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
