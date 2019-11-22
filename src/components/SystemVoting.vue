@@ -6,6 +6,7 @@
         <span class="current-value-label">Current value: </span> 
         <span v-if="id !== 'BP'">{{current}}</span> 
         <span v-else>candidates 1-{{$store.state.activeChainId.bpnumber}}</span>
+        <span v-if="isVoteWithAmountValue"> ({{currentAsAmount | formatToken}})</span>
       </Island>
 
       <Island>
@@ -39,6 +40,9 @@ import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/compos
 import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Filters/FilterItems.vue';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
+import { Amount } from '@herajs/client';
+
+const votesWithAmountValue = ['GASPRICE', 'NAMEPRICE', 'STAKINGMIN'];
 
 export default {
   components: {
@@ -120,11 +124,17 @@ export default {
     },
   },
   computed: {
+    isVoteWithAmountValue() {
+      return votesWithAmountValue.indexOf(this.id) !== -1;
+    },
+    currentAsAmount() {
+      return new Amount(this.current);
+    },
     fullSelected () {
       return this.selected.length >= this.maxSelections
     },
     maxSelections () {
-      if (this.$props.id == 'BP') {
+      if (this.id == 'BP') {
         return 30;
       }
       return 1;
