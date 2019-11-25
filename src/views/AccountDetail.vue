@@ -13,7 +13,10 @@
         </KVTableRow>
         <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ accountDetail.balance.toUnit('aergo').toString() }}</KVTableRow>
         <KVTableRow label="Last staking" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
-        <KVTableRow label="Next action available" v-if="when">Block no. {{when + (60*60*24)}} (in {{nextActionRelativeString}})</KVTableRow>
+        <KVTableRow label="Next action available" v-if="when">
+          <span v-if="nextActionAvailable">now</span>
+          <span v-else>Block no. {{when + (60*60*24)}} (in {{nextActionRelativeString}})</span>
+        </KVTableRow>
       </KVTable>
     </Island>
 
@@ -61,7 +64,13 @@ export default {
       }
     },
     nextActionRelativeString() {
+      if (!this.accountNextActionTime) {
+        return '';
+      }
       return formatDistance(new Date(), this.accountNextActionTime);
+    },
+    nextActionAvailable() {
+      return this.accountNextActionTime && this.accountNextActionTime < new Date();
     },
     chance () {
       if (this.accountDetail && this.activeChainId) {
