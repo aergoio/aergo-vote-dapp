@@ -1,6 +1,6 @@
 <template>
   <Vertical base="fill">
-    <ViewTitle>My Account</ViewTitle>
+    <ViewTitle>Account</ViewTitle>
 
     <Island>
       <IslandHeader title="Details" />
@@ -13,12 +13,12 @@
         </KVTableRow>
         <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ accountDetail.balance.toUnit('aergo').toString() }}</KVTableRow>
         <KVTableRow label="Last staking" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
-        <KVTableRow label="Next staking available" v-if="when">Block no. {{when + (60*60*24)}} (approx. {{accountNextActionTime}})</KVTableRow>
+        <KVTableRow label="Next action available" v-if="when">Block no. {{when + (60*60*24)}} (in {{nextActionRelativeString}})</KVTableRow>
       </KVTable>
     </Island>
 
     <Island v-if="voteHistory">
-      <IslandHeader title="My votes" :annotation="`Total ${totalVotingPower}`" />
+      <IslandHeader title="Votes" :annotation="`Total ${totalVotingPower}`" />
       <div v-if="when">
         <VoteHistoryTable :items="voteHistory.getVotingList()" />
       </div>
@@ -37,6 +37,7 @@ import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composi
 import { mapState } from "vuex"
 import JSBI from 'jsbi';
 import { Amount } from '@herajs/client';
+import { formatDistance } from 'date-fns'
 
 export default {
   props: ['address'],
@@ -58,6 +59,9 @@ export default {
       } catch(e) {
         return new Amount(0);
       }
+    },
+    nextActionRelativeString() {
+      return formatDistance(new Date(), this.accountNextActionTime);
     },
     chance () {
       if (this.accountDetail && this.activeChainId) {
