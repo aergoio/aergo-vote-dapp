@@ -41,6 +41,7 @@ import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Fil
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
 import { Amount } from '@herajs/client';
+import bpmap from '../bpmap.json'
 
 const votesWithAmountValue = ['GASPRICE', 'NAMEPRICE', 'STAKINGMIN'];
 
@@ -114,6 +115,16 @@ export default {
       try {
         const votesList = await this.$store.dispatch('getTopVotes', { count: 50, id: this.$props.id === 'BP' ? 'voteBP' : this.$props.id })
         for (let vote of votesList) {
+          if (this.$props.id == 'BP') {
+            if (bpmap[vote.candidate] != null) {
+              vote.url = bpmap[vote.candidate].url
+              vote.name = bpmap[vote.candidate].name
+            }
+            else {
+              vote.url = ''
+              vote.name = '?'
+            }
+          }
           vote.amount = Object.freeze(vote.amount) // prevent Vue from adding observer to Amount
         }
         this.votesList = votesList

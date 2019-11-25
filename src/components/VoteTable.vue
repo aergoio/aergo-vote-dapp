@@ -11,6 +11,8 @@
           <Header sortField="votes" :sortAsc="false" @updateSort="updateSort">
             <HeaderCell field="pos">Pos.</HeaderCell>
             <HeaderCell field="candidate">Candidate</HeaderCell>
+            <!--HeaderCell field="votebtn"></HeaderCell-->
+            <HeaderCell field="info">{{withInfo()? "Info" : ""}}</HeaderCell>
             <HeaderCell field="votes">Current votes</HeaderCell>
           </Header>
         </template>
@@ -21,7 +23,12 @@
             </Cell>
             <Cell field="candidate">
               {{padString(item.candidate, maxCandidateLength)}}
+            <!--/Cell-->
+            <!--Cell field="votebtn"-->
               <IconButton type="action" size="small" style="display: inline-block" rounded iconName="btn-add-white" @click="$emit('clickCandidate', item.candidate)" />
+            </Cell>
+            <Cell field="description">
+              <a v-bind:href="item.url" target="_blank">{{item.name}}</a>
             </Cell>
             <Cell field="votes">
               {{padString(item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo', maxAmountLength)}}
@@ -48,6 +55,8 @@ import { Amount } from '@herajs/client';
 interface Item {
   amount: Amount;
   candidate: string;
+  name: string;
+  url: string;
 }
 
 export default Vue.extend({
@@ -84,6 +93,12 @@ export default Vue.extend({
     padString(amountStr: string, max: number): string {
       // Pad amount with whitespace to make units line up
       return amountStr.padStart(max, " "); // U+2007 Figure Space
+    },
+    withInfo(): boolean {
+      if(this.items.length != 0 && this.items[0].name != null) {
+        return true;
+      };
+      return false;
     },
   },
 });
