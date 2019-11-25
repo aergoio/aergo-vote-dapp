@@ -107,7 +107,8 @@ export default Vue.extend({
     width: 40%;
   }
   .candidate-list {
-    margin-left: 1.5em;
+    margin: 0 0 0 1.5em;
+    padding: 0;
   }
 }
 </style>
