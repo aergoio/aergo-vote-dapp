@@ -1,6 +1,15 @@
 {
-    "16Uiu2HAmRNY6CEDMQKuUkUbix7QDpp1fFAg3yRVMoJJDNztbGzdH": {"name": "blocko", "url": "http://www.blocko.io"},
-    "16Uiu2HAmGiJ2QgVAWHMUtzLKKNM5eFUJ3Ds3FN7nYJq1mHN5ZPj9": {"name": "aergo", "url": "http://www.aergo.io"},
-    "16Uiu2HAmAokYAtLbZxJAPRgp2jCc4bD35cJD921trqUANh59Rc4n": {"name": "blocko", "url": "http://www.blocko.io"},
-    "16Uiu2HAm18LyTb9WWVNWcj5Gn83fUP4ckqxgy9AzHgzYsXpiZ8JA": {"name": "aergo", "url": "http://www.aergo.io"}
+    "16Uiu2HAkue4Tbo9K9LvQ9ehwNUHRWq4KVvFWRvMwXZFkPx5JiaVB": {"name": "Blocko", "url": "https://www.blocko.io"},
+    "16Uiu2HAmERrf7WqtVpr6zrtAYZW7w7C9txQ4vP6haEsKySG8c2cJ": {"name": "Aergo", "url": "https://www.aergo.io"},
+    "16Uiu2HAkwjJgLdrnW6TnoB7gj8bpWmmQoyDePciqSLqySUn2mfEc": {"name": "Xangle", "url": "https://xangle.io"},
+    "16Uiu2HAkx46aiE5CFizobL1p4RcxKH8188dQSaHZtpxtk9dNeNvq": {"name": "D.STREET", "url": "https://dstreet.io"},
+    "16Uiu2HAmFWnjcGj2p4owdr7MsuPEKB2oCBBLdz4yEmGrb2N4fvVG": {"name": "AcroAergo", "url": "https://acroeos.io"},
+    "16Uiu2HAmG8HGE2Af7SYZQHMYeh2k1nBfgTYb4Lu2hafAQPPVzxQu": {"name": "Cobak", "url": "https://www.cobak.co.kr"},
+    "16Uiu2HAkz7NRJ5pdawPfzRxiiSMdppp6scmR8AwAWyi9oMd6GYcF": {"name": "Blocko", "url": "https://www.blocko.io"},
+    "16Uiu2HAmTAecpp4edNWXgQzuJ5MXfzgFrtUcTypvubxNrz1oHNUu": {"name": "Aergo", "url": "https://www.aergo.io"},
+
+    "16Uiu2HAmRNY6CEDMQKuUkUbix7QDpp1fFAg3yRVMoJJDNztbGzdH": {"name": "Blocko", "url": "https://www.blocko.io"},
+    "16Uiu2HAmGiJ2QgVAWHMUtzLKKNM5eFUJ3Ds3FN7nYJq1mHN5ZPj9": {"name": "Aergo", "url": "https://www.aergo.io"},
+    "16Uiu2HAmAokYAtLbZxJAPRgp2jCc4bD35cJD921trqUANh59Rc4n": {"name": "Blocko", "url": "https://www.blocko.io"},
+    "16Uiu2HAm18LyTb9WWVNWcj5Gn83fUP4ckqxgy9AzHgzYsXpiZ8JA": {"name": "Aergo", "url": "https://www.aergo.io"}
 }
