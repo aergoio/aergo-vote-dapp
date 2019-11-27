@@ -89,7 +89,7 @@ export default {
       return new Amount('0.16 aergo').mul(60*60*24);
     },
     nextActionAvailable() {
-      return this.accountNextActionTime && this.accountNextActionTime < new Date();
+      return !this.accountNextActionTime || this.accountNextActionTime < new Date();
     },
     nextActionRelativeString() {
       if (!this.accountNextActionTime) {
