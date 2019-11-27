@@ -21,9 +21,9 @@
       </KVTable>
     </Island>
 
-    <Island>
+    <Island v-if="!activeChainId.totalvotingpower.equal(0)">
       <IslandHeader title="Expected voting reward" />
-      <RewardCalc :totalVotes="activeChainId.stakingtotal" :accountVotes="totalVotingPower" :dailyTotalAmount="dailyReward" />
+      <RewardCalc :totalVotes="activeChainId.totalvotingpower" :accountVotes="totalVotingPower" :dailyTotalAmount="dailyReward" />
     </Island>
 
     <Island v-if="voteHistory">

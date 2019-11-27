@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
-    "@herajs/client": "^0.16.2",
+    "@herajs/client": "^0.16.4",
     "core-js": "^2.6.5",
     "date-fns": "^2.8.1",
     "jsbi": "^3.1.1",
