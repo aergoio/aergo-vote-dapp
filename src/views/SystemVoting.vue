@@ -82,9 +82,8 @@ export default {
       }
     },
     onSendTxResult(event) {
-      console.log('AERGO_SEND_TX_RESULT', event.detail)
       if (event.detail.hash) {
-        this.message = {type: 'success', text: 'Result hash: ' + event.detail.hash};
+        this.message = {type: 'success', text: 'Thanks for voting! Transaction hash: ' + event.detail.hash};
       } else {
         this.message = {type: 'danger', text: 'An error occurred.'};
       }

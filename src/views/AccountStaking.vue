@@ -148,16 +148,15 @@ export default {
       this.stakeAmount = this.accountDetail.staked.toUnit('aergo').formatNumber();
     },
     onSendTxResult(event) {
-      console.log('AERGO_SEND_TX_RESULT', event.detail);
       if ('error' in event.detail) {
         this.message = {type: 'danger', text: 'An error occurred.'};
         return;
       }
-      this.message = { type: 'success', text: 'Result hash: ' + event.detail.hash };
+      this.message = { type: 'success', text: 'Stake has been adjusted. Transaction hash: ' + event.detail.hash };
       setTimeout(()=>{
         this.loadAccountDetail();
         this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE });
-      }, 5000)
+      }, 2000)
     },
     async requestStakeChange () {
       console.log('Requesting stake change', this.stakeChangeAmount.toString());

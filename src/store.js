@@ -56,7 +56,7 @@ export default new Vuex.Store({
       commit('setConnectionError', false);
       state.aergo.getChainInfo().then((result) => {
         commit('setActiveChainId', result)
-      }).catch((error) => {
+      }).catch(() => {
         commit('setConnectionError', `Failed to connect to Aergo node at ${url}. Please try again later.`);
       });
     },
