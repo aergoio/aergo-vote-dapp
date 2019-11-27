@@ -18,28 +18,34 @@
     <Island>
       <IslandHeader title="Adjust stake" />
 
-      <KVTable>
-        <KVTableRow label="Total balance" v-if="accountDetail">{{ currentTotalBalance.toUnit('aergo').toString() }}</KVTableRow>
-        <KVTableRow label="Stake before change" v-if="accountDetail">{{ accountDetail.staked.toUnit('aergo').toString() }}</KVTableRow>
-        <KVTableRow label="Stake after change" v-if="accountDetail">
-          <div class="amount-unit-input">
-            <Input v-model="stakeAmount" size="small" /> aergo
-            <span v-if="stakedTooMuch" class="error"><Icon name="danger-circle" :size="18" /> Can't stake more than total balance.</span>
-            <span v-if="stakedTooLittle" class="error"><Icon name="danger-circle" :size="18" /> The minimum staking amount is {{this.activeChainId.stakingminimum | formatToken}}.</span>
-          </div>
-        </KVTableRow>
-        <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ unstakedBalance.toUnit('aergo').toString() }}</KVTableRow>
-        <KVTableRow label="Change from current" v-if="accountDetail">
-          <div class="amount-unit-input">
-            <span>{{stakeChangeAmountSign}}{{ stakeChangeAmount.toUnit('aergo').toString() }}</span>
-            <Button type="primary" :disabled="!nextActionAvailable || stakeChangeAmount.equal(0)" @click="requestStakeChange">Change stake</Button>
-            <span v-if="!nextActionAvailable" class="error"><Icon name="danger-circle" :size="18" /> You need to wait for {{nextActionRelativeString}} before adjusting your stake.</span>
-          </div>
-        </KVTableRow>
-      </KVTable>
+      <div v-if="!activeAccount">
+        <LoginWithAergoConnect @click.native="connectAccount" />
+      </div>
+      <div v-else>
 
-      <Alert :type="message.type" v-if="message.text">{{message.text}}</Alert>
+        <KVTable>
+          <KVTableRow label="Total balance" v-if="accountDetail">{{ currentTotalBalance.toUnit('aergo').toString() }}</KVTableRow>
+          <KVTableRow label="Stake before change" v-if="accountDetail">{{ accountDetail.staked.toUnit('aergo').toString() }}</KVTableRow>
+          <KVTableRow label="Stake after change" v-if="accountDetail">
+            <div class="amount-unit-input">
+              <Input v-model="stakeAmount" size="small" /> aergo
+              <span v-if="stakedTooMuch" class="error"><Icon name="danger-circle" :size="18" /> Can't stake more than total balance.</span>
+              <span v-if="stakedTooLittle" class="error"><Icon name="danger-circle" :size="18" /> The minimum staking amount is {{this.activeChainId.stakingminimum | formatToken}}.</span>
+            </div>
+          </KVTableRow>
+          <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ unstakedBalance.toUnit('aergo').toString() }}</KVTableRow>
+          <KVTableRow label="Change from current" v-if="accountDetail">
+            <div class="amount-unit-input">
+              <span>{{stakeChangeAmountSign}}{{ stakeChangeAmount.toUnit('aergo').toString() }}</span>
+              <Button type="primary" :disabled="!nextActionAvailable || stakeChangeAmount.equal(0)" @click="requestStakeChange">Change stake</Button>
+              <span v-if="!nextActionAvailable" class="error"><Icon name="danger-circle" :size="18" /> You need to wait for {{nextActionRelativeString}} before adjusting your stake.</span>
+            </div>
+          </KVTableRow>
+        </KVTable>
 
+        <Alert :type="message.type" v-if="message.text">{{message.text}}</Alert>
+
+      </div>
     </Island>
 
     <Island>
@@ -61,6 +67,7 @@ import { formatDistance } from 'date-fns'
 import RewardCalc from '../components/RewardCalc';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
+import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 
 export default {
   props: ['address'],
@@ -74,9 +81,10 @@ export default {
     RewardCalc,
     Button, Input,
     Alert, Icon,
+    LoginWithAergoConnect,
   },
   computed: {
-    ...mapState(['activeChainId']),
+    ...mapState(['activeChainId', 'activeAccount']),
     dailyReward() {
       return new Amount('0.16 aergo').mul(60*60*24);
     },
@@ -120,10 +128,21 @@ export default {
         });
         return this.accountDetail.when;
       }
-      return '...';
+      return '';
     }
   },
   methods: {
+    async connectAccount () {
+      const account = await this.$store.dispatch('refreshActiveAccount');
+      const chainId = this.activeChainId.chainid.magic;
+      if (chainId != account.chainId) {
+        alert(`The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`);
+        return;
+      }
+      if (account.address != this.address) {
+        this.$router.push({name: 'staking', params: {address: account.address}});
+      }
+    },
     async loadAccountDetail () {
       this.accountDetail = await this.$store.dispatch('getAccountDetail', { address: this.address });
       this.stakeAmount = this.accountDetail.staked.toUnit('aergo').formatNumber();

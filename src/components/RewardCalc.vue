@@ -59,17 +59,17 @@ export default Vue.extend({
     },
   },
   computed: {
-    ratio() {
+    ratio(): number {
       return aerRatio(this.accountVotes, this.totalVotes);
     },
-    ratioLabel() {
+    ratioLabel(): string {
       const ratio = this.ratio;
       if (ratio < 0.000001 && this.accountVotes.compare(0) > 0) {
         return '<0.0001%';
       }
       return `${Math.round(ratio * 100 * 10000)/10000}%`; // precision = 4
     },
-    expectedReward() {
+    expectedReward(): Amount {
       const aAergo = JSBI.toNumber(this.dailyTotalAmount.div(1e18).value as JSBI);
       return new Amount(Math.round(aAergo * this.ratio), 'aergo');
     },
