@@ -10,14 +10,20 @@
         <KVTableRow label="Staked balance" v-if="accountDetail">
           {{ accountDetail.staked.toUnit('aergo').toString() }} ({{chance}} of all stakes)
           <span v-if="accountDetail.staked.equal(0)" class="note">You need to stake (e.g. in Aergo Connect) to be able to vote.</span>
+          <router-link :to="{name: 'staking'}">Adjust</router-link>
         </KVTableRow>
         <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ accountDetail.balance.toUnit('aergo').toString() }}</KVTableRow>
-        <KVTableRow label="Last staking" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
+        <KVTableRow label="Last action" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
         <KVTableRow label="Next action available" v-if="when">
           <span v-if="nextActionAvailable">now</span>
-          <span v-else>Block no. {{when + (60*60*24)}} (in {{nextActionRelativeString}})</span>
+          <span v-else>Block no. {{when + (60*60*24)}} ({{nextActionRelativeString}})</span>
         </KVTableRow>
       </KVTable>
+    </Island>
+
+    <Island>
+      <IslandHeader title="Expected voting reward" />
+      <RewardCalc :totalVotes="activeChainId.stakingtotal" :accountVotes="totalVotingPower" :dailyTotalAmount="dailyReward" />
     </Island>
 
     <Island v-if="voteHistory">
@@ -41,6 +47,7 @@ import { mapState } from "vuex"
 import JSBI from 'jsbi';
 import { Amount } from '@herajs/client';
 import { formatDistance } from 'date-fns'
+import RewardCalc from '../components/RewardCalc';
 
 export default {
   props: ['address'],
@@ -51,6 +58,7 @@ export default {
     Vertical,
     VoteHistoryTable,
     KVTable, KVTableRow,
+    RewardCalc,
   },
   computed: {
     ...mapState(['activeChainId']),
@@ -67,10 +75,13 @@ export default {
       if (!this.accountNextActionTime) {
         return '';
       }
-      return formatDistance(new Date(), this.accountNextActionTime);
+      return `in ${formatDistance(new Date(), this.accountNextActionTime)}`;
     },
     nextActionAvailable() {
       return this.accountNextActionTime && this.accountNextActionTime < new Date();
+    },
+    dailyReward() {
+      return new Amount('0.16 aergo').mul(60*60*24);
     },
     chance () {
       if (this.accountDetail && this.activeChainId) {

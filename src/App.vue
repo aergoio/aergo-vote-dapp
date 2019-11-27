@@ -54,7 +54,16 @@ export default {
           routeAttrs: {
             to: this.activeAccount ? { name: 'account', params: { address: this.activeAccount.address } } : { name: 'login' },
           },
-        }
+          subItems: this.activeAccount ? [
+            {
+              id: 'staking',
+              label: 'Adjust stake',
+              routeAttrs: {
+                to: { name: 'staking', params: { address: this.activeAccount.address } },
+              }
+            }
+          ] : [],
+        },
       ].concat(votes);
     },
   },

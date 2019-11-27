@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import AccountDetail from './views/AccountDetail'
+import AccountStaking from './views/AccountStaking';
 import SystemVoting from './views/SystemVoting'
 import About from './views/About'
 import Login from './views/Login'
@@ -26,6 +27,12 @@ export default new Router({
       path: '/account/:address',
       name: 'account',
       component: AccountDetail,
+      props: true
+    },
+    {
+      path: '/account/:address/stake',
+      name: 'staking',
+      component: AccountStaking,
       props: true
     },
     {

@@ -60,6 +60,7 @@ export default {
   props: ['id'],
   methods: {
     addSelected (candidate) {
+      candidate = `${candidate}`.trim();
       if (!candidate) {
         return;
       }
