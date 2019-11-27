@@ -9,6 +9,7 @@
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
       </template>
       <template #default>
+        <Alert v-if="connectionError" type="danger">{{connectionError}}</Alert>
         <router-view />
       </template>
     </ViewWithSidebar>
@@ -16,7 +17,7 @@
 </template>
 <script>
 import { mapState } from "vuex"
-import { LogoGeneric } from '@aergoenterprise/lib-components/src/basic';
+import { LogoGeneric, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/templates';
 import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
@@ -29,6 +30,7 @@ export default {
     SidebarMenu,
     LogoGeneric,
     LoginWithAergoConnect,
+    Alert,
   },
   data() {
     return {
@@ -36,7 +38,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['systemVotings', 'activeChainId', 'activeAccount']),
+    ...mapState(['systemVotings', 'activeChainId', 'activeAccount', 'connectionError']),
     menuItems() {
       const votes = this.systemVotings.map((item, index) => {
         return {

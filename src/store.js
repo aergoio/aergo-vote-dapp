@@ -19,7 +19,8 @@ export default new Vuex.Store({
     activeAccount: null,
     when: '...',
     staked: '...' ,
-    balance: '...'
+    balance: '...',
+    connectionError: false,
   },
   mutations: {
     setAergo(state, url) {
@@ -42,16 +43,22 @@ export default new Vuex.Store({
     },
     setBalance (state, balance) {
       state.balance = balance
-    }
+    },
+    setConnectionError (state, error) {
+      state.connectionError = error;
+    },
   },
   actions: {
     getAergo({ commit, state }, { url }) {
       if (!state.aergo) {
         commit('setAergo', { url })
       }
+      commit('setConnectionError', false);
       state.aergo.getChainInfo().then((result) => {
         commit('setActiveChainId', result)
-      })
+      }).catch((error) => {
+        commit('setConnectionError', `Failed to connect to Aergo node at ${url}. Please try again later.`);
+      });
     },
     getBlock ({ dispatch, state }, { blockNoOrHash }) {
       if (state.blocksByHash[blockNoOrHash]) {
