@@ -5,7 +5,13 @@
     <Island>
       <p>To vote and view your current votes, please login with Aergo Connect.</p>
       <p>Please use an account for the chain with the id <strong>{{activeChainId ? activeChainId.chainid.magic : "..."}}</strong>.</p>
-      <LoginWithAergoConnect @click.native="connectAccount" />
+      <div class="row">
+        <LoginWithAergoConnect @click.native="connectAccount" />
+        <span>or</span>
+        <a target="_blank" href="https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc?hl=en">
+          <Button rounded type="simple" style="display: inline-block">Install from Chrome Webstore</Button>
+        </a>
+      </div>
     </Island>
   </Vertical>
 </template>
@@ -15,6 +21,7 @@ import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
+import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 
 export default {
   components: {
@@ -23,6 +30,7 @@ export default {
     ViewTitle,
     Vertical,
     LoginWithAergoConnect,
+    Button,
   },
   computed: {
     ...mapState(['activeChainId', 'activeAccount']),
@@ -46,13 +54,21 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .view-login .login-with-aergo-connect {
-  margin-top: 20px;
   margin-left: -5px;
-  width: 250px;
+  width: 200px;
 }
 .view-login strong {
   font-weight: 500;
+}
+.row {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+
+  > * {
+    margin-right: 25px;
+  }
 }
 </style>
