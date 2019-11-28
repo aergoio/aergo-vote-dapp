@@ -48,12 +48,13 @@ import TableController from '@aergoenterprise/lib-components/src/container/Table
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { IconButton } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Amount } from '@herajs/client';
+import { SortParams, PageParams } from '@aergoenterprise/lib-components/src/composite/tables/Table/Table.types';
 
 interface Item {
-  amount: Amount;
   candidate: string;
-  name: string;
-  url: string;
+  amount: Amount;
+  name?: string;
+  url?: string;
 }
 
 export default Vue.extend({
@@ -71,7 +72,7 @@ export default Vue.extend({
     return {
       from: 0,
       sort: 'votes:desc',
-      page: { limit: -1 },
+      page: { limit: -1 } as PageParams,
     };
   },
   computed: {
@@ -82,7 +83,7 @@ export default Vue.extend({
     maxCandidateLength(): number {
       return Math.max(...this.items.map(item => (item.candidate || '').length));
     },
-    pageItems() {
+    pageItems(): Item[] {
       if (this.page.limit === -1) {
         return [...this.items];
       }
@@ -93,7 +94,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    loadTableData({ sort, page }: any): void {
+    loadTableData({ sort, page }: { sort: SortParams, page: PageParams }): void {
       this.from = page.offset;
       this.sort = `${sort.field}:${sort.asc?'asc':'desc'}`;
       this.page = page;
