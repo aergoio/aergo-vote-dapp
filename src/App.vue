@@ -82,7 +82,6 @@ export default {
     }
   },
   created() {
-    document.title = "Beta · aergo voting"
     this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
   },
 }
