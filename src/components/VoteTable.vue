@@ -2,8 +2,8 @@
   <TableController
     @load="loadTableData"
     defaultSortField="blockno" :defaultSortAsc="false"
-    :itemsPerPage="10"
-    :items="items" :totalItems="items ? items.length : 0"
+    :itemsPerPage="15"
+    :items="pageItems" :totalItems="items ? items.length : 0"
     >
     <Vertical slot-scope="{ items, totalItems, sort, page, updateSort, updatePage }" base="fill">
       <Table :isLoading="isLoading" :isEmpty="totalItems === 0" class="votes-table">
@@ -11,8 +11,7 @@
           <Header sortField="votes" :sortAsc="false" @updateSort="updateSort">
             <HeaderCell field="pos">Pos.</HeaderCell>
             <HeaderCell field="candidate">Candidate</HeaderCell>
-            <!--HeaderCell field="votebtn"></HeaderCell-->
-            <HeaderCell field="info">{{withInfo()? "Info" : ""}}</HeaderCell>
+            <HeaderCell field="info" v-if="hasInfo">Info</HeaderCell>
             <HeaderCell field="votes">Current votes</HeaderCell>
           </Header>
         </template>
@@ -23,11 +22,9 @@
             </Cell>
             <Cell field="candidate">
               {{padString(item.candidate, maxCandidateLength)}}
-            <!--/Cell-->
-            <!--Cell field="votebtn"-->
               <IconButton type="action" size="small" style="display: inline-block" rounded iconName="btn-add-white" @click="$emit('clickCandidate', item.candidate)" />
             </Cell>
-            <Cell field="description">
+            <Cell field="description" v-if="hasInfo">
               <a v-bind:href="item.url" target="_blank">{{item.name}}</a>
             </Cell>
             <Cell field="votes">
@@ -39,7 +36,7 @@
           No candidates found.
         </template>
       </Table>
-      <Pagination :totalItems="totalItems" :itemsPerPage="10" @change="updatePage" v-if="totalItems > 10" />
+      <Pagination :totalItems="totalItems" :itemsPerPage="15" @change="updatePage" v-if="totalItems > 15" />
     </Vertical>
   </TableController>
 </template>
@@ -74,6 +71,7 @@ export default Vue.extend({
     return {
       from: 0,
       sort: 'votes:desc',
+      page: { limit: -1 },
     };
   },
   computed: {
@@ -83,22 +81,26 @@ export default Vue.extend({
     },
     maxCandidateLength(): number {
       return Math.max(...this.items.map(item => (item.candidate || '').length));
-    }
+    },
+    pageItems() {
+      if (this.page.limit === -1) {
+        return [...this.items];
+      }
+      return this.items.slice(this.page.offset, this.page.offset + this.page.limit);
+    },
+    hasInfo(): boolean {
+      return this.items.length > 0 && this.items[0].name != null;
+    },
   },
   methods: {
     loadTableData({ sort, page }: any): void {
       this.from = page.offset;
       this.sort = `${sort.field}:${sort.asc?'asc':'desc'}`;
+      this.page = page;
     },
     padString(amountStr: string, max: number): string {
       // Pad amount with whitespace to make units line up
       return amountStr.padStart(max, " "); // U+2007 Figure Space
-    },
-    withInfo(): boolean {
-      if(this.items.length != 0 && this.items[0].name != null) {
-        return true;
-      };
-      return false;
     },
   },
 });
@@ -116,7 +118,13 @@ export default Vue.extend({
   }
   .field-candidate, .field-votes {
     white-space: nowrap;
-    width: 50%;
+    width: 40%;
+  }
+  .field-description {
+    width: 20%;
+  }
+  .field-candidate {
+    font-family: "Roboto Mono", monospace;
   }
 }
 </style>
