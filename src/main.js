@@ -13,6 +13,7 @@ Vue.filter('formatToken', formatToken);
 if (process.env.NODE_ENV === 'production') {
   Vue.use(VueAnalytics, {
     id: 'UA-117920519-1',
+    router,
   });
 }
 
