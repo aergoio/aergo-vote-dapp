@@ -22,6 +22,7 @@ import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/compo
 import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/templates';
 import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
 import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitalize';
+import voteDefinitions from './votes.json';
 
 export default {
   name: 'App',
@@ -43,7 +44,7 @@ export default {
       const votes = this.systemVotings.map((item, index) => {
         return {
           id: index,
-          label: capitalize(item.id.toLowerCase()),
+          label: voteDefinitions[item.id].label,
           routeAttrs: {
             to: { name: 'voting', params: { id: item.id } },
           },
@@ -64,9 +65,17 @@ export default {
                 to: { name: 'staking', params: { address: this.activeAccount.address } },
               }
             }
-          ] : [],
+          ] : undefined,
         },
-      ].concat(votes);
+        {
+          id: 'votes',
+          label: 'Current Votes',
+          routeAttrs: {
+            to: { name: 'voting-overview' },
+          },
+          subItems: votes,
+        }
+      ];
     },
   },
   methods: {

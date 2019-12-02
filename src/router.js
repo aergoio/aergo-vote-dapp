@@ -5,6 +5,7 @@ import AccountStaking from './views/AccountStaking';
 import SystemVoting from './views/SystemVoting'
 import About from './views/About'
 import Login from './views/Login'
+import EmptyRoute from './views/EmptyRoute';
 
 Vue.use(Router)
 
@@ -18,16 +19,24 @@ export default new Router({
       name: 'about',
     },
     {
-      path: '/voting/:id',
-      name: 'voting',
-      component: SystemVoting,
-      props: true
+      path: '/voting/',
+      component: EmptyRoute,
+      name: 'voting-overview',
+      redirect: '/voting/BP',
+      children: [
+        {
+          path: ':id',
+          name: 'voting',
+          component: SystemVoting,
+          props: true
+        },
+      ]
     },
     {
       path: '/account/:address',
       name: 'account',
       component: AccountDetail,
-      props: true
+      props: true,
     },
     {
       path: '/account/:address/stake',

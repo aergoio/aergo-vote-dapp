@@ -1,12 +1,15 @@
 <template>
   <div>
     <Vertical base="fill">
-      <ViewTitle>Vote: {{id}}</ViewTitle>
+      <ViewTitle>Vote: {{voteLabel}} ({{id}})</ViewTitle>
       <Island>
-        <span class="current-value-label">Current value: </span> 
-        <span v-if="id !== 'BP'">{{current}}</span> 
-        <span v-else>candidates 1-{{$store.state.activeChainId.bpnumber}}</span>
-        <span v-if="isVoteWithAmountValue"> ({{currentAsAmount | formatToken}})</span>
+        <p>
+          <span class="current-value-label">Current value: </span> 
+          <span v-if="id !== 'BP'">{{current}}</span> 
+          <span v-else>candidates 1-{{$store.state.activeChainId.bpnumber}}</span>
+          <span v-if="isVoteWithAmountValue"> ({{currentAsAmount | formatToken}})</span>
+        </p>
+        <p>{{voteDescription}}</p>
       </Island>
 
       <Island>
@@ -42,6 +45,7 @@ import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
 import { Amount } from '@herajs/client';
 import bpmap from '../bpmap.json'
+import votes from '../votes.json';
 
 const votesWithAmountValue = ['GASPRICE', 'NAMEPRICE', 'STAKINGMIN'];
 
@@ -167,6 +171,14 @@ export default {
         }
       }
       return this.$store.state.activeChainId;
+    },
+    voteDescription() {
+      if (!(this.id in votes)) return '';
+      return votes[this.id].description;
+    },
+    voteLabel() {
+      if (!(this.id in votes)) return '';
+      return votes[this.id].label;
     }
   },
   watch: {
@@ -213,5 +225,8 @@ export default {
 }
 .candidate-input {
   margin: 20px 0;
+}
+.island p:last-child {
+  margin-bottom: 0;
 }
 </style>

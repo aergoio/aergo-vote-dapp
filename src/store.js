@@ -1,19 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import connectAergo from './provider'
+import votes from './votes.json';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     aergo: null,
-    systemVotings: Object.freeze([
-      { id: 'BP' },
-      { id: 'BPCOUNT' },
-      { id: 'GASPRICE' },
-      { id: 'STAKINGMIN' },
-      { id: 'NAMEPRICE' }
-    ]),
+    systemVotings: Object.freeze(Object.keys(votes).map(key => ({ id: key }))),
     blocksByHash: {},
     activeChainId: '',
     activeAccount: null,
