@@ -57,23 +57,22 @@ export default {
           routeAttrs: {
             to: this.activeAccount ? { name: 'account', params: { address: this.activeAccount.address } } : { name: 'login' },
           },
-          subItems: [
-            this.activeAccount ? 
+          subItems: this.activeAccount ? [
             {
               id: 'staking',
               label: 'Adjust stake',
               routeAttrs: {
                 to: { name: 'staking', params: { address: this.activeAccount.address } },
               }
-            } : undefined,
+            },
             {
               id: 'history',
               label: 'Reward History',
               routeAttrs: {
-                to: { name: 'history' },
+                to: { name: 'history', params: { address: this.activeAccount.address } },
               }
             }
-          ].filter(Boolean),
+          ]: undefined,
         },
         {
           id: 'votes',
