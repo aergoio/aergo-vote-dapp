@@ -84,6 +84,10 @@ export default new Vuex.Store({
       }
       return new Promise((resolve, reject) => {
         window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
+          if ('error' in event) {
+            reject(new Error('request was cancelled by user'));
+            return;
+          }
           commit('setActiveAccount', event.detail.account)
           state.aergo.getStaking(event.detail.account.address)
           .then((staked) => {
@@ -95,9 +99,6 @@ export default new Vuex.Store({
             commit('setBalance', as.balance.toUnit('aergo').toString())
           })
           resolve(event.detail.account)
-        }, { once: true })
-        window.addEventListener('AERGO_ACTIVE_ACCOUNT' + '_CANCEL', function() {
-          reject(new Error('request was cancelled by user'))
         }, { once: true })
         window.postMessage({
           type: 'AERGO_REQUEST',

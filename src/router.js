@@ -6,6 +6,7 @@ import SystemVoting from './views/SystemVoting'
 import About from './views/About'
 import Login from './views/Login'
 import EmptyRoute from './views/EmptyRoute';
+import AccountHistory from './views/AccountHistory';
 
 Vue.use(Router)
 
@@ -42,6 +43,12 @@ export default new Router({
       path: '/account/:address/stake',
       name: 'staking',
       component: AccountStaking,
+      props: true
+    },
+    {
+      path: '/account/:address/history',
+      name: 'history',
+      component: AccountHistory,
       props: true
     },
     {
