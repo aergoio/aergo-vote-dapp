@@ -14,7 +14,7 @@
 
       <Island>
         <IslandHeader title="Candidates" />
-        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="addSelected" />
+        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="addSelected" :selected="selected" />
       </Island>
 
       <Island>

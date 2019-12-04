@@ -22,7 +22,10 @@
             </Cell>
             <Cell field="candidate">
               {{padString(item.candidate, maxCandidateLength)}}
-              <IconButton type="action" size="small" style="display: inline-block" rounded iconName="btn-add-white" @click="$emit('clickCandidate', item.candidate)" />
+              <IconButton
+                type="action" size="small" style="display: inline-block" rounded
+                :iconName="selected.indexOf(item.candidate) !== -1 ? 'selected' : 'btn-add-white'"
+                @click="$emit('clickCandidate', item.candidate)" />
             </Cell>
             <Cell field="description" v-if="hasInfo">
               <a v-bind:href="item.url" target="_blank">{{item.name}}</a>
@@ -67,6 +70,7 @@ export default Vue.extend({
   props: {
     isLoading: Boolean,
     items: Array as PropType<Item[]>,
+    selected: Array as PropType<string[]>,
   },
   data() {
     return {
