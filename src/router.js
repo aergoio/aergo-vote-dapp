@@ -4,6 +4,7 @@ import AccountDetail from './views/AccountDetail'
 import AccountStaking from './views/AccountStaking';
 import SystemVoting from './views/SystemVoting'
 import About from './views/About'
+import FAQ from './views/FAQ'
 import Login from './views/Login'
 import EmptyRoute from './views/EmptyRoute';
 import AccountHistory from './views/AccountHistory';
@@ -55,6 +56,11 @@ export default new Router({
       path: '/login',
       component: Login,
       name: 'login',
+    },
+    {
+      path: '/faq',
+      component: FAQ,
+      name: 'faq',
     },
   ]
 })

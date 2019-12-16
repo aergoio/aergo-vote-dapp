@@ -81,6 +81,13 @@ export default {
             to: { name: 'voting-overview' },
           },
           subItems: votes,
+        },
+        {
+          id: 'faq',
+          label: 'FAQ',
+          routeAttrs: {
+            to: { name: 'faq' },
+          },
         }
       ];
     },
