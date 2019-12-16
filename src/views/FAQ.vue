@@ -14,13 +14,13 @@
       <p>After every action (both staking and voting), you need to wait for 24 hours before being able to do the next action. The only exception is the very first time: one time, you can conduct all of the actions at once. The diagram at the bottom of this page shows an example daily schedule and how it affects your current totals.</p>
 
       <IslandHeader title="What is voting power?" />
-      <p>When you cast a vote, it is weighed by your currently staked amount. This is called the power of your vote, or voting power.</p>
+      <p>When you cast a vote, it is weighed by your currently staked amount. This is called the power of your vote, or voting power. Your total voting power is the sum of all your votes' power.</p>
 
       <IslandHeader title="If I can only do one action per 24 hours, is it better to stake first or vote first?" />
       <p>If you want to change your stake, you should do that first to maximize your reward. Your votes are weighed based on your currently staked amount.</p>
 
       <IslandHeader title="How are rewards calculated?" />
-      <p>A reward (currently 0.16 aergo) is paid out with every block (block rate: 1 second). The winner is selected randomly, with the chance depending on your total voting power in relation to everybody's voting power. Over a longer time period (e.g. 24 hours), your total received reward will be very close to the statistically expected one. In mathematical terms, your expected daily reward is (myVotePower / allVotePower) * (0.16) * (60 * 60 * 24).</p>
+      <p>A reward (currently 0.16 aergo) is paid out with every block (block rate: 1 second). The winner is selected randomly, with the chance depending on your total voting power in relation to everybody's voting power. Over a longer time period (e.g. 24 hours), your total received reward will be very close to the statistically expected one. In mathematical terms, your expected daily reward is (myTotalVotePower / allVotePower) * (0.16) * (60 * 60 * 24).</p>
       
       <IslandHeader title="When should I increase my stake?" />
       <p>If you have additional aergo to stake (for example because you received some rewards), it makes sense to increase your stake and vote again to increase your chances of receiving rewards. Your chance will increase roughly by the same percentage that your voting power increased, so you can calculate if it is worth your while.</p>
