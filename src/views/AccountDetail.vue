@@ -27,7 +27,7 @@
     </Island>
 
     <Island v-if="voteHistory">
-      <IslandHeader title="Votes" :annotation="`Total ${totalVotingPower}`" />
+      <IslandHeader title="Votes" :annotation="`Total: ${totalVotingPower.formatNumber()}`" />
       <div v-if="when">
         <VoteHistoryTable :items="voteHistory.getVotingList()" />
       </div>

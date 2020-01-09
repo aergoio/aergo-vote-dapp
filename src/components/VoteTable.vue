@@ -31,7 +31,7 @@
               <a v-bind:href="item.url" target="_blank">{{item.name}}</a>
             </Cell>
             <Cell field="votes">
-              {{padString(item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo', maxAmountLength)}}
+              {{padString(item.amount ? `${Math.round(Number(formatVoteAmount(item.amount)))}` : '0', maxAmountLength)}}
             </Cell>
           </Row>
         </template>
@@ -82,7 +82,7 @@ export default Vue.extend({
   computed: {
     maxAmountLength(): number {
       // Get the length of the longest amount string
-      return Math.max(...this.items.map(item => (item.amount ? item.amount.toUnit('aergo').toString() : '0 aergo').length));
+      return Math.max(...this.items.map(item => (item.amount ? this.formatVoteAmount(item.amount) : '0').length));
     },
     maxCandidateLength(): number {
       return Math.max(...this.items.map(item => (item.candidate || '').length));
@@ -98,6 +98,9 @@ export default Vue.extend({
     },
   },
   methods: {
+    formatVoteAmount(amount: Amount): string {
+      return `${Math.round(Number(amount.toUnit('aergo').formatNumber()))}`;
+    },
     loadTableData({ sort, page }: { sort: SortParams, page: PageParams }): void {
       this.from = page.offset;
       this.sort = `${sort.field}:${sort.asc?'asc':'desc'}`;

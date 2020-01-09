@@ -2,7 +2,7 @@ import { Amount } from '@herajs/client';
 
 const tryUnits = ['aergo', 'gaer', 'aer'];
 
-export function formatToken(_value: any, unit = ''): string {
+export function formatToken(_value: any, unit = '', showUnit = true): string {
     const value = new Amount(_value, 'aer');
     let amount;
     if (unit) {
@@ -18,5 +18,6 @@ export function formatToken(_value: any, unit = ''): string {
         }
     }
     if (!amount) amount = '0';
+    if (!showUnit) return `${amount}`;
     return `${amount} ${unit}`;
 }
