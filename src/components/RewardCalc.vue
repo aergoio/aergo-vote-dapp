@@ -3,14 +3,14 @@
     <span class="row">
       <span class="labelled-amount">
         <span class="amount-label">My {{basis}}</span>
-        <span class="amount" :class="{updating}">{{accountVotes | formatToken('', basis !== 'votes')}}</span>
+        <span class="amount" :class="{updating}">{{accountVotes | formatToken}}</span>
       </span>
 
       <span>÷</span>
       
       <span class="labelled-amount">
         <span class="amount-label">Total {{basis}}</span>
-        <span class="amount">{{totalVotes | formatToken('', basis !== 'votes')}}</span>
+        <span class="amount">{{totalVotes | formatToken}}</span>
       </span>
 
       <span>=</span>

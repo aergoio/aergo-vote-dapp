@@ -66,7 +66,7 @@ export default Vue.extend({
   computed: {
     maxAmountLength(): number {
       // Get the length of the longest amount string
-      return Math.max(...this.items.map(item => (item.getAmount() ? new Amount(item.getAmount(), 'aer').toUnit('aergo').formatNumber() : '0').length));
+      return Math.max(...this.items.map(item => (item.getAmount() ? new Amount(item.getAmount(), 'aer').toUnit('aergo').toString() : '0 aergo').length));
     }
   },
   methods: {
@@ -77,7 +77,7 @@ export default Vue.extend({
     displayAmount(vote: any): string {
       // Pad amount with whitespace to make units line up
       try {
-        return new Amount(vote.getAmount(), 'aer').toUnit('aergo').formatNumber().padStart(this.maxAmountLength, " "); // U+2007 Figure Space
+        return new Amount(vote.getAmount(), 'aer').toUnit('aergo').toString().padStart(this.maxAmountLength, " "); // U+2007 Figure Space
       } catch(e) {
         return ''; // old API
       }
