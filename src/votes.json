@@ -7,13 +7,13 @@
         "label": "Block Producer Count",
         "description": "This vote determines the number of block producers that will be assigned in the dpos consensus algorithm. The top N candidates from the BP vote will be selected." 
     },
-    "GASPRICE": {
-        "label": "Gas Price",
-        "description": "This vote determines the gas price (in aer) used to calculate transaction fees." 
-    },
     "STAKINGMIN": {
         "label": "Staking Minimum",
         "description": "This vote determines the minimum amount (in aer) required for staking." 
+    },
+    "GASPRICE": {
+        "label": "Gas Price",
+        "description": "This vote determines the gas price (in aer) used to calculate transaction fees." 
     },
     "NAMEPRICE": {
         "label": "Name Transaction Price",
