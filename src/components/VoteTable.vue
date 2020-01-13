@@ -31,7 +31,7 @@
               <a v-bind:href="item.url" target="_blank">{{item.name}}</a>
             </Cell>
             <Cell field="votes">
-              {{padString(item.amount ? `${Math.round(Number(formatVoteAmount(item.amount)))}` : '0 aergo', maxAmountLength)}}
+              {{padString(item.amount ? `${formatVoteAmount(item.amount)}` : '0 aergo', maxAmountLength)}}
             </Cell>
           </Row>
         </template>
