@@ -68,11 +68,11 @@ export default {
       if (!candidate) {
         return;
       }
-      if (this.fullSelected) {
-        this.message = {type: 'danger', text: `Cannot select more than ${this.maxSelections} candidates`};
+      if (this.selected.indexOf(candidate) !== -1) {
         return;
       }
-      if (this.selected.indexOf(candidate) !== -1) {
+      if (this.fullSelected) {
+        this.message = {type: 'danger', text: `Cannot select more than ${this.maxSelections} candidates`};
         return;
       }
       this.selected.push(candidate);

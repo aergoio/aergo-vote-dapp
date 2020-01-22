@@ -1,14 +1,13 @@
 <template>
   <TableController
     @load="loadTableData"
-    defaultSortField="blockno" :defaultSortAsc="false"
     :itemsPerPage="15"
     :items="pageItems" :totalItems="items ? items.length : 0"
     >
-    <Vertical slot-scope="{ items, totalItems, sort, page, updateSort, updatePage }" base="fill">
+    <Vertical slot-scope="{ items, totalItems, page, updatePage }" base="fill">
       <Table :isLoading="isLoading" :isEmpty="totalItems === 0" class="votes-table">
         <template #header>
-          <Header sortField="votes" :sortAsc="false" @updateSort="updateSort">
+          <Header>
             <HeaderCell field="pos">Pos.</HeaderCell>
             <HeaderCell field="candidate">Candidate</HeaderCell>
             <HeaderCell field="info" v-if="hasInfo">Info</HeaderCell>
@@ -133,6 +132,9 @@ export default Vue.extend({
   }
   .field-candidate {
     font-family: "Roboto Mono", monospace;
+  }
+  .component.icon-button .icon {
+    width: 12px !important;
   }
 }
 </style>

@@ -39,7 +39,7 @@
     
       <IslandHeader title="What's an example schedule for staking and voting?" />
       <p>In this example, someone staked 10000 aergo on the first day and voted in all votes. Ten days later, they increased their stake by 5000 aergo. For the next five days, they update their votes. With every updated vote, the total voting power increases, and thus their chance to win the reward.</p>
-      <img src="../assets/voting-diagram.png" class="voting-diagram">
+      <img src="../assets/voting-diagram-2.png" class="voting-diagram">
     </Island>
   </Vertical>
 </template>
@@ -63,7 +63,6 @@ export default {
 
 <style lang="scss">
 .voting-diagram {
-  border: 1px solid #eee;
   margin-bottom: 1em;
   width: 100%;
   max-width: 150vh;

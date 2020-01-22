@@ -121,6 +121,13 @@ export default {
   margin: 25px 32px;
 }
 .view-sidebar .login-with-aergo-connect {
-  margin: auto 32px 40px 32px;
+  margin: auto 25px 30px 25px;
+}
+.view-with-sidebar .view-sidebar {
+  flex: 1 0 240px;
+  max-width: 240px;
+}
+.view-with-sidebar .view-sidebar .sidebar-inner-wrap {
+  width: 240px;
 }
 </style>
