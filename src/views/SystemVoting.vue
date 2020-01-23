@@ -14,7 +14,7 @@
 
       <Island>
         <IslandHeader title="Candidates" />
-        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="addSelected" :selected="selected" />
+        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="toggleSelected" :selected="selected" />
       </Island>
 
       <Island>
@@ -63,6 +63,13 @@ export default {
   name: 'system-voting',
   props: ['id'],
   methods: {
+    toggleSelected (candidate) {
+      if (this.selected.indexOf(candidate) !== -1) {
+        this.removeSelected(candidate);
+      } else {
+        this.addSelected(candidate);
+      }
+    },
     addSelected (candidate) {
       candidate = `${candidate}`.trim();
       if (!candidate) {

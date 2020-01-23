@@ -20,9 +20,10 @@
               {{index+1}}
             </Cell>
             <Cell field="candidate">
-              {{padString(item.candidate, maxCandidateLength)}}
+              {{padStringRight(item.candidate, maxCandidateLength)}}
               <IconButton
-                type="action" size="small" style="display: inline-block" rounded
+                size="small" style="display: inline-block" rounded
+                :type="selected.indexOf(item.candidate) !== -1 ? 'primary' : 'action'"
                 :iconName="selected.indexOf(item.candidate) !== -1 ? 'selected' : 'btn-add-white'"
                 @click="$emit('clickCandidate', item.candidate)" />
             </Cell>
@@ -109,6 +110,10 @@ export default Vue.extend({
       // Pad amount with whitespace to make units line up
       return amountStr.padStart(max, " "); // U+2007 Figure Space
     },
+    padStringRight(amountStr: string, max: number): string {
+      // Pad amount with whitespace to make units line up
+      return amountStr.padEnd(max, " "); // U+2007 Figure Space
+    },
   },
 });
 </script>
@@ -133,8 +138,11 @@ export default Vue.extend({
   .field-candidate {
     font-family: "Roboto Mono", monospace;
   }
-  .component.icon-button .icon {
-    width: 12px !important;
+  .component.icon-button {
+    border-width: 1px;
+    .icon {
+      width: 12px !important;
+    }
   }
 }
 </style>
