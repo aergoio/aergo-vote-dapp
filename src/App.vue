@@ -76,7 +76,7 @@ export default {
         },
         {
           id: 'votes',
-          label: 'Current Votes',
+          label: 'System Voting',
           routeAttrs: {
             to: { name: 'voting-overview' },
           },
@@ -88,7 +88,37 @@ export default {
           routeAttrs: {
             to: { name: 'faq' },
           },
-        }
+        },
+         {
+          id: 'gov_voting',
+          label: 'Governance Voting',
+          routeAttrs: {
+            to: { name: 'GovernanceVoting' },
+          },
+          subItems: [
+            {
+              id: 'gov_argus',
+              label: 'Aergo Argus',
+              routeAttrs: {
+                to: { name: 'GovernanceVoting' },
+              }
+            },
+            {
+              id: 'dodona',
+              label: 'Aergo Dodona',
+              routeAttrs: {
+                to: { name: 'GovernanceVoting' },
+              }
+            },
+            {
+              id: 'agora',
+              label: 'Aergo Agora',
+              routeAttrs: {
+                to: { name: 'GovernanceVoting' },
+              }
+            }
+          ]
+        },
       ];
     },
   },

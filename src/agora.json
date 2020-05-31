@@ -1,0 +1,76 @@
+{   
+    "votes": [
+    {
+        "title": "ARGUS-6",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "Open",
+        "outcome": "pending",
+        "category": "argus",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "5",
+        "oppose": "1"
+    },
+    {
+        "title": "ARGUS-5",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "Open",
+        "outcome": "pending",
+        "category": "dodona",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "10",
+        "oppose": "5"
+    },
+    {
+        "title": "ARGUS-4",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "Open",
+        "outcome": "pending",
+        "category": "agora",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "20",
+        "oppose": "10"
+    },
+    {
+        "title": "ARGUS-3",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "Open",
+        "outcome": "pending",
+        "category": "agora",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "12",
+        "oppose": "6"
+    },
+    {
+        "title": "ARGUS-2",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "closed",
+        "outcome": "rejected",
+        "category": "argus",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "5",
+        "oppose": "10"
+    },
+    {
+        "title": "ARGUS-1",
+        "contents": "Blah blah Blah blah Blah blah Blah blah",
+        "status": "closed",
+        "outcome": "passed",
+        "category": "dodona",
+        "url": "https://raw.githubusercontent.com/aergoio/agora/master/README.md",
+        "start_date": "1590940470",
+        "end_date": "1591052400",
+        "agree": "5",
+        "oppose": "1"
+    }
+    ]
+}

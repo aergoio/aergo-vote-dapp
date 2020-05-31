@@ -8,6 +8,7 @@ import FAQ from './views/FAQ'
 import Login from './views/Login'
 import EmptyRoute from './views/EmptyRoute';
 import AccountHistory from './views/AccountHistory';
+import GovVoting from './views/GovVoting';
 
 Vue.use(Router)
 
@@ -61,6 +62,11 @@ export default new Router({
       path: '/faq',
       component: FAQ,
       name: 'faq',
+    },
+    {
+      path: '/gov_voting',
+      component: GovVoting,
+      name: 'GovernanceVoting',
     },
   ]
 })

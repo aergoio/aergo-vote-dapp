@@ -13,6 +13,9 @@ yarn serve
 
 Configure Aergo node:
 
+> * https://mainnet-api-http.aergo.io
+> * https://testnet-api-http.aergo.io
+
 ```
 VUE_APP_AERGO_NODE=xxx yarn serve
 ```
