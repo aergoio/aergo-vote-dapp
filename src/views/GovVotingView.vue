@@ -15,7 +15,7 @@
             <div class="item-content">
                 <h5># {{items.title}} : <span style="font-weight:normal">{{items.contents}}</span></h5>
                 <h5>Link : <span style="font-weight:normal"><a v-bind:href="items.url">{{items.url}}</a></span></h5>
-                <h5>(SHA256 : <span style="font-weight:normal">{{hasing(items.url)}}</a></span>)</h5>
+                <h5>(SHA256 : <span style="font-weight:normal">{{hasing(items.url)}}</span>)</h5>
                 <div class="vote-head">
                     <span>YES ({{items.agree}})</span>
                     <span>3%</span>
