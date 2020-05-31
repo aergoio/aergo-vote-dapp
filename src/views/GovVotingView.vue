@@ -3,54 +3,36 @@
     <Vertical base="fill">
       <ViewTitle><p style="float:left">Gorvernanace Voting</p> <p style="float:right;font-size:small"><button type="button" class="component button button-primary button-uppercase"><a href="/proposal">New Proposal</a></button></p></ViewTitle>
       <Island>
-          <p>Aergo Argus : Argus...?</p>
-          <p>Aergo Dodona : ??</p>
-          <p>Aergo Agora : ??</p>
-      </Island>
-      <Island>
-          <select name="category">
-              <option value="" selected="selected">Category</option>
-              <option value="Argus">Argus</option>
-              <option value="Dodona">Dodona</option>
-              <option value="Agora">Agora</option>
-          </select>
-          <select name="status">
-              <option value="" selected="selected">Status</option>
-              <option value="Open">Open</option>
-              <option value="Closed">Closed</option>
-          </select>
-          <select name="outcome">
-              <option value="" selected="selected">OutCome</option>
-              <option value="Passed">Passed</option>
-              <option value="Rejected">Rejected</option>
-          </select>
+          <button type="button" @click="onClickBack()" class="component button button-primary button-uppercase">BACK</button>
       </Island>
 
       <Island>
-        <div class="grid-container">
-            <div v-for="items in results" v-bind:key="items.title" class="grid-item">
-                <div class="item-container" @click="onClickView(items.title)">
-                    <div class="item-head">
-                        <span style="font-weight: 600">{{items.category}}</span>
-                        <span>{{items.status}}</span>
-                    </div>
-                    <div class="item-content">
-                        <h5># {{items.title}} : <span style="font-weight:normal">{{items.contents}}</span></h5>
-                        <div class="vote-head">
-                            <span>YES ({{items.agree}})</span>
-                            <span>3%</span>
-                        </div>
-                        <div class="vote-bar-border">
-                            <div class="vote-bar-yes" style="transform: scale3d(0.03, 1, 1);"></div>
-                        </div>
-                        <div class="vote-head">
-                            <span>NO ({{items.oppose}})</span>
-                            <span>1%</span>
-                        </div>
-                        <div class="vote-bar-border">
-                            <div class="vote-bar-no" style="transform: scale3d(0.01, 1, 1);"></div>
-                        </div>
-                    </div>
+        <div v-for="items in results" v-bind:key="items.title">
+            <div class="item-head">
+                <span style="font-weight: 600">{{items.category}}</span>
+                <span> {{items.status}}</span>
+            </div>
+            <div class="item-content">
+                <h5># {{items.title}} : <span style="font-weight:normal">{{items.contents}}</span></h5>
+                <h5>Link : <span style="font-weight:normal"><a v-bind:href="items.url">{{items.url}}</a></span></h5>
+                <h5>(SHA256 : <span style="font-weight:normal">{{hasing(items.url)}}</a></span>)</h5>
+                <div class="vote-head">
+                    <span>YES ({{items.agree}})</span>
+                    <span>3%</span>
+                </div>
+                <div class="vote-bar-border">
+                    <div class="vote-bar-yes" style="transform: scale3d(0.03, 1, 1);"></div>
+                </div>
+                <div class="vote-head">
+                    <span>NO ({{items.oppose}})</span>
+                    <span>1%</span>
+                </div>
+                <div class="vote-bar-border">
+                    <div class="vote-bar-no" style="transform: scale3d(0.01, 1, 1);"></div>
+                </div>
+                <div v-if="items.status === 'Open'" class="vote-button-group">
+                    <button type="button" class="component button">YES</button>
+                    <button type="button" class="component button">NO</button>
                 </div>
             </div>
         </div>
@@ -67,6 +49,7 @@ import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
 import { Amount } from '@herajs/client';
 import agora_json from '../agora.json';
+import sha256 from 'crypto-js/sha256';
 
 export default {
   components: {
@@ -77,19 +60,24 @@ export default {
     Input,
     Alert
   },
-  name: 'gov-voting',
+  name: 'gov-voting-view',
   props: ['id'],
   methods: {
-    onClickView(id) {
-      document.location.href = "/gov_voting/" +id;
+    onClickBack() {
+        document.location.href = "/gov_voting";
+      },
+    hasing(message) {
+        return sha256(message);
     }
+
   },
   computed: {
     results() {
-      return agora_json.votes.map((items) => {
-        return items;
+      let id = this.$route.params.id;
+      return agora_json.votes.filter((items) => {
+        return items["title"] === id;
       })
-    },
+    }
   }
 }
 </script>
@@ -141,9 +129,6 @@ export default {
 }
 
 .item-head {
-    display: flex;
-    -moz-box-pack: justify;
-    justify-content: space-between;
     margin-bottom: 8px;
 }
 
@@ -183,5 +168,12 @@ export default {
     transform-origin: 0px 0px 0px;
     background-color: rgb(255, 105, 105);
     width: 100%;
+}
+.vote-button-group {
+    display: flex;
+    margin-top: 20px;
+}
+.vote-button-group button {
+    margin-left: 10px;
 }
 </style>

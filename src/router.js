@@ -9,6 +9,8 @@ import Login from './views/Login'
 import EmptyRoute from './views/EmptyRoute';
 import AccountHistory from './views/AccountHistory';
 import GovVoting from './views/GovVoting';
+import GovVotingView from './views/GovVotingView';
+import GovVotingNew from './views/GovVotingNew';
 
 Vue.use(Router)
 
@@ -68,5 +70,16 @@ export default new Router({
       component: GovVoting,
       name: 'GovernanceVoting',
     },
+    {
+      path: '/gov_voting/:id',
+      component: GovVotingView,
+      name: 'GovernanceVotingView',
+      props: true
+    },
+    {
+      path: '/proposal',
+      component: GovVotingNew,
+      name: 'GovernanceVotingNew'
+    }
   ]
 })
