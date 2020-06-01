@@ -8,11 +8,11 @@
           <p>Aergo Agora : ??</p>
       </Island>
       <Island>
-          <select name="category">
-              <option value="" selected="selected">Category</option>
-              <option value="Argus">Argus</option>
-              <option value="Dodona">Dodona</option>
-              <option value="Agora">Agora</option>
+          <select id="category" name="category" @change="changeCategory($event)">
+              <option value="" v-bind:selected="selectedCategory() == ''">Category</option>
+              <option value="Argus" v-bind:selected="selectedCategory() == 'argus'">Argus</option>
+              <option value="Dodona" v-bind:selected="selectedCategory() == 'dodona'">Dodona</option>
+              <option value="Agora" v-bind:selected="selectedCategory() == 'agora'">Agora</option>
           </select>
           <select name="status">
               <option value="" selected="selected">Status</option>
@@ -82,12 +82,25 @@ export default {
   methods: {
     onClickView(id) {
       document.location.href = "/gov_voting/v/" +id;
+    },
+    selectedCategory() {
+      return this.$route.query.category;
+    },
+    changeCategory() {
+      console.log(event.target.value);
+      location.replace("/gov_voting/q?category="+event.target.value.toLowerCase());
     }
   },
   computed: {
     results() {
-      return agora_json.votes.map((items) => {
-        return items;
+      let cat = this.$route.query.category;
+      if (cat == undefined) cat = "";
+
+      return agora_json.votes.filter((items) => {
+        if(cat == "") return items;
+        if(items.category == cat) {
+          return items.category === cat;
+        }
       })
     },
   }

@@ -100,21 +100,21 @@ export default {
               id: 'gov_argus',
               label: 'Aergo Argus',
               routeAttrs: {
-                to: { name: 'GovernanceVoting' },
+                to: { name: 'GovernanceVotingQuery', query: { category: 'argus'}}
               }
             },
             {
               id: 'dodona',
               label: 'Aergo Dodona',
               routeAttrs: {
-                to: { name: 'GovernanceVoting' },
+                to: { name: 'GovernanceVotingQuery', query: { category: 'dodona'}}
               }
             },
             {
               id: 'agora',
               label: 'Aergo Agora',
               routeAttrs: {
-                to: { name: 'GovernanceVoting' },
+                to: { name: 'GovernanceVotingQuery', query: { category: 'agora'}}
               }
             }
           ]
