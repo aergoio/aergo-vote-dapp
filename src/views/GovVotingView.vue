@@ -7,10 +7,15 @@
       </Island>
 
       <Island>
+        <!--
+        <Badge type="success" rounded outline><Icon name="alert" :size="16" :badgeText="unreadNotificationsCount" />asdsadsa</Badge>
+        -->
+        
         <div v-for="items in results" v-bind:key="items.title">
             <div class="item-head">
                 <span style="font-weight: 600">{{items.category}}</span>
-                <span> {{items.status}}</span>
+                <span> (Status: {{items.status}})</span>
+                <span> (Outcome: {{items.outcome}})</span>
             </div>
             <div class="item-content">
                 <h5># {{items.title}} : <span style="font-weight:normal">{{items.contents}}</span></h5>
@@ -42,7 +47,7 @@
 </template>
 
 <script>
-import { ViewTitle, Alert } from '@aergoenterprise/lib-components/src/basic';
+import { Icon, Badge, ViewTitle, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
@@ -58,7 +63,8 @@ export default {
     ViewTitle,
     Button,
     Input,
-    Alert
+    Alert,
+    Icon, Badge
   },
   name: 'gov-voting-view',
   props: ['id'],

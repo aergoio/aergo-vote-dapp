@@ -71,7 +71,7 @@ export default new Router({
       name: 'GovernanceVoting',
     },
     {
-      path: '/gov_voting/:id',
+      path: '/gov_voting/v/:id',
       component: GovVotingView,
       name: 'GovernanceVotingView',
       props: true

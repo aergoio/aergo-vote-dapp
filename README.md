@@ -17,7 +17,7 @@ Configure Aergo node:
 > * https://testnet-api-http.aergo.io
 
 ```
-VUE_APP_AERGO_NODE=xxx yarn serve
+VUE_APP_AERGO_NODE=https://testnet-api-http.aergo.io yarn serve
 ```
 
 ### Compiles and minifies for production

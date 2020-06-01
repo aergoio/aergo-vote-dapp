@@ -81,7 +81,7 @@ export default {
   props: ['id'],
   methods: {
     onClickView(id) {
-      document.location.href = "/gov_voting/" +id;
+      document.location.href = "/gov_voting/v/" +id;
     }
   },
   computed: {
