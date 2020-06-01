@@ -52,7 +52,7 @@ export default {
   props: ['id'],
   methods: {
     onClickBack() {
-        document.location.href = "/gov_voting";
+        this.$router.push({name:"GovernanceVoting"});
     },
   },
   computed: {

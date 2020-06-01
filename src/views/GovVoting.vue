@@ -1,7 +1,7 @@
 <template>
   <div>
     <Vertical base="fill">
-      <ViewTitle><p style="float:left">Gorvernanace Voting</p> <p style="float:right;font-size:small"><button type="button" class="component button button-primary button-uppercase"><a href="/proposal">New Proposal</a></button></p></ViewTitle>
+      <ViewTitle><p style="float:left">Gorvernanace Voting</p> <p style="float:right;font-size:small"><button @click="onClickProposal()" type="button" class="component button button-primary button-uppercase">New Proposal</button></p></ViewTitle>
       <Island>
           <p>Aergo Argus : Argus...?</p>
           <p>Aergo Dodona : ??</p>
@@ -80,15 +80,17 @@ export default {
   name: 'gov-voting',
   props: ['id'],
   methods: {
+    onClickProposal() {
+      this.$router.push({name:"GovernanceVotingNew"});
+    },
     onClickView(id) {
-      document.location.href = "/gov_voting/v/" +id;
+      this.$router.push({name:"GovernanceVotingView", params: {id: id}});
     },
     selectedCategory() {
       return this.$route.query.category;
     },
     changeCategory() {
-      console.log(event.target.value);
-      location.replace("/gov_voting/q?category="+event.target.value.toLowerCase());
+      this.$router.push({name:"GovernanceVotingQuery", query: { category: event.target.value.toLowerCase()}});
     }
   },
   computed: {

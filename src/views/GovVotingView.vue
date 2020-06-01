@@ -1,7 +1,7 @@
 <template>
   <div>
     <Vertical base="fill">
-      <ViewTitle><p style="float:left">Gorvernanace Voting</p> <p style="float:right;font-size:small"><button type="button" class="component button button-primary button-uppercase"><a href="/proposal">New Proposal</a></button></p></ViewTitle>
+      <ViewTitle><p style="float:left">Gorvernanace Voting</p> <p style="float:right;font-size:small"><button @click="onClickProposal()" type="button" class="component button button-primary button-uppercase">New Proposal</button></p></ViewTitle>
       <Island>
           <button type="button" @click="onClickBack()" class="component button button-primary button-uppercase">BACK</button>
       </Island>
@@ -69,9 +69,12 @@ export default {
   name: 'gov-voting-view',
   props: ['id'],
   methods: {
+    onClickProposal() {
+      this.$router.push({name:"GovernanceVotingNew"});
+    },
     onClickBack() {
-        document.location.href = "/gov_voting";
-      },
+        this.$router.push({name:"GovernanceVoting"});
+    },
     hasing(message) {
         return sha256(message);
     }
