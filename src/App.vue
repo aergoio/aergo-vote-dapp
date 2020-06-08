@@ -94,30 +94,7 @@ export default {
           label: 'Governance Voting',
           routeAttrs: {
             to: { name: 'GovernanceVoting' },
-          },
-          subItems: [
-            {
-              id: 'gov_argus',
-              label: 'Aergo Argus',
-              routeAttrs: {
-                to: { name: 'GovernanceVotingQuery', query: { category: 'argus'}}
-              }
-            },
-            {
-              id: 'dodona',
-              label: 'Aergo Dodona',
-              routeAttrs: {
-                to: { name: 'GovernanceVotingQuery', query: { category: 'dodona'}}
-              }
-            },
-            {
-              id: 'agora',
-              label: 'Aergo Agora',
-              routeAttrs: {
-                to: { name: 'GovernanceVotingQuery', query: { category: 'agora'}}
-              }
-            }
-          ]
+          }
         },
       ];
     },
