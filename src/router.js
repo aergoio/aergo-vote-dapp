@@ -76,13 +76,13 @@ export default new Router({
       name: 'GovernanceVotingQuery',
     },
     {
-      path: '/gov_voting/v/:id',
+      path: '/gov_voting/:id',
       component: GovVotingView,
       name: 'GovernanceVotingView',
       props: true
     },
     {
-      path: '/proposal',
+      path: '/gov_voting/proposal',
       component: GovVotingNew,
       name: 'GovernanceVotingNew'
     }

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import connectAergo from './provider'
 import votes from './votes.json';
+import agora from './agora.json'
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     staked: '...' ,
     balance: '...',
     connectionError: false,
+    agora : agora.votes
   },
   mutations: {
     setAergo(state, url) {
