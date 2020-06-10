@@ -1,28 +1,41 @@
 <template>
   <Vertical base="fill">
-    <div class="title-with-button">
-      <ViewTitle>Gorvernanace Voting</ViewTitle>
-      <Button @click="onClickProposal()" type="button" class="component button button-primary button-uppercase"
-              v-if="!!this.activeAccount">New Proposal
+    <ViewTitle>
+      <span>Gorvernanace Voting</span>
+      <Button @click="onClickProposal()" class="button button-primary button-uppercase"
+              v-if="/*!!this.activeAccount*/true">New Proposal
       </Button>
-    </div>
+    </ViewTitle>
     <Island>
       <p>Aergo Argus : Argus...?</p>
       <p>Aergo Dodona : ??</p>
       <p>Aergo Agora : ??</p>
     </Island>
-    <Island :class="'vote-menu-wrapper'">
-      <SelectInput
-              placeholder="Category"
-              :options="vote_category"
-              v-model="category_selected"></SelectInput>
-      <SelectInput
-              placeholder="Status"
-              :options="vote_status" v-model="status_selected"></SelectInput>
-      <SelectInput
-              placeholder="Outcome"
-              :options="vote_outcome" v-model="outcome_selected"></SelectInput>
-    
+    <Island>
+      <Horizontal :align="'start'">
+        <SelectInput
+                placeholder="Category"
+                :options="vote_category"
+                v-model="category_selected"></SelectInput>
+        <SelectInput
+                placeholder="Status"
+                :options="vote_status" v-model="status_selected"></SelectInput>
+        <SelectInput
+                placeholder="Outcome"
+                :options="vote_outcome" v-model="outcome_selected"></SelectInput>
+
+        <DatePicker mode="range"
+                    :columns="2"
+                    :value="datepicker_value"
+                    :placeholder="'start'"
+                    :masks="mask"
+                    :input-props='{
+                                    // class:"datepicker",
+                                    placeholder: "Stat Date  -  End Date",
+                                    readonly: true
+
+                                  }' />
+      </Horizontal>
 
     </Island>
     <div class="grid-container">
@@ -31,11 +44,13 @@
 
         <router-link class="item-container" :to="`/gov_voting/${items.title}`">
           <div :class="`item-head item-head-${items.status.toLowerCase()}`">
-            <span class="title"># {{items.title}}</span>
-            <span class="category">{{items.category}}</span>
+            <span class="title">{{items.category}}</span>
+            <span class="category">{{items.status}}</span>
           </div>
           <div class="item-content">
-            <p class="text">{{items.contents}}</p>
+            <p class="text"><b># {{items.title}}</b> {{items.contents.length>80?items.contents.slice(0,80)+"..." :
+              items.contents
+              }}</p>
           </div>
           <div class="item-votes">
             <div class="vote">
@@ -56,6 +71,10 @@
                 <div class="vote-bar-no" style="transform: scale3d(0.01, 1, 1);"></div>
               </div>
             </div>
+
+          </div>
+          <div class="outcome">
+            <span>{{items.outcome}}</span>
           </div>
         </router-link>
       </div>
@@ -65,68 +84,15 @@
 
 <script>
     import {ViewTitle} from '@aergoenterprise/lib-components/src/basic';
-    import {Vertical} from '@aergoenterprise/lib-components/src/layout';
+    import {Vertical, Horizontal} from '@aergoenterprise/lib-components/src/layout';
     import {Island} from '@aergoenterprise/lib-components/src/composite';
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
-    import {DatePicker} from "../components/DatePicker";
+    import DatePicker from 'v-calendar/lib/components/date-picker.umd'
+
     import SelectInput
         from "@aergoenterprise/lib-components/src/composite/forms/SelectInput/SelectInput";
 
     import {mapState} from "vuex";
-
-    const vote_category = [
-
-        {
-            label: "Category",
-            value: "all"
-        },
-        {
-            label: "Argus",
-            value: "argus"
-        },
-        {
-            label: 'Dodona',
-            value: 'dodona',
-        },
-        {
-            label: 'Agora',
-            value: 'agora',
-
-        },
-
-    ];
-    const vote_status = [
-
-        {
-            label: 'Status',
-            value: 'all',
-        },
-        {
-            value: 'open',
-            label: 'Open',
-        },
-        {
-            value: 'closed',
-            label: 'Closed',
-        },
-
-    ];
-    const vote_outcome = [
-
-        {
-            value: 'all',
-            label: 'Outcome',
-        },
-        {
-            value: 'passed',
-            label: "Passed"
-        },
-        {
-            value: "rejected",
-            label: "rejected"
-        },
-
-    ]
 
 
     export default {
@@ -137,20 +103,69 @@
             ViewTitle,
             Button,
             DatePicker,
-            // Input,
-            // Alert
+            Horizontal
         },
         name: 'gov-voting',
         props: {
             vote_category: {
                 type: Array,
-                default: vote_category
+                default: () => [
+
+                    {
+                        label: "Category",
+                        value: "all"
+                    },
+                    {
+                        label: "Argus",
+                        value: "argus"
+                    },
+                    {
+                        label: 'Dodona',
+                        value: 'dodona',
+                    },
+                    {
+                        label: 'Agora',
+                        value: 'agora',
+
+                    },
+
+                ]
             }, vote_status: {
                 type: Array,
-                default: vote_status
+                default: () => [
+
+                    {
+                        label: 'Status',
+                        value: 'all',
+                    },
+                    {
+                        value: 'open',
+                        label: 'Open',
+                    },
+                    {
+                        value: 'closed',
+                        label: 'Closed',
+                    },
+
+                ]
             }, vote_outcome: {
                 type: Array,
-                default: vote_outcome
+                default: () => [
+
+                    {
+                        value: 'all',
+                        label: 'Outcome',
+                    },
+                    {
+                        value: 'passed',
+                        label: "Passed"
+                    },
+                    {
+                        value: "rejected",
+                        label: "rejected"
+                    },
+
+                ]
             },
 
         },
@@ -159,7 +174,10 @@
                 category_selected: 'all',
                 status_selected: "all",
                 outcome_selected: "all",
-                picker: new Date().toISOString().substr(0, 10),
+                datepicker_value:null,
+                mask: {
+                    input: "YYYY-MM-DD"
+                }
             }
         },
         methods: {
@@ -189,7 +207,7 @@
 </script>
 
 <style scoped lang="scss">
-  /*@import "~@aergoenterprise/lib-components/src/styles/variables";*/
+
   .title-with-button {
     display: inline-flex;
     justify-content: space-between;
@@ -211,12 +229,22 @@
     }
   }
 
+  .horizontal {
+    > * {
+      height: 40px;
+
+      + * {
+        margin-left: 10px;
+      }
+    }
+  }
+
   .grid-container {
     display: grid;
     gap: 16px;
     grid-auto-flow: row;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    grid-auto-rows: 270px;
+    grid-auto-rows: 240px;
     -moz-box-align: start;
     align-items: start;
     padding: 0 0 24px;
@@ -231,7 +259,7 @@
       border-radius: 4px;
       cursor: pointer;
       overflow: hidden;
-      box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 3px;
+      box-shadow: rgba(0, 0, 0, 0.15) 0 1px 3px;
 
       .item {
         &-container {
@@ -241,9 +269,10 @@
         }
 
         &-head {
-          padding: .2rem .5rem;
+          padding: .4rem .5rem;
           display: flex;
           justify-content: space-between;
+          color: white;
 
           &-open {
             background-color: rgb(44, 198, 143);
@@ -265,13 +294,14 @@
           overflow-y: hidden;
 
           .text {
-            line-height: 1rem;
-          font-weight: normal;
+            line-height: 1.3rem;
+            font-size: 1rem;
+            font-weight: normal;
           }
         }
 
         &-votes {
-          padding: .5rem;
+          padding: 0 1rem;
 
           .vote {
             + .vote {
@@ -291,21 +321,28 @@
 
   .vote-bar-border {
     overflow: hidden;
-    background: rgb(241, 243, 247) none repeat scroll 0% 0%;
+    background: rgb(241, 243, 247) none repeat scroll 0 0;
     border-radius: 4px;
   }
 
   .vote-bar-yes {
     height: 6px;
-    transform-origin: 0px 0px 0px;
+    transform-origin: 0 0 0;
     background-color: rgb(44, 198, 143);
     width: 100%;
   }
 
   .vote-bar-no {
     height: 6px;
-    transform-origin: 0px 0px 0px;
+    transform-origin: 0 0 0;
     background-color: rgb(255, 105, 105);
     width: 100%;
+  }
+
+  .outcome {
+    padding: 0.7rem;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: right;
   }
 </style>
