@@ -7,7 +7,6 @@
         Proposal
       </Button>
     </div>
-
     <div class="result-wrapper">
       <div :class="`result-head ${results.status.toLowerCase()}`">
         <div class="result-head-left">
@@ -19,43 +18,43 @@
       <div class="result-body">
         <p>
           {{results.contents}}
-        </p>
-        <p>
+          <span>
           SHA256 : {{hasing(results.url)}}
-        </p>
-        <p>
+        </span>
+          <span>
           🔗 : {{results.url}}
+        </span>
         </p>
+
       </div>
       <div class="result-votes">
-        <div class="vote">
-          <div class="head">
-            <span>YES<small>({{results.agree}})</small></span>
-            <span>3%</span>
+        <div class="vote-result-text">
+          <div class="yes">
+            <div>YES</div>
+            <div>30%</div>
           </div>
-          <div class="vote-bar-border">
-            <div class="vote-bar-yes" style="transform: scale3d(0.03, 1, 1);"></div>
+          <div class="no">
+            <div>NO</div>
+            <div>20%</div>
           </div>
+          <div class="remain"/>
         </div>
-        <div class="vote">
-          <div class="head">
-            <span>NO<small>({{results.oppose}})</small></span>
-            <span>1%</span>
-          </div>
-          <div class="vote-bar-border">
-            <div class="vote-bar-no" style="transform: scale3d(0.01, 1, 1);"></div>
-          </div>
+        <div class="vote-graph-wrapper">
+          <div class="bar yes"/>
+          <div class="bar no"/>
+          <div class="bar remain"/>
         </div>
       </div>
     </div>
 
 
     <div class="button-wrapper">
-      <div v-if="results.status === 'Open'" class="vote-button-group">
+      <div v-if="results.status === 'Open' && !!this.activeAccount" class="vote-button-group">
         <button type="button" class="component button">YES</button>
         <button type="button" class="component button">NO</button>
       </div>
-      <button type="button" @click="onClickBack()" class="component button button-primary button-uppercase">BACK
+      <button type="button" @click="onClickBack()"
+              class="right-button component button button-primary button-uppercase">BACK
       </button>
     </div>
   </Vertical>
@@ -64,12 +63,9 @@
 <script>
     import {ViewTitle} from '@aergoenterprise/lib-components/src/basic';
     import {Vertical} from '@aergoenterprise/lib-components/src/layout';
-    import {Island} from '@aergoenterprise/lib-components/src/composite';
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
-    import {Input} from '@aergoenterprise/lib-components/src/composite/forms';
-    import {Amount} from '@herajs/client';
     import sha256 from 'crypto-js/sha256';
-    import {mapState} from "vuex";
+    import {mapGetters, mapState} from "vuex";
 
     export default {
         components: {
@@ -97,11 +93,9 @@
         },
         computed: {
             ...mapState(['activeAccount', 'agora']),
+            ...mapGetters(['govDetail']),
             results() {
-                let id = this.$route.params.id;
-                return this.agora.find((items) => {
-                    return items["title"] === id;
-                })
+                return this.$store.getters.govDetail(this.id);
             }
         }
     }
@@ -125,46 +119,61 @@
     box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 3px;
     border-radius: 4px;
     overflow: hidden;
-    .result-head{
+
+    .result-head {
       padding: .5rem;
       display: flex;
       justify-content: space-between;
-      &.open{
+      color:white;
+
+      &.open {
         background-color: rgb(44, 198, 143);
       }
-      &.closed{
+
+      &.closed {
         background-color: rgb(255, 105, 105);
       }
     }
-    .result-body{
-      padding: 1rem;
+
+    .result-body {
+      padding: 0 1rem 1rem;
+      white-space: pre-line;
     }
   }
 
 
-  .result-votes{
-    padding: 0 1rem 1rem;
+  .result-votes {
+    padding: 0 1rem 2rem;
 
-    .vote-head {
-      font-size: 14px;
+    .vote-result-text {
       display: flex;
-      -moz-box-pack: justify;
-      justify-content: space-between;
-      margin-top: 10px;
-      margin-bottom: 5px;
     }
 
-    .vote-bar-border {
-      overflow: hidden;
-      background: rgb(241, 243, 247) none repeat scroll 0% 0%;
-      border-radius: 4px;
+    .yes {
+      width: 30%;
 
-      .vote-bar-yes {
-        height: 6px;
-        transform-origin: 0px 0px 0px;
-        background-color: rgb(44, 198, 143);
-        width: 100%;
-      }
+    }
+
+    .no {
+      width: 20%;
+    }
+
+    .remain {
+      flex: 1;
+    }
+
+    .vote-graph-wrapper {
+      width: 100%;
+      display: flex;
+      border-radius: 2px;
+      overflow: hidden;
+
+      .bar {
+        height: 7px;
+
+        &.yes {
+          background-color: rgb(44, 198, 143);
+        }
 
       .vote-bar-no {
         height: 6px;
@@ -175,15 +184,22 @@
     }
   }
 
-  .button-wrapper{
-    display: flex;
-    justify-content: space-between;
+  .button-wrapper {
+    display: block;
+    /*justify-content: space-between;*/
     margin-top: 1rem;
-    *+button{
+
+    * + button {
       margin-left: 10px;
     }
-    .vote-button-group{
+
+    .vote-button-group {
       display: flex;
+      float: left;
+    }
+
+    .right-button {
+      float: right;
     }
   }
 </style>

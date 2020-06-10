@@ -2,7 +2,7 @@
   <Vertical base="fill">
     <ViewTitle>
       <span>Gorvernanace Voting</span>
-      <Button @click="onClickProposal()" class="button button-primary button-uppercase"
+      <Button @click="onClickProposal()" :class="'button button-primary button-uppercase'"
               v-if="/*!!this.activeAccount*/true">New Proposal
       </Button>
     </ViewTitle>
@@ -29,12 +29,7 @@
                     :value="datepicker_value"
                     :placeholder="'start'"
                     :masks="mask"
-                    :input-props='{
-                                    // class:"datepicker",
-                                    placeholder: "Stat Date  -  End Date",
-                                    readonly: true
-
-                                  }' />
+                    :input-props='{ placeholder: "Stat Date  -  End Date", readonly: true}' />
       </Horizontal>
 
     </Island>
@@ -227,6 +222,9 @@
         margin-left: 1rem;
       }
     }
+  }
+  .button-normal{
+    color:white;
   }
 
   .horizontal {
