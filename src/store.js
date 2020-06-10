@@ -124,4 +124,7 @@ export default new Vuex.Store({
       return this.dispatch('getActiveAccount')
     }
   },
+  getters:{
+    govDetail : state => id => state.agora.find(i=>i.title === id)
+  }
 })
