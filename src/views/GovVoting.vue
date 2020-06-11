@@ -51,7 +51,7 @@
         <router-link class="item-container" :to="`/gov_voting/${items.title}`">
           <div :class="`item-head item-head-${items.status.toLowerCase()}`">
             <span class="title">{{items.category}}</span>
-            <span class="category">{{items.status}}</span>
+            <span :class="items.outcome.toLowerCase()"><div/><div/><div/></span>
           </div>
           <div class="item-content">
             <p class="text"><b># {{items.title}}</b> {{items.contents.length>80?items.contents.slice(0,80)+"..." :
@@ -59,9 +59,6 @@
               }}</p>
           </div>
           <VoteGraph/>
-          <div class="outcome">
-            <span>{{items.outcome}}</span>
-          </div>
         </router-link>
       </div>
     </div>
@@ -274,6 +271,7 @@
 
           &-open {
             background-color: rgb(44, 198, 143);
+
           }
 
           &-closed {
@@ -282,6 +280,31 @@
 
           .title {
             font-weight: 600;
+          }
+
+          .passed, .rejected, .pending {
+            display: flex;
+
+            div {
+              width: 1em;
+              height: 1em;
+              background-color: white;
+              border-radius: 50%;
+              border: 1px solid rgba(white,.8);
+
+              + div {
+                margin-left: .2em;
+              }
+            }
+          }
+          .passed>div:first-child{
+            background-color: #63c955;
+          }
+          .pending>div:nth-child(2){
+            background-color: #f5c050;
+          }
+          .rejected>div:last-child{
+            background-color: #eb6155;
           }
         }
 
