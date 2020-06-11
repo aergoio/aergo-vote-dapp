@@ -2,8 +2,8 @@
   <Vertical base="fill">
     <ViewTitle>Gorvernanace Voting</ViewTitle>
 
-<!--    <Island>-->
-<!--      <IslandHeader title="New Proposal"/>-->
+    <Island>
+      <IslandHeader title="New Proposal"/>
       <KVTable>
         <KVTableRow label="Github Agora Proposals URL"><Input size="small" placeholder="URL"/></KVTableRow>
         <KVTableRow label="Start Date / End Date">
@@ -12,7 +12,16 @@
                       :value="datepicker_value"
                       :placeholder="'start'"
                       :masks="mask"
-                      :input-props='{ placeholder: "Stat Date  -  End Date", readonly: true}' />
+                      :input-props='{
+                        class:"temp",
+                        placeholder: "Start Date  -  End Date",
+                        readonly: true,
+                    }'
+                      :theme="{
+                        datePickerInputDrag: { light: 'temp' }
+                      }"
+                      :popover="{ visibility : 'click'}"
+          />
         </KVTableRow>
         <KVTableRow label="Category">
           <SelectInput
@@ -21,25 +30,23 @@
                   v-model="category_selected"></SelectInput>
         </KVTableRow>
       </KVTable>
-<!--    </Island>-->
+    </Island>
     <div class="button-wrapper">
+      <Button type="button" class="component button button-primary button-uppercase">Submit</Button>
       <Button type="button" @click="onClickBack()" class="component button button-uppercase">BACK
       </Button>
-      <Button type="button" class="component button button-primary button-uppercase">Submit</Button>
     </div>
   </Vertical>
 </template>
 
 <script>
-    import {ViewTitle, Alert} from '@aergoenterprise/lib-components/src/basic';
+    import {ViewTitle} from '@aergoenterprise/lib-components/src/basic';
     import {Vertical} from '@aergoenterprise/lib-components/src/layout';
     import {Island, IslandHeader} from '@aergoenterprise/lib-components/src/composite';
     import {KVTable, KVTableRow} from '@aergoenterprise/lib-components/src/composite/tables';
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
     import {Input, SelectInput} from '@aergoenterprise/lib-components/src/composite/forms';
     import DatePicker from 'v-calendar/lib/components/date-picker.umd'
-
-
 
     export default {
         components: {
@@ -49,7 +56,6 @@
             DatePicker,
             Button,
             Input, SelectInput,
-            Alert,
             KVTable, KVTableRow,
         },
         name: 'gov-voting-new',
@@ -117,12 +123,12 @@
     justify-content: space-between;
     margin-top: 20px;
   }
-  .key-value-table{
-    background-color: white;
-    padding: 1em;
-    dd{
-      border: none;
-    }
+  dl>*>*{
+    height: 40px;
+
+  }
+  .select-input{
+    height: 40px;
   }
 
 </style>

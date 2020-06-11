@@ -1,10 +1,12 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>
-      <span>Gorvernanace Voting</span>
-      <Button @click="onClickProposal()" :class="'button button-primary button-uppercase'"
-              v-if="/*!!this.activeAccount*/true">New Proposal
-      </Button>
+      <div class="title-with-button">
+        <span>Gorvernanace Voting</span>
+        <Button @click="onClickProposal()" :class="'button button-primary button-uppercase'"
+                v-if="!!this.activeAccount">New Proposal
+        </Button>
+      </div>
     </ViewTitle>
     <Island>
       <p>Aergo Argus : Argus...?</p>
@@ -29,7 +31,16 @@
                     :value="datepicker_value"
                     :placeholder="'start'"
                     :masks="mask"
-                    :input-props='{ placeholder: "Stat Date  -  End Date", readonly: true}' />
+                    :input-props='{
+                        class:"temp",
+                        placeholder: "Start Date  -  End Date",
+                        readonly: true,
+                    }'
+                    :theme="{
+                        datePickerInputDrag: { light: 'temp' }
+                      }"
+                    :popover="{ visibility : 'click'}"
+        />
       </Horizontal>
 
     </Island>
@@ -47,27 +58,7 @@
               items.contents
               }}</p>
           </div>
-          <div class="item-votes">
-            <div class="vote">
-              <div class="head">
-                <span>YES<small>({{items.agree}})</small></span>
-                <span>3%</span>
-              </div>
-              <div class="vote-bar-border">
-                <div class="vote-bar-yes" style="transform: scale3d(0.03, 1, 1);"></div>
-              </div>
-            </div>
-            <div class="vote">
-              <div class="head">
-                <span>NO<small>({{items.oppose}})</small></span>
-                <span>1%</span>
-              </div>
-              <div class="vote-bar-border">
-                <div class="vote-bar-no" style="transform: scale3d(0.01, 1, 1);"></div>
-              </div>
-            </div>
-
-          </div>
+          <VoteGraph/>
           <div class="outcome">
             <span>{{items.outcome}}</span>
           </div>
@@ -88,6 +79,7 @@
         from "@aergoenterprise/lib-components/src/composite/forms/SelectInput/SelectInput";
 
     import {mapState} from "vuex";
+    import {VoteGraph} from "../components/VoteGraph";
 
 
     export default {
@@ -98,7 +90,8 @@
             ViewTitle,
             Button,
             DatePicker,
-            Horizontal
+            Horizontal,
+            VoteGraph
         },
         name: 'gov-voting',
         props: {
@@ -169,7 +162,7 @@
                 category_selected: 'all',
                 status_selected: "all",
                 outcome_selected: "all",
-                datepicker_value:null,
+                datepicker_value: null,
                 mask: {
                     input: "YYYY-MM-DD"
                 }
@@ -207,8 +200,10 @@
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 
     .button {
+      font-size: 1rem;
       height: fit-content;
     }
   }
@@ -223,8 +218,9 @@
       }
     }
   }
-  .button-normal{
-    color:white;
+
+  .button-normal {
+    color: white;
   }
 
   .horizontal {
@@ -263,14 +259,18 @@
         &-container {
           display: flex;
           flex-flow: column;
-          height: 100%;
+          height: calc(100% - 2em);
+          padding: 1em;
         }
 
         &-head {
-          padding: .4rem .5rem;
+          padding: .5em;
           display: flex;
           justify-content: space-between;
           color: white;
+          margin: -1em;
+          margin-bottom: 1em;
+          height: 1em;
 
           &-open {
             background-color: rgb(44, 198, 143);
@@ -286,7 +286,6 @@
         }
 
         &-content {
-          padding: .7rem;
           height: 100%;
           flex: 1;
           overflow-y: hidden;
@@ -338,9 +337,23 @@
   }
 
   .outcome {
-    padding: 0.7rem;
     width: 100%;
+    margin-top: .5em;
     box-sizing: border-box;
     text-align: right;
+    font-weight: 400;
+  }
+
+</style>
+
+<style lang="scss">
+  .temp {
+    height: 40px;
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 3px;
+    border: 1px solid #d9d9d9;
+    letter-spacing: -0.01em;
+    width: 13em;
   }
 </style>

@@ -26,35 +26,17 @@
         </span>
         </p>
 
-      </div>
-      <div class="result-votes">
-        <div class="vote-result-text">
-          <div class="yes">
-            <div>YES</div>
-            <div>30%</div>
-          </div>
-          <div class="no">
-            <div>NO</div>
-            <div>20%</div>
-          </div>
-          <div class="remain"/>
-        </div>
-        <div class="vote-graph-wrapper">
-          <div class="bar yes"/>
-          <div class="bar no"/>
-          <div class="bar remain"/>
-        </div>
+        <VoteGraph/>
       </div>
     </div>
 
-
     <div class="button-wrapper">
       <div v-if="results.status === 'Open' && !!this.activeAccount" class="vote-button-group">
-        <button type="button" class="component button">YES</button>
-        <button type="button" class="component button">NO</button>
+        <button type="button" class="component button button-primary">YES</button>
+        <button type="button" class="component button button-primary">NO</button>
       </div>
       <button type="button" @click="onClickBack()"
-              class="right-button component button button-primary button-uppercase">BACK
+              class="right-button component button  button-uppercase">BACK
       </button>
     </div>
   </Vertical>
@@ -66,12 +48,14 @@
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
     import sha256 from 'crypto-js/sha256';
     import {mapGetters, mapState} from "vuex";
+    import {VoteGraph} from "../components/VoteGraph";
 
     export default {
         components: {
             Vertical,
             ViewTitle,
             Button,
+            VoteGraph
         },
         name: 'gov-voting-view',
         props: {
@@ -116,7 +100,7 @@
     width: 100%;
     background-color: white;
     margin-top: 20px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 3px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 3px;
     border-radius: 4px;
     overflow: hidden;
 
@@ -124,7 +108,7 @@
       padding: .5rem;
       display: flex;
       justify-content: space-between;
-      color:white;
+      color: white;
 
       &.open {
         background-color: rgb(44, 198, 143);
@@ -141,48 +125,6 @@
     }
   }
 
-
-  .result-votes {
-    padding: 0 1rem 2rem;
-
-    .vote-result-text {
-      display: flex;
-    }
-
-    .yes {
-      width: 30%;
-
-    }
-
-    .no {
-      width: 20%;
-    }
-
-    .remain {
-      flex: 1;
-    }
-
-    .vote-graph-wrapper {
-      width: 100%;
-      display: flex;
-      border-radius: 2px;
-      overflow: hidden;
-
-      .bar {
-        height: 7px;
-
-        &.yes {
-          background-color: rgb(44, 198, 143);
-        }
-
-      .vote-bar-no {
-        height: 6px;
-        transform-origin: 0px 0px 0px;
-        background-color: rgb(255, 105, 105);
-        width: 100%;
-      }
-    }
-  }
 
   .button-wrapper {
     display: block;
