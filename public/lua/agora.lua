@@ -73,19 +73,14 @@ function finishAgenda(hash)
 end
 
 function confirmAgenda(hash)
-    local agenda = _getAgenda(hash)
-    assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    -- XXX check staking
-    local voter = system.getSender()
-    if voters[hash][voter] then
-        return
-    end
-    voters[hash][voter] = 1
-    agenda.confirm = agenda.confirm + 1
-    _setAgenda(hash, agenda)
+    _voteAgenda(hash, "confirm")
 end
 
 function rejectAgenda(hash)
+    _voteAgenda(hash, "reject")
+end
+
+function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
     -- XXX check staking
@@ -93,8 +88,8 @@ function rejectAgenda(hash)
     if voters[hash][voter] then
         return
     end
-    voters[hash][voter] = 0
-    agenda.reject = agenda.reject + 1
+    voters[hash][voter] = true
+    agenda[key] = agenda[key] + 1
     _setAgenda(hash, agenda)
 end
 
