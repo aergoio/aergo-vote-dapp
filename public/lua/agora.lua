@@ -33,15 +33,19 @@ end
 
 function issueAgenda(hash, aip, title, category, startDate, endDate)
     assert(councils[system.getSender()] ~= nil, "only a council can issues a agenda")
-    -- XXX ignore?
     if agendas[hash] == nil then
+        local d = system.date("*t", endDate)
+        d.hour = 23
+        d.min = 59
+        d.sec = 59
         agenda_arr:append({
             ["aip"] = aip,
             ["title"] = title,
             issuer = system.getSender(),
+            ["category"] = category,
             status = "open",
             ["startDate"] = startDate,
-            ["endDate"] = endDate,
+            ["endDate"] = system.time(d),
             confirm = 0,
             reject = 0
         })
@@ -83,6 +87,9 @@ end
 function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
+    if agenda.endDate < system.getTimestamp() then
+        return
+    end
     -- XXX check staking
     local voter = system.getSender()
     if voters[hash][voter] then
