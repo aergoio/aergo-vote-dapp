@@ -3,22 +3,15 @@ state.var {
   agendas = state.map(),
   agenda_arr = state.array(),
   voters = state.map(2),
-  categories = state.value(),
   statuses = state.value()
 }
 
 function constructor()
-    if categories:get() == nil then
-        categories:set({})
-    end
-    addCategory('argus')
-    addCategory('dodona')
-    addCategory('agora')
     if statuses:get() == nil then
         statuses:set({})
     end
-    addStatus('open')
-    addStatus('closed')
+    _addStatus('open')
+    _addStatus('closed')
 end
 
 function addCouncil(council)
@@ -31,7 +24,7 @@ function removeCouncil(council)
     councils:delete(council)
 end
 
-function issueAgenda(hash, aip, title, url, category, startDate, endDate)
+function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
     assert(councils[system.getSender()] ~= nil, "only a council can issues a agenda")
     if agendas[hash] == nil then
         local d = system.date("*t", endDate)
@@ -44,6 +37,7 @@ function issueAgenda(hash, aip, title, url, category, startDate, endDate)
             ["url"] = url,
             issuer = system.getSender(),
             ["category"] = category,
+            ["subCategory"] = subCategory,
             status = "open",
             ["startDate"] = startDate,
             ["endDate"] = system.time(d),
@@ -101,46 +95,12 @@ function _voteAgenda(hash, key)
     _setAgenda(hash, agenda)
 end
 
-function addCategory(category)
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
-    local h = categories:get()
-    h[category] = true
-    categories:set(h)
-end
-
-function removeCategory(category)
-    -- XXX depedent agendas?
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
-    local h = categories:get()
-    h[category] = nil
-    categories:set(h)
-end
-
-function addStatus(status)
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
-    local h = statuses:get()
-    h[status] = true
-    statuses:set(h)
-end
-
-function removeStatus(status)
-    -- XXX depedent agendas?
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
-    local h = statuses:get()
-    h[status] = nil
-    statuses:set(h)
-end
-
 function listAgendas()
     local arr = {}
     for i, v in agenda_arr:ipairs() do
         table.insert(arr, v)
     end
     return arr
-end
-
-function listCategories()
-    return _keys(categories:get())
 end
 
 function listStatus()
@@ -155,11 +115,15 @@ function _keys(h)
     return arr
 end
 
+function _addStatus(status)
+    local h = statuses:get()
+    h[status] = true
+    statuses:set(h)
+end
+
 abi.register(
     addCouncil, removeCouncil,
-    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda, 
-    addCategory, removeCategory,
-    addStatus, removeStatus)
+    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda)
 
-abi.register_view(listAgendas, listCategories, listStatus)
+abi.register_view(listAgendas, listStatus)
 
