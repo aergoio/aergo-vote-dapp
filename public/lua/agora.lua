@@ -2,6 +2,7 @@ state.var {
   councils = state.map(),
   agendas = state.map(),
   agenda_arr = state.array(),
+  voters = state.map(2),
   categories = state.value(),
   statuses = state.value()
 }
@@ -74,7 +75,12 @@ end
 function confirmAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    -- XXX check voter
+    -- XXX check staking
+    local voter = system.getSender()
+    if voters[hash][voter] then
+        return
+    end
+    voters[hash][voter] = 1
     agenda.confirm = agenda.confirm + 1
     _setAgenda(hash, agenda)
 end
@@ -82,7 +88,12 @@ end
 function rejectAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    -- XXX check voter
+    -- XXX check staking
+    local voter = system.getSender()
+    if voters[hash][voter] then
+        return
+    end
+    voters[hash][voter] = 0
     agenda.reject = agenda.reject + 1
     _setAgenda(hash, agenda)
 end
