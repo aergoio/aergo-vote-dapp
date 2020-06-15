@@ -31,7 +31,7 @@ function removeCouncil(council)
     councils:delete(council)
 end
 
-function issueAgenda(hash, aip, title, category, startDate, endDate)
+function issueAgenda(hash, aip, title, url, category, startDate, endDate)
     assert(councils[system.getSender()] ~= nil, "only a council can issues a agenda")
     if agendas[hash] == nil then
         local d = system.date("*t", endDate)
@@ -41,6 +41,7 @@ function issueAgenda(hash, aip, title, category, startDate, endDate)
         agenda_arr:append({
             ["aip"] = aip,
             ["title"] = title,
+            ["url"] = url,
             issuer = system.getSender(),
             ["category"] = category,
             status = "open",
