@@ -121,9 +121,15 @@ function _addStatus(status)
     statuses:set(h)
 end
 
+function refund(addr, amount)
+    assert(system.getCreator() == system.getSender(), "only onwer can call")
+    contract.send(addr, amount)
+end
+
 abi.register(
     addCouncil, removeCouncil,
-    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda)
+    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
+    refund)
 
 abi.register_view(listAgendas, listStatus)
 
