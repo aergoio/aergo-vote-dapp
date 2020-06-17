@@ -115,7 +115,7 @@ export default {
     },
     stakedTooLittle() {
       if (!this.activeChainId && !this.activeChainId.stakingminimum) return false;
-      return this.stakeAmountAsAmount.compare(this.activeChainId.stakingminimum) < 0;
+      return !this.stakeAmountAsAmount.equal(0) && this.stakeAmountAsAmount.compare(this.activeChainId.stakingminimum) < 0;
     },
     stakeAmountAsAmount() {
       return new Amount(this.stakeAmount.replace(/[^\d\.]/g, ''), 'aergo');
