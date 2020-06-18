@@ -42,8 +42,8 @@ function issueAgenda(hash, aip, title, url, category, subCategory, startDate, en
             status = "open",
             ["startDate"] = startDate,
             ["endDate"] = system.time(d),
-            confirm = 0,
-            reject = 0
+            confirm = bignum.number(0),
+            reject = bignum.number(0)
         })
         agendas[hash] = agenda_arr:length()
     end
@@ -88,11 +88,12 @@ function _voteAgenda(hash, key)
     local now = system.getTimestamp()
     assert(agenda.startDate <= now, "voting has not started: AIP-" .. agenda.aip)
     assert(agenda.endDate >= now, "voting has ended: AIP-" .. agenda.aip)
-    -- check staking
     local voter = system.getSender()
+    local stakingAmount = contract.balance(voter, "staking")
+    assert(stakingAmount > bignum.number(0), "staking balance is zero")
     assert(voters[hash][voter] == nil, "you voted: " .. voter)
     voters[hash][voter] = true
-    agenda[key] = agenda[key] + 1
+    agenda[key] = agenda[key] + stakingAmount
     _setAgenda(hash, agenda)
 end
 
