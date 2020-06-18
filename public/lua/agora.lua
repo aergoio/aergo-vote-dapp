@@ -65,8 +65,9 @@ end
 
 function finishAgenda(hash)
     local agenda = _getAgenda(hash)
-    assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    assert(agenda.issuer == system.getSender(), string.format("'%s' is not the issuer", system.getSender()))
+    assert(agenda ~= nil, "not found the agenda: " .. hash)
+    local sender = system.getSender
+    assert(agenda.issuer == sender, "'" .. sender .. "' is not the issuer")
     agenda.status = "closed"
     _setAgenda(hash, agenda)
 end
@@ -81,15 +82,14 @@ end
 
 function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
-    assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    if agenda.endDate < system.getTimestamp() or agenda.status == 'closed' then
-        return
-    end
-    -- XXX check staking
+    assert(agenda ~= nil, "not found the agenda: " .. hash)
+    assert(agenda.status ~= 'closed', "agenda is closed: AIP-" .. agenda.aip)
+    local now = system.getTimestamp()
+    assert(agenda.startDate <= now, "voting has not started: AIP-" .. agenda.aip)
+    assert(agenda.endDate >= now, "voting has ended: AIP-" .. agenda.aip)
+    -- check staking
     local voter = system.getSender()
-    if voters[hash][voter] then
-        return
-    end
+    assert(voters[hash][voter] == nil, "you voted: " .. voter)
     voters[hash][voter] = true
     agenda[key] = agenda[key] + 1
     _setAgenda(hash, agenda)
