@@ -32,6 +32,7 @@ function issueAgenda(hash, aip, title, url, category, subCategory, startDate, en
         d.min = 59
         d.sec = 59
         agenda_arr:append({
+            ["hash"] = hash,
             ["aip"] = aip,
             ["title"] = title,
             ["url"] = url,
@@ -121,6 +122,10 @@ function _addStatus(status)
     statuses:set(h)
 end
 
+function getAgenda(hash)
+    return _getAgenda(hash)
+end
+
 function refund(addr, amount)
     assert(system.getCreator() == system.getSender(), "only onwer can call")
     contract.send(addr, amount)
@@ -131,5 +136,7 @@ abi.register(
     issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
     refund)
 
-abi.register_view(listAgendas, listStatus)
+abi.register_view(listAgendas, listStatus,
+                  --remove
+                  getAgenda)
 
