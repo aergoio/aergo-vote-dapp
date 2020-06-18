@@ -82,7 +82,7 @@ end
 function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, string.format("not found the agenda: %s", hash))
-    if agenda.endDate < system.getTimestamp() then
+    if agenda.endDate < system.getTimestamp() or agenda.status == 'closed' then
         return
     end
     -- XXX check staking
