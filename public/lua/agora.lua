@@ -90,7 +90,7 @@ function _voteAgenda(hash, key)
     assert(agenda.endDate >= now, "voting has ended: AIP-" .. agenda.aip)
     local voter = system.getSender()
     local stakingAmount = contract.balance(voter, "staking")
-    assert(stakingAmount > bignum.number(0), "staking balance is zero")
+    assert(stakingAmount > bignum.number(0), "staked amount is zero")
     assert(voters[hash][voter] == nil, "you voted: " .. voter)
     voters[hash][voter] = true
     agenda[key] = agenda[key] + stakingAmount
