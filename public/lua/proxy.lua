@@ -67,6 +67,7 @@ function upgradeTo(version, implementation, payableList)
     _onlyProxyOwner()
     _upgradePayableList(payableList)
     _upgradeTo(version, implementation)
+    contract.delegatecall(_implementation:get(), "init")
 end
 
 function _upgradeTo(version, implementation)
@@ -119,6 +120,12 @@ function _isPayable(name)
     return _payableList[name]
 end
 
+function refund(addr, amount)
+    _onlyProxyOwner()
+    _typecheck(addr, 'address')
+    contract.send(addr, amount)
+end
+
 -- Tells the version name of the current implementation
 -- @type query
 -- @return (string) Representing the name of the current version
@@ -133,10 +140,10 @@ function implementation()
     return _implementation:get()
 end
 
--- Fallback function allowing to perform a delegatecall to the given implementation.
--- @type payable
--- This function will return whatever the implementation call returns
-function default(callName, ...)
+function default()
+end
+
+function invoke(callName, ...)
     assert(nil ~= _implementation:get(), "implementation is nil")
     if nil == callName then
         callName = "default"
@@ -149,6 +156,11 @@ function default(callName, ...)
     return contract.delegatecall(_implementation:get(), callName, ...)
 end
 
-abi.register(transferProxyOwnership, upgradeTo, upgradePayableList)
+function check_delegation()
+    return true
+end
+
+abi.register(transferProxyOwnership, upgradeTo, upgradePayableList, refund)
 abi.register_view(proxyOwner, version, implementation, payableList)
 abi.payable(default)
+abi.fee_delegation(invoke)

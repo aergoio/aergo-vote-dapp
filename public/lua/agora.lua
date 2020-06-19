@@ -6,12 +6,12 @@ state.var {
   statuses = state.value()
 }
 
-function constructor()
+function init()
     if statuses:get() == nil then
         statuses:set({})
+        _addStatus('open')
+        _addStatus('closed')
     end
-    _addStatus('open')
-    _addStatus('closed')
 end
 
 function addCouncil(council)
@@ -123,21 +123,10 @@ function _addStatus(status)
     statuses:set(h)
 end
 
-function getAgenda(hash)
-    return _getAgenda(hash)
-end
-
-function refund(addr, amount)
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
-    contract.send(addr, amount)
-end
-
 abi.register(
+    init,
     addCouncil, removeCouncil,
-    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
-    refund)
+    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda)
 
-abi.register_view(listAgendas, listStatus,
-                  --remove
-                  getAgenda)
+abi.register_view(listAgendas, listStatus)
 
