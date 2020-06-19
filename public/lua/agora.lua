@@ -25,7 +25,7 @@ function removeCouncil(council)
 end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
-    assert(councils[system.getSender()] ~= nil, "only a council can issues a agenda")
+    assert(councils[system.getSender()] ~= nil, "only a council can issues an agenda")
     if agendas[hash] == nil then
         local d = system.date("*t", endDate)
         d.hour = 23
