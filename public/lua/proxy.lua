@@ -156,8 +156,8 @@ function invoke(callName, ...)
     return contract.delegatecall(_implementation:get(), callName, ...)
 end
 
-function check_delegation()
-    return true
+function check_delegation(fname, ...)
+    return contract.delegatecall(_implementation:get(), "checkDelegation", ...)
 end
 
 abi.register(transferProxyOwnership, upgradeTo, upgradePayableList, refund)

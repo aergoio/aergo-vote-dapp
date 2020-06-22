@@ -6,7 +6,12 @@ state.var {
   statuses = state.value()
 }
 
+function _checkOwner()
+    assert(system.getCreator() == system.getSender(), "only owner can call")
+end
+
 function init()
+    _checkOwner()
     if statuses:get() == nil then
         statuses:set({})
         _addStatus('open')
@@ -15,18 +20,20 @@ function init()
 end
 
 function addCouncil(council)
-    assert(system.getCreator() == system.getSender(), "only onwer can call")
+    _checkOwner()
     councils[council] = true
 end
 
 function removeCouncil(council)
-    assert(system.getCreator() == system.getSender(), "only owner can call")
+    _checkOwner()
     councils:delete(council)
 end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
     assert(councils[system.getSender()] ~= nil, "only a council can issues an agenda")
-    assert(agendas[hash] == nil, "agenda already exists: AIP-", agendas[hash].aip)
+    if agendas[hash] ~= nil then
+        error("agenda already exists: AIP-" .. agendas[hash].aip)
+    end
     assert(startDate < endDate, "invalid argument: startDate(" .. startDate .. ") >= endDate(" .. endDate .. ")")
     agenda_arr:append({
         ["hash"] = hash,
@@ -119,10 +126,30 @@ function _addStatus(status)
     statuses:set(h)
 end
 
+function checkDelegation(fname, ...)
+    if fname == 'addCouncil' or fname == 'removeCouncil' then
+        return system.getCreator() == system.getSender()
+    elseif fname == 'issueAgenda' or fname == 'finishAgenda' then
+        return councils[system.getSender()] ~= nil
+    elseif fname == 'confirmAgenda' or fname == 'rejectAgenda' then
+        local hash = ...
+        if _getAgenda(hash) == nil then
+            return false
+        end
+        local voter = system.getSender()
+        if voters[hash][voter] ~= nil then
+            return false
+        end
+        return contract.balance(voter, "staking") > bignum.number(0)
+    end
+    return false
+end
+
 abi.register(
     init,
     addCouncil, removeCouncil,
-    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda)
+    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
+    checkDelegation)
 
 abi.register_view(listAgendas, listStatus)
 
