@@ -71,7 +71,7 @@ end
 function finishAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
-    local sender = system.getSender
+    local sender = system.getSender()
     assert(agenda.issuer == sender, "'" .. sender .. "' is not the issuer")
     agenda.status = "closed"
     _setAgenda(hash, agenda)
