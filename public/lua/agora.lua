@@ -14,8 +14,8 @@ function init()
     _checkOwner()
     if statuses:get() == nil then
         statuses:set({})
-        _addStatus('open')
-        _addStatus('closed')
+        _addStatus("open")
+        _addStatus("closed")
     end
 end
 
@@ -88,7 +88,7 @@ end
 function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
-    assert(agenda.status ~= 'closed', "agenda is closed: AIP-" .. agenda.aip)
+    assert(agenda.status ~= "closed", "agenda is closed: AIP-" .. agenda.aip)
     local now = system.getTimestamp()
     assert(agenda.startDate <= now, "voting has not started: AIP-" .. agenda.aip)
     assert(agenda.endDate >= now, "voting has ended: AIP-" .. agenda.aip)
@@ -128,13 +128,21 @@ function _addStatus(status)
 end
 
 function checkDelegation(fname, ...)
-    if fname == 'addCouncil' or fname == 'removeCouncil' then
+    if fname == "addCouncil" or fname == "removeCouncil" then
         return system.getCreator() == system.getSender()
-    elseif fname == 'issueAgenda' or fname == 'finishAgenda' then
+    elseif fname == "issueAgenda" or fname == "finishAgenda" then
         return councils[system.getSender()] ~= nil
-    elseif fname == 'confirmAgenda' or fname == 'rejectAgenda' then
+    elseif fname == "confirmAgenda" or fname == "rejectAgenda" then
         local hash = ...
-        if _getAgenda(hash) == nil then
+        local agenda = _getAgenda(hash)
+        if agenda == nil then
+            return false
+        end
+        if agenda.status == "closed" then
+            return false
+        end
+        local now = system.getTimestamp()
+        if agenda.startDate > now or agenda.endDate < now then
             return false
         end
         local voter = system.getSender()
@@ -146,7 +154,7 @@ function checkDelegation(fname, ...)
     return false
 end
 
-function voteAlready(hash, voter)
+function alreadyVoted(hash, voter)
     if _getAgenda(hash) == nil then
         return false
     end
@@ -159,5 +167,5 @@ abi.register(
     issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
     checkDelegation)
 
-abi.register_view(listAgendas, listStatus, voteAlready)
+abi.register_view(listAgendas, listStatus, alreadyVoted)
 
