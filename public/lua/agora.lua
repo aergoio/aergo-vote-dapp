@@ -26,27 +26,23 @@ end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
     assert(councils[system.getSender()] ~= nil, "only a council can issues an agenda")
-    if agendas[hash] == nil then
-        local d = system.date("*t", endDate)
-        d.hour = 23
-        d.min = 59
-        d.sec = 59
-        agenda_arr:append({
-            ["hash"] = hash,
-            ["aip"] = aip,
-            ["title"] = title,
-            ["url"] = url,
-            issuer = system.getSender(),
-            ["category"] = category,
-            ["subCategory"] = subCategory,
-            status = "open",
-            ["startDate"] = startDate,
-            ["endDate"] = system.time(d),
-            confirm = bignum.number(0),
-            reject = bignum.number(0)
-        })
-        agendas[hash] = agenda_arr:length()
-    end
+    assert(agendas[hash] == nil, "agenda already exists: AIP-", agendas[hash].aip)
+    assert(startDate < endDate, "invalid argument: startDate(" .. startDate .. ") >= endDate(" .. endDate .. ")")
+    agenda_arr:append({
+        ["hash"] = hash,
+        ["aip"] = aip,
+        ["title"] = title,
+        ["url"] = url,
+        issuer = system.getSender(),
+        ["category"] = category,
+        ["subCategory"] = subCategory,
+        status = "open",
+        ["startDate"] = startDate,
+        ["endDate"] = endDate,
+        confirm = bignum.number(0),
+        reject = bignum.number(0)
+    })
+    agendas[hash] = agenda_arr:length()
 end
 
 function _getAgenda(hash)
