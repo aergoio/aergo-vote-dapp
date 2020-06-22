@@ -146,11 +146,18 @@ function checkDelegation(fname, ...)
     return false
 end
 
+function voteAlready(hash, voter)
+    if _getAgenda(hash) == nil then
+        return false
+    end
+    return voters[hash][voter] ~= nil
+end
+
 abi.register(
     init,
     addCouncil, removeCouncil,
     issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
     checkDelegation)
 
-abi.register_view(listAgendas, listStatus)
+abi.register_view(listAgendas, listStatus, voteAlready)
 
