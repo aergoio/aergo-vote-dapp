@@ -30,7 +30,8 @@ function removeCouncil(council)
 end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
-    assert(councils[system.getSender()] ~= nil, "only a council can issues an agenda")
+    local sender = system.getSender()
+    assert(councils[sender] == true, "only a council can issues an agenda")
     local agenda = _getAgenda(hash)
     if agenda ~= nil then
         error("agenda already exists: AIP-" .. agenda.aip)
@@ -41,7 +42,7 @@ function issueAgenda(hash, aip, title, url, category, subCategory, startDate, en
         ["aip"] = aip,
         ["title"] = title,
         ["url"] = url,
-        issuer = system.getSender(),
+        issuer = sender,
         ["category"] = category,
         ["subCategory"] = subCategory,
         status = "open",
@@ -72,7 +73,7 @@ function finishAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
     local sender = system.getSender()
-    assert(agenda.issuer == sender, "'" .. sender .. "' is not the issuer")
+    assert(councils[sender] == true, "'" .. sender .. "' is not a council")
     agenda.status = "closed"
     _setAgenda(hash, agenda)
 end
@@ -131,7 +132,7 @@ function checkDelegation(fname, ...)
     if fname == "addCouncil" or fname == "removeCouncil" then
         return system.getCreator() == system.getSender()
     elseif fname == "issueAgenda" or fname == "finishAgenda" then
-        return councils[system.getSender()] ~= nil
+        return councils[system.getSender()] == true
     elseif fname == "confirmAgenda" or fname == "rejectAgenda" then
         local hash = ...
         local agenda = _getAgenda(hash)
