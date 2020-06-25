@@ -1,5 +1,6 @@
 state.var {
   councilors = state.map(),
+  councilor_arr = state.array(),
   agendas = state.map(),
   agenda_arr = state.array(),
   voters = state.map(2),
@@ -21,12 +22,19 @@ end
 
 function addCouncilor(councilor)
     _checkOwner()
-    councilors[councilor] = true
+    if not isCouncilor(councilor) then
+        councilor_arr:append(councilor)
+        councilors[councilor] = councilor_arr:length()
+    end
 end
 
 function removeCouncilor(councilor)
     _checkOwner()
-    councilors:delete(councilor)
+    local i = councilors[councilor]
+    if i ~= nil then
+        councilors:delete(councilor)
+        councilor_arr[i] = nil
+    end
 end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
@@ -163,7 +171,17 @@ function alreadyVoted(hash, voter)
 end
 
 function isCouncilor(councilor)
-    return councilors[councilor] == true
+    return councilors[councilor] ~= nil
+end
+
+function listCouncilors()
+    local arr = {}
+    for i, v in councilor_arr:ipairs() do
+        if v ~= nil then
+            table.insert(arr, v)
+        end
+    end
+    return arr
 end
 
 abi.register(
@@ -172,5 +190,5 @@ abi.register(
     issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
     checkDelegation)
 
-abi.register_view(listAgendas, listStatus, alreadyVoted, isCouncilor)
+abi.register_view(listAgendas, listStatus, alreadyVoted, isCouncilor, listCouncilors)
 
