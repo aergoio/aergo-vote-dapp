@@ -19,42 +19,19 @@ end
 state.var {
     _version = state.value(),
     _implementation = state.value(),
-    _upgradeabilityOwner = state.value(),
     _payableList = state.map(),
     _payableArray = state.value()
 }
 
--- The constructor sets the original owner of the contract to the sender account.
--- @type constructor
-function constructor()
-    _setUpgradeabilityOwner(system.getSender())
-end
-
-function _setUpgradeabilityOwner(newUpgradeabilityOwner)
-    _upgradeabilityOwner:set(newUpgradeabilityOwner)
-end
-
 function _onlyProxyOwner()
-    assert(_upgradeabilityOwner:get() == system.getSender(), string.format("only proxy owner. Owner: %s | sender: %s", _upgradeabilityOwner:get(), system.getSender()))
+    assert(system.getCreator() == system.getSender(), string.format("only proxy owner. Owner: %s | sender: %s", system.getCreator(), system.getSender()))
 end
 
 -- Tells the address of the proxy owner
 -- @type query
 -- @return (address) The address of the proxy owner
 function proxyOwner()
-    return _upgradeabilityOwner:get()
-end
-
--- Allows the current owner to transfer control of the contract to a newOwner.
--- @type call
--- @param newOwner (address) The address to transfer ownership to.
--- @event ProxyOwnershipTransferred(oldOwner, newOwner)
-function transferProxyOwnership(newOwner)
-    _onlyProxyOwner()
-    _typecheck(newOwner, 'address')
-    local oldOwner = proxyOwner()
-    _setUpgradeabilityOwner(newOwner)
-    contract.event("ProxyOwnershipTransferred", oldOwner, newOwner)
+    return system.getCreator()
 end
 
 -- Allows the upgradeability owner to upgrade the current version of the proxy.
@@ -160,7 +137,7 @@ function check_delegation(fname, ...)
     return contract.delegatecall(_implementation:get(), "checkDelegation", ...)
 end
 
-abi.register(transferProxyOwnership, upgradeTo, upgradePayableList, refund)
+abi.register(upgradeTo, upgradePayableList, refund)
 abi.register_view(proxyOwner, version, implementation, payableList)
 abi.payable(default)
 abi.fee_delegation(invoke)
