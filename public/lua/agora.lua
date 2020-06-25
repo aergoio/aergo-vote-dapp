@@ -1,5 +1,5 @@
 state.var {
-  councils = state.map(),
+  councilors = state.map(),
   agendas = state.map(),
   agenda_arr = state.array(),
   voters = state.map(2),
@@ -19,19 +19,19 @@ function init()
     end
 end
 
-function addCouncil(council)
+function addCouncilor(councilor)
     _checkOwner()
-    councils[council] = true
+    councilors[councilor] = true
 end
 
-function removeCouncil(council)
+function removeCouncilor(councilor)
     _checkOwner()
-    councils:delete(council)
+    councilors:delete(councilor)
 end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
     local sender = system.getSender()
-    assert(councils[sender] == true, "only a council can issues an agenda")
+    assert(isCouncilor(sender) "only a councilor can issues an agenda")
     local agenda = _getAgenda(hash)
     if agenda ~= nil then
         error("agenda already exists: AIP-" .. agenda.aip)
@@ -73,7 +73,7 @@ function finishAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
     local sender = system.getSender()
-    assert(councils[sender] == true, "'" .. sender .. "' is not a council")
+    assert(isCouncilor(sender), "'" .. sender .. "' is not a councilor")
     agenda.status = "closed"
     _setAgenda(hash, agenda)
 end
@@ -129,10 +129,10 @@ function _addStatus(status)
 end
 
 function checkDelegation(fname, ...)
-    if fname == "addCouncil" or fname == "removeCouncil" then
+    if fname == "addCouncilor" or fname == "removeCouncilor" then
         return system.getCreator() == system.getSender()
     elseif fname == "issueAgenda" or fname == "finishAgenda" then
-        return councils[system.getSender()] == true
+        return isCouncilor(system.getSender())
     elseif fname == "confirmAgenda" or fname == "rejectAgenda" then
         local hash = ...
         local agenda = _getAgenda(hash)
@@ -162,11 +162,15 @@ function alreadyVoted(hash, voter)
     return voters[hash][voter] ~= nil
 end
 
+function isCouncilor(councilor)
+    return councilors[councilor] == true
+end
+
 abi.register(
     init,
-    addCouncil, removeCouncil,
+    addCouncilor, removeCouncilor,
     issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
     checkDelegation)
 
-abi.register_view(listAgendas, listStatus, alreadyVoted)
+abi.register_view(listAgendas, listStatus, alreadyVoted, isCouncilor)
 
