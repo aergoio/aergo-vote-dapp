@@ -39,7 +39,7 @@ end
 
 function issueAgenda(hash, aip, title, url, category, subCategory, startDate, endDate)
     local sender = system.getSender()
-    assert(isCouncilor(sender) "only a councilor can issues an agenda")
+    assert(isCouncilor(sender), "only a councilor can issues an agenda")
     local agenda = _getAgenda(hash)
     if agenda ~= nil then
         error("agenda already exists: AIP-" .. agenda.aip)
