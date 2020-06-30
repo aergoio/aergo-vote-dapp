@@ -9,6 +9,7 @@
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
       </template>
       <template #default>
+        <Loading v-if="isLoading"/>
         <Alert v-if="connectionError" type="danger">{{connectionError}}</Alert>
         <router-view />
       </template>
@@ -23,6 +24,7 @@ import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/t
 import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
 import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitalize';
 import voteDefinitions from './votes.json';
+import Loading from "./components/Loading";
 
 export default {
   name: 'App',
@@ -32,14 +34,16 @@ export default {
     LogoGeneric,
     LoginWithAergoConnect,
     Alert,
+      Loading
   },
   data() {
     return {
       account: null,
+      isPending:this.pending
     };
   },
   computed: {
-    ...mapState(['systemVotings', 'activeChainId', 'activeAccount', 'connectionError']),
+    ...mapState(['systemVotings', 'activeChainId', 'activeAccount', 'connectionError','isLoading']),
     menuItems() {
       const votes = this.systemVotings.map((item, index) => {
         return {

@@ -1,38 +1,69 @@
 <template>
   <Vertical base="fill">
+    <Alert v-if="errorMessage" type="danger">{{errorMessage}}</Alert>
     <ViewTitle>Gorvernanace Voting</ViewTitle>
-
     <Island>
       <IslandHeader title="New Proposal"/>
       <KVTable>
-        <KVTableRow label="Github Agora Proposals URL"><Input size="small" placeholder="URL"/></KVTableRow>
-        <KVTableRow label="Start Date / End Date">
-          <DatePicker mode="range"
-                      :columns="2"
-                      :value="datepicker_value"
-                      :placeholder="'start'"
-                      :masks="mask"
-                      :input-props='{
-                        class:"temp",
-                        placeholder: "Start Date  -  End Date",
-                        readonly: true,
-                    }'
-                      :theme="{
-                        datePickerInputDrag: { light: 'temp' }
-                      }"
-                      :popover="{ visibility : 'click'}"
+        <KVTableRow
+                label="Github Agora Proposals URL">
+          <span>{{agoraUrl}}</span>
+
+          <input type="text" placeholder="URL" v-model="url"
+                 @focus="onGetFocus"
+                 @blur="onGetGithubUrlData"
+                 @paste="onPaste"
+                 class="urlBox"
           />
         </KVTableRow>
-        <KVTableRow label="Category">
-          <SelectInput
-                  placeholder="Category"
-                  :options="vote_category"
-                  v-model="category_selected"></SelectInput>
+        <KVTableRow label="Start Date">
+          <label class="check">
+            <input type="radio" name="quarter" @click="checkQuarter('03')"/>
+            1Q
+          </label>
+          <label class="check">
+            <input type="radio" name="quarter" @click="checkQuarter('06')"/>
+            2Q
+          </label>
+          <label class="check">
+            <input type="radio" name="quarter" @click="checkQuarter('09')"/>
+            3Q
+          </label>
+          <label class="check">
+            <input type="radio" name="quarter" @click="checkQuarter('12')"/>
+            4Q
+          </label>
+          <label @click="radioButtonDisable">
+            <DatePicker mode="single"
+                        ref="datePicker"
+                        v-model="datepicker_range"
+                        :placeholder="'start'"
+                        :masks="mask"
+                        :input-props='{
+                        class:"temp height",
+                        placeholder: "Start Date",
+                        readonly: true}'
+                        :popover="{ visibility : 'hover-focus'}"
+
+            />
+          </label>
+        </KVTableRow>
+        <KVTableRow label="data">
+          <div v-if="!url">
+
+          </div>
+          <div class="error" v-else-if="isError">
+            <span>Error : URL validation failed!</span>
+          </div>
+          <div v-else>
+            {{githubData}}
+          </div>
         </KVTableRow>
       </KVTable>
     </Island>
     <div class="button-wrapper">
-      <Button type="button" class="component button button-primary button-uppercase">Submit</Button>
+      <Button type="button" @click="onIssueAgenda()" class="component button button-primary button-uppercase">Submit
+      </Button>
       <Button type="button" @click="onClickBack()" class="component button button-uppercase">BACK
       </Button>
     </div>
@@ -40,12 +71,12 @@
 </template>
 
 <script>
-    import {ViewTitle} from '@aergoenterprise/lib-components/src/basic';
+    import {Alert, ViewTitle} from '@aergoenterprise/lib-components/src/basic';
     import {Vertical} from '@aergoenterprise/lib-components/src/layout';
     import {Island, IslandHeader} from '@aergoenterprise/lib-components/src/composite';
     import {KVTable, KVTableRow} from '@aergoenterprise/lib-components/src/composite/tables';
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
-    import {Input, SelectInput} from '@aergoenterprise/lib-components/src/composite/forms';
+    import sha256 from 'crypto-js/sha256';
     import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 
     export default {
@@ -55,54 +86,133 @@
             ViewTitle,
             DatePicker,
             Button,
-            Input, SelectInput,
             KVTable, KVTableRow,
+            Alert
         },
         name: 'gov-voting-new',
         props: {
-            vote_category: {
-                type: Array,
-                default: () => [
-
-                    {
-                        label: "Category",
-                        value: "all"
-                    },
-                    {
-                        label: "Argus",
-                        value: "argus"
-                    },
-                    {
-                        label: 'Dodona',
-                        value: 'dodona',
-                    },
-                    {
-                        label: 'Agora',
-                        value: 'agora',
-
-                    },
-
-                ]
+            id: {
+                type: String
             },
-            id:{
-                type:String
-            }
         },
         methods: {
+            radioButtonDisable() {
+                document.querySelectorAll("input[type=radio]").forEach(i => i.checked = false)
+            },
             onClickBack() {
-                this.$router.push({name: "GovernanceVoting"});
+                this.$router.push({name: "GovernanceVoting"},);
+            },
+            onGetFocus() {
+                this.url = null;
+                this.githubData = null;
+                this.isError = false;
+            },
+            onPaste(e) {
+                let url = this.url
+                    || (e.clipboardData || e.originalEvent.clipboardData || window.clipboardData).getData('text');
+                const regex = /https:\/\/raw\.githubusercontent\.com\/aergoio\/\w+\/(?=[\d\w]{30,}\/AIP-\d+\.md)/gi;
+                const regex2 = /https:\/\/github\.com\/aergoio\/agora_testcase\/blob\//gi;
+                e.preventDefault()
+
+                if (regex.test(url) || regex2.test(url)) {
+                    e.target.value = this.url = url.replace(regex, "").replace(regex2, "");
+                } else if (/[\d\w]{30,}\/AIP-\d+\.md/gi.test(url)) {
+                    e.target.value = this.url = url;
+                } else {
+                    e.target.placeholder = "URL ERROR!"
+                    this.isError = true;
+                }
+            },
+            checkQuarter(quarter) {
+                this.datepicker_range = new Date(`${new Date().getFullYear()}-${quarter}-01`)
+            },
+            async onIssueAgenda() {
+                const that = this;
+                await that.validation();
+                const hash = await that.$store.dispatch('fetchAgenda', this.agenda);
+                await setTimeout(() => that.getReceipt(hash), 3000);
+            },
+            async getReceipt(hash) {
+                const receipt = await this.$store.dispatch("getReceipt", hash.toString());
+                this.$store.commit("setLoading", false)
+                switch (receipt.status) {
+                    case "SUCCESS":
+                        await this.$router.push(`/gov_voting?tx=${hash.toString()}`)
+                        return;
+                    case "ERROR":
+                        this.errorMessage = receipt.result.split(/:[0-9]:/gi)[1].trim();
+                        return;
+                    default:
+                        console.log("...");
+                        return;
+                }
+            },
+            async onGetGithubUrlData() {
+
+                this.isError = false;
+                const that = this;
+                this.githubData = await fetch(process.env.VUE_APP_AGORA_URL + this.url)
+                    .then(resp => resp.text())
+                    .then(text => {
+                        const split = text.split("---");
+                        that.agenda = {
+                            hash: sha256(text.replace(/status\s?:\s?\w+/gi, "")).toString()
+                        }
+                        return split[1];
+                    })
+                    .then(data => data.split("\n").filter(i => i.length > 0).reduce((accm, curr) => {
+                            const temp = curr.split(":");
+                            accm[temp[0].trim().toLowerCase()] = temp[1].trim();
+                            return accm;
+                        }, {})
+                    ).catch(() => {
+                        this.isError = true;
+                    });
+            },
+            validation() {
+                const {githubData, url, datepicker_range} = this;
+
+                if (!githubData) {
+                    this.errorMessage = "No Data"
+                    return;
+                }
+                if (!url) {
+                    this.errorMessage = "No URL"
+                    return;
+                }
+                if (!datepicker_range) {
+                    this.errorMessage = "No Date"
+                    return
+                }
+                this.errorMessage = null;
+                const offsetTime = new Date().getTimezoneOffset() * 60
+
+                this.agenda = Object.assign(this.agenda, {
+                    aip: githubData.aip,
+                    title: githubData.title,
+                    url: process.env.VUE_APP_AGORA_URL + url,//TODO repo 확정되면 주소 바꿀것.
+                    category: githubData.category,
+                    startDate: new Date(datepicker_range).getTime() / 1000 - offsetTime + 28800,
+                    endDate: new Date(datepicker_range).getTime() / 1000 - offsetTime + 201599
+                })
             },
         },
-        data(){
+        data() {
             return {
                 category_selected: 'all',
-                datepicker_value:null,
+                datepicker_range: null,
                 mask: {
                     input: "YYYY-MM-DD"
-                }
+                },
+                url: "",
+                githubData: null,
+                agenda: null,
+                isError: false,
+                txResult: "",
+                errorMessage: null,
+                agoraUrl: process.env.VUE_APP_AGORA_URL
             }
-        },
-        computed: {}
+        }
     }
 </script>
 
@@ -118,17 +228,45 @@
   .island p:last-child {
     margin-bottom: 0;
   }
-  .button-wrapper{
+
+  .button-wrapper {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
   }
-  dl>*>*{
+
+  dl > * > * {
     height: 40px;
 
   }
-  .select-input{
+
+  .select-input {
     height: 40px;
   }
 
+  .error {
+    border: solid 1px red;
+    border-radius: 4px;
+    background-color: rgba(red, 10%);
+    box-sizing: border-box;
+    display: flex;
+
+    span {
+      margin: auto;
+      font-weight: bold;
+      color: rgba(red, 50%);
+    }
+  }
+
+  .check {
+    margin-right: 1em;
+  }
+
+  .urlBox {
+    width: 29em;
+    height: 2em;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    padding: 0 .5em;
+  }
 </style>

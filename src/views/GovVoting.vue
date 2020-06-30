@@ -1,5 +1,8 @@
 <template>
   <Vertical base="fill">
+    <Alert type="success" v-if="query.tx">{{"success! : "}}
+      <a :href="scan_url+query.tx">{{query.tx}}</a>
+    </Alert>
     <ViewTitle>
       <div class="title-with-button">
         <span>Gorvernanace Voting</span>
@@ -21,62 +24,72 @@
                 v-model="category_selected"></SelectInput>
         <SelectInput
                 placeholder="Status"
-                :options="vote_status" v-model="status_selected"></SelectInput>
-        <SelectInput
-                placeholder="Outcome"
-                :options="vote_outcome" v-model="outcome_selected"></SelectInput>
-
+                :options="status" v-model="status_selected"></SelectInput>
         <DatePicker mode="range"
                     :columns="2"
-                    :value="datepicker_value"
+                    v-model="datepicker_range"
                     :placeholder="'start'"
                     :masks="mask"
                     :input-props='{
-                        class:"temp",
-                        placeholder: "Start Date  -  End Date",
-                        readonly: true,
-                    }'
+                                class:"temp",
+                                placeholder: "Start Date  -  End Date",
+                                readonly: true,
+                            }'
                     :theme="{
-                        datePickerInputDrag: { light: 'temp' }
-                      }"
+                       datePickerInputDrag: {
+                           light: 'temp'
+                       }
+                              }"
                     :popover="{ visibility : 'click'}"
         />
+        <span @click="reload()" class="reload" ref="refresh">
+          <Icon name="refresh-dark" :size="40" :badge="false"/>
+        </span>
+
       </Horizontal>
 
     </Island>
-    <div class="grid-container">
-
-      <div v-for="items in results" :key="items.title" class="grid-item">
-
-        <router-link class="item-container" :to="`/gov_voting/${items.title}`">
-          <div :class="`item-head item-head-${items.status.toLowerCase()}`">
-            <span class="title">{{items.category}}</span>
-            <span :class="items.outcome.toLowerCase()"><div/><div/><div/></span>
-          </div>
-          <div class="item-content">
-            <p class="text"><b># {{items.title}}</b> {{items.contents.length>80?items.contents.slice(0,80)+"..." :
-              items.contents
-              }}</p>
-          </div>
-          <VoteGraph/>
-        </router-link>
+    <div v-for="list in agoraList(category_selected,status_selected,datepicker_range)" :key="list.title">
+      <div class="grid-title">
+        <span class="name">{{list.title}}</span>
+        <span class="number">{{list.data.length}}</span>
+      </div>
+      <div class="grid-container">
+        <div v-for="items in list.data" :key="items.aip" class="grid-item">
+          <VoteCard
+                  :hash="items.hash"
+                  :aip="items.aip"
+                  :url="items.url"
+                  :category="items.category"
+                  :status="items.status"
+                  :confirm="items.yes"
+                  :reject="items.no"
+                  :title="items.title"
+                  :start="items.startDate"
+                  :end="items.endDate"
+                  :curStatus="items.curStatus"
+                  :leftTime="items.leftTime"
+          />
+        </div>
       </div>
     </div>
+
   </Vertical>
 </template>
 
 <script>
-    import {ViewTitle} from '@aergoenterprise/lib-components/src/basic';
+    import {Alert, ViewTitle} from '@aergoenterprise/lib-components/src/basic';
     import {Vertical, Horizontal} from '@aergoenterprise/lib-components/src/layout';
     import {Island} from '@aergoenterprise/lib-components/src/composite';
     import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
     import DatePicker from 'v-calendar/lib/components/date-picker.umd'
+    import {VoteCard} from "../components/VoteCard";
 
     import SelectInput
         from "@aergoenterprise/lib-components/src/composite/forms/SelectInput/SelectInput";
 
-    import {mapState} from "vuex";
-    import {VoteGraph} from "../components/VoteGraph";
+    import {mapGetters, mapState} from "vuex";
+    import {Icon} from "@aergoenterprise/lib-components/src/basic/index";
 
 
     export default {
@@ -86,113 +99,82 @@
             Island,
             ViewTitle,
             Button,
-            DatePicker,
             Horizontal,
-            VoteGraph
+            VoteCard,
+            Alert,
+            DatePicker,
+            Icon
         },
         name: 'gov-voting',
         props: {
             vote_category: {
                 type: Array,
                 default: () => [
-
                     {
                         label: "Category",
                         value: "all"
                     },
                     {
-                        label: "Argus",
+                        label: "ARGUS",
                         value: "argus"
                     },
                     {
-                        label: 'Dodona',
+                        label: 'DODONA',
                         value: 'dodona',
                     },
                     {
-                        label: 'Agora',
+                        label: 'AGORA',
                         value: 'agora',
 
                     },
 
                 ]
-            }, vote_status: {
-                type: Array,
-                default: () => [
 
-                    {
-                        label: 'Status',
-                        value: 'all',
-                    },
-                    {
-                        value: 'open',
-                        label: 'Open',
-                    },
-                    {
-                        value: 'closed',
-                        label: 'Closed',
-                    },
-
-                ]
-            }, vote_outcome: {
-                type: Array,
-                default: () => [
-
-                    {
-                        value: 'all',
-                        label: 'Outcome',
-                    },
-                    {
-                        value: 'passed',
-                        label: "Passed"
-                    },
-                    {
-                        value: "rejected",
-                        label: "rejected"
-                    },
-
-                ]
-            },
+            }
 
         },
         data() {
             return {
                 category_selected: 'all',
                 status_selected: "all",
-                outcome_selected: "all",
-                datepicker_value: null,
+                datepicker_range: {
+                    start: null,
+                    end: null
+                },
                 mask: {
                     input: "YYYY-MM-DD"
-                }
+                },
+                scan_url: process.env.VUE_APP_SCAN_URL
             }
         },
         methods: {
             onClickProposal() {
                 this.$router.push({name: "GovernanceVotingNew"});
+            },
+            reload() {
+                this.$store.dispatch('getAgoraList');
+                this.category_selected = "all"
+                this.status_selected = "all"
+                this.datepicker_range = {
+                    start: null,
+                    end: null
+                }
             }
         },
         computed: {
-            ...mapState(['activeAccount', 'agora']),
-            results() {
-                const {agora, category_selected, status_selected, outcome_selected} = this;
-
-                return agora
-                    .filter(i => {
-                        if (category_selected === "all"
-                            || category_selected === i.category.toLowerCase()) return i
-                    }).filter(i => {
-                        if (status_selected === "all"
-                            || status_selected === i.status.toLowerCase()) return i
-                    }).filter(i => {
-                        if (outcome_selected === "all"
-                            || outcome_selected === i.outcome.toLowerCase()) return i
-                    });
-            },
+            ...mapState(['activeAccount', 'agora', 'status']),
+            ...mapGetters(['agoraList']),
+            query() {
+                return this.$route.query
+            }
+        },
+        created() {
+            this.reload()
         }
     }
 </script>
 
 <style scoped lang="scss">
-
   .title-with-button {
     display: inline-flex;
     justify-content: space-between;
@@ -230,6 +212,27 @@
     }
   }
 
+  .grid-title {
+    margin: 20px 0;
+
+    span + span {
+      margin-left: 5px;
+    }
+
+    .name {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .number {
+      font-size: .7rem;
+      background-color: var(--color-primary);
+      color: white;
+      padding: 0 .5em;
+      border-radius: 5px;
+    }
+  }
+
   .grid-container {
     display: grid;
     gap: 16px;
@@ -238,8 +241,6 @@
     grid-auto-rows: 240px;
     -moz-box-align: start;
     align-items: start;
-    padding: 0 0 24px;
-    margin-top: 20px;
 
 
     .grid-item {
@@ -252,121 +253,14 @@
       overflow: hidden;
       box-shadow: rgba(0, 0, 0, 0.15) 0 1px 3px;
 
-      .item {
-        &-container {
-          display: flex;
-          flex-flow: column;
-          height: calc(100% - 2em);
-          padding: 1em;
-        }
 
-        &-head {
-          padding: .5em;
-          display: flex;
-          justify-content: space-between;
-          color: white;
-          margin: -1em;
-          margin-bottom: 1em;
-          height: 1em;
-
-          &-open {
-            background-color: rgb(44, 198, 143);
-
-          }
-
-          &-closed {
-            background-color: rgb(255, 105, 105);
-          }
-
-          .title {
-            font-weight: 600;
-          }
-
-          .passed, .rejected, .pending {
-            display: flex;
-
-            div {
-              width: 1em;
-              height: 1em;
-              background-color: white;
-              border-radius: 50%;
-              border: 1px solid rgba(white,.8);
-
-              + div {
-                margin-left: .2em;
-              }
-            }
-          }
-          .passed>div:first-child{
-            background-color: #63c955;
-          }
-          .pending>div:nth-child(2){
-            background-color: #f5c050;
-          }
-          .rejected>div:last-child{
-            background-color: #eb6155;
-          }
-        }
-
-        &-content {
-          height: 100%;
-          flex: 1;
-          overflow-y: hidden;
-
-          .text {
-            line-height: 1.3rem;
-            font-size: 1rem;
-            font-weight: normal;
-          }
-        }
-
-        &-votes {
-          padding: 0 1rem;
-
-          .vote {
-            + .vote {
-              margin-top: 5px;
-            }
-
-            .head {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 5px;
-            }
-          }
-        }
-      }
     }
   }
 
-  .vote-bar-border {
-    overflow: hidden;
-    background: rgb(241, 243, 247) none repeat scroll 0 0;
-    border-radius: 4px;
+  .reload {
+    cursor: pointer;
+    margin-left: auto;
   }
-
-  .vote-bar-yes {
-    height: 6px;
-    transform-origin: 0 0 0;
-    background-color: rgb(44, 198, 143);
-    width: 100%;
-  }
-
-  .vote-bar-no {
-    height: 6px;
-    transform-origin: 0 0 0;
-    background-color: rgb(255, 105, 105);
-    width: 100%;
-  }
-
-  .outcome {
-    width: 100%;
-    margin-top: .5em;
-    box-sizing: border-box;
-    text-align: right;
-    font-weight: 400;
-  }
-
 </style>
 
 <style lang="scss">
