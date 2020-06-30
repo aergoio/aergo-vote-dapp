@@ -148,6 +148,7 @@
                 }
             },
             async onGetGithubUrlData() {
+                if (!this.url) return;
 
                 this.isError = false;
                 const that = this;
