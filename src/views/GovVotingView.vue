@@ -45,12 +45,10 @@
     </div>
     <div class="button-wrapper">
       <div class="vote-button-group">
-        <button type="button" class="component button button-primary" @click="vote(true)" :disabled="!activeAccount &&
-        showButton()">
+        <button type="button" class="component button button-primary" @click="vote(true)" :disabled="showButton(activeAccount)">
           YES
         </button>
-        <button type="button" class="component button button-primary" @click="vote(false)" :disabled="!activeAccount &&
-        showButton()">
+        <button type="button" class="component button button-primary" @click="vote(false)" :disabled="showButton(activeAccount)">
           NO
         </button>
       </div>
@@ -96,8 +94,11 @@
                 this.$store.dispatch("finishAgenda",{hash:this.detail.hash});
                 this.reload();
             },
-            showButton() {
+            showButton(activeAccount) {
                 const temp = new Date().getTime() / 1000;
+                if(!activeAccount){
+                    return true;
+                }
                 if (new Date(this.detail.startDate * 1000) > new Date()) {
                     return true;
                 }
