@@ -45,10 +45,12 @@
     </div>
     <div class="button-wrapper">
       <div class="vote-button-group">
-        <button type="button" class="component button button-primary" @click="vote(true)" :disabled="showButton()">
+        <button type="button" class="component button button-primary" @click="vote(true)" :disabled="!activeAccount &&
+        showButton()">
           YES
         </button>
-        <button type="button" class="component button button-primary" @click="vote(false)" :disabled="showButton()">
+        <button type="button" class="component button button-primary" @click="vote(false)" :disabled="!activeAccount &&
+        showButton()">
           NO
         </button>
       </div>
@@ -96,9 +98,6 @@
             },
             showButton() {
                 const temp = new Date().getTime() / 1000;
-                if (!this.activeAccount) {
-                    return true;
-                }
                 if (new Date(this.detail.startDate * 1000) > new Date()) {
                     return true;
                 }
@@ -128,11 +127,17 @@
             async vote(result) {
                 const that = this;
                 const hash = await that.$store.dispatch("fetchVote", {result, hash: that.detail.hash.toString()})
+
+                if(!hash) {
+                    this.$store.commit("setLoading", false)
+                    return;
+                }// user cancel
+
                 await setTimeout(() => that.getReceipt(hash), 3000);
             },
             async getReceipt(hash) {
-                const receipt = await this.$store.dispatch("getReceipt", hash.toString());
                 this.$store.commit("setLoading", false)
+                const receipt = await this.$store.dispatch("getReceipt", hash.toString());
                 switch (receipt.status) {
                     case "SUCCESS":
                         this.errorMessage = {
@@ -154,6 +159,7 @@
             }, reload() {
                 this.alreadyVote();
                 this.$store.dispatch('getAgoraList');
+                this.showButton()
 
 
             }
