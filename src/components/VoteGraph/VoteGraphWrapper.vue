@@ -62,6 +62,9 @@
 </script>
 
 <style scoped lang="scss">
+  *{
+    transition: width .5s ease-in-out;
+  }
   .vote-graph {
     font-weight: normal;
 
