@@ -7,7 +7,7 @@
       <div class="title-with-button">
         <span>Gorvernanace Voting</span>
         <Button @click="onClickProposal()" :class="'button button-primary button-uppercase'"
-                v-if="!!this.activeAccount">New Proposal
+                v-if="isCouncilor">New Proposal
         </Button>
       </div>
     </ViewTitle>
@@ -43,13 +43,13 @@
                     :popover="{ visibility : 'click'}"
         />
         <span @click="reload()" class="reload" ref="refresh">
-          <Icon name="refresh-dark" :size="40" :badge="false"/>
-        </span>
-
+                  <Icon name="refresh-dark" :size="40" :badge="false"/>
+                </span>
       </Horizontal>
 
     </Island>
-    <div v-for="list in agoraList(category_selected,status_selected,datepicker_range)" :key="list.title">
+    <div v-for="list in agoraList(category_selected,status_selected,datepicker_range||{start:null,end:null})"
+         :key="list.title">
       <div class="grid-title">
         <span class="name">{{list.title}}</span>
         <span class="number">{{list.data.length}}</span>
@@ -162,7 +162,7 @@
             }
         },
         computed: {
-            ...mapState(['activeAccount', 'agora', 'status']),
+            ...mapState(['activeAccount', 'agora', 'status','isCouncilor']),
             ...mapGetters(['agoraList']),
             query() {
                 return this.$route.query
@@ -170,6 +170,7 @@
         },
         created() {
             this.reload()
+            this.$store.dispatch("isCouncilor")
         }
     }
 </script>

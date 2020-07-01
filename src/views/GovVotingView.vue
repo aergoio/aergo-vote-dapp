@@ -4,7 +4,7 @@
     <div class="title-with-button">
       <ViewTitle>Gorvernanace Voting</ViewTitle>
       <Button @click="onClickProposal()" type="button" class="component button button-primary button-uppercase"
-              v-if="!!this.activeAccount">New
+              v-if="isCouncilor">New
         Proposal
       </Button>
     </div>
@@ -55,7 +55,7 @@
       <div class="vote-button-group">
         <button class="component button button-primary"
                 @click="onClickFinishAgenda()"
-                v-if="councilor" :disabled="detail.status !== 'open'">
+                v-if="isCouncilor" :disabled="detail.status !== 'open'">
           Agenda CLOSE
         </button>
         <button type="button" @click="onClickBack()"
@@ -122,9 +122,6 @@
                 this.voteAlready = await
                     this.$store.dispatch("alreadyVoted", {hash: !this.detail ? "" : this.detail.hash.toString()})
             },
-            async isCouncilor() {
-                this.councilor = await this.$store.dispatch("isCouncilor", {hash: !this.detail ? "" : this.detail.hash.toString()})
-            },
             async vote(result) {
                 const that = this;
                 const hash = await that.$store.dispatch("fetchVote", {result, hash: that.detail.hash.toString()})
@@ -166,14 +163,13 @@
             }
         },
         computed: {
-            ...mapState(['activeAccount', 'agora', 'staked']),
+            ...mapState(['activeAccount', 'agora', 'staked','isCouncilor']),
             ...mapGetters(['govDetail']),
             detail() {
                 return this.govDetail(this.$route.params.id);
             },
         }, created() {
             this.reload()
-            this.isCouncilor()
         }, data() {
             return {
                 errorMessage: null,

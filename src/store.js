@@ -13,23 +13,20 @@ async function connectContract(aergo, query) {
     return await aergo.queryContract(contract.invoke(...query))
 }
 
-function getStatus(curr) {
-    const start = curr.startDate;
-    const end = curr.endDate;
-    const stat = curr.status.toLowerCase();
+function getStatus({startDate,endDate,status}) {
     const current = new Date().getTime() / 1000;
 
-    if (current < start && stat === "open") {
+    if (current < startDate && status.toLowerCase() === "open") {
         return "register"
-    } else if (current > start && current < end) {
-        return stat === "open" ? "open" : "closed"
-    } else if (current > end) {
-        return stat === "open" ? "finished" : "closed"
+    } else if (current > startDate && current < endDate) {
+        return status.toLowerCase() === "open" ? "open" : "closed"
+    } else if (current > endDate) {
+        return status.toLowerCase() === "open" ? "finished" : "closed"
     }
 }
 
 function toUTC(time) {
-    return new Date(Date.UTC(time.getFullYear(),time.getMonth(),time.getDate())).getTime() / 1000;
+    return new Date(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate())).getTime() / 1000;
 }
 
 export default new Vuex.Store({
@@ -40,6 +37,7 @@ export default new Vuex.Store({
         blocksByHash: {},
         activeChainId: '',
         activeAccount: null,
+        isCouncilor: false,
         when: '...',
         staked: '...',
         balance: '...',
@@ -105,6 +103,9 @@ export default new Vuex.Store({
         },
         setLoading(state, loading) {
             state.isLoading = loading;
+        },
+        setUserCouncilor(state, councilor) {
+            state.isCouncilor = councilor;
         }
     },
     actions: {
@@ -283,11 +284,12 @@ export default new Vuex.Store({
             }
             return await connectContract(state.aergo, ["alreadyVoted", hash, state.activeAccount.address]);
         },
-        async isCouncilor({state}, {hash}) {
-            if (!state.activeAccount || hash === "") {
+        async isCouncilor({state,commit}) {
+            if (!state.activeAccount) {
                 return false
             }
-            return await connectContract(state.aergo, ["isCouncilor", state.activeAccount.address])
+            const queryReturn = await connectContract(state.aergo, ["isCouncilor", state.activeAccount.address])
+            commit("setUserCouncilor",queryReturn)
         },
         async finishAgenda({state}, {hash}) {
             if (!state.activeAccount) {
@@ -338,7 +340,7 @@ export default new Vuex.Store({
                     data: state.agora.filter(i => {
                         if ((category === "all" || category === i.category.toLowerCase())
                             && (status === "all" || status === i.curStatus.toLowerCase())
-                            && (start === null || ((toUTC(start)<= i.startDate) && (toUTC(end)+28800 >= i.endDate)))) {
+                            && (start === null || ((toUTC(start) <= i.startDate) && (toUTC(end) + 28800 >= i.endDate)))) {
                             return i;
                         }
                     })
