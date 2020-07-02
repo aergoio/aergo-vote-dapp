@@ -218,7 +218,7 @@ export default {
 
   .number {
     font-size: 0.7rem;
-    background-color: var(--color-primary);
+    background-color: #8FCFD1;
     color: white;
     padding: 0 0.5em;
     border-radius: 5px;
@@ -277,4 +277,7 @@ export default {
   letter-spacing: -0.01em;
   width: 13em;
 }
+  .button-primary{
+    background-color: #2F6F72 !important
+  }
 </style>

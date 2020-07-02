@@ -56,7 +56,7 @@
         <button
           type="button"
           class="component button button-primary"
-          @click="vote(1)"
+          @click="vote(0)"
           :disabled="showButton(activeAccount)"
         >
           YES
@@ -64,7 +64,7 @@
         <button
           type="button"
           class="component button button-primary"
-          @click="vote(0)"
+          @click="vote(1)"
           :disabled=" showButton(activeAccount)"
         >
           NO

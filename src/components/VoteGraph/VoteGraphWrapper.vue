@@ -132,7 +132,7 @@ export default {
       color: white;
 
       &.yes {
-        background-color: rgb(44, 198, 143);
+        background-color: #5f9ea0;
 
         span {
           position: absolute;
@@ -141,7 +141,7 @@ export default {
       }
 
       &.no {
-        background-color: rgb(255, 105, 105);
+        background-color: #ff8d8d;
 
         span {
           position: absolute;
