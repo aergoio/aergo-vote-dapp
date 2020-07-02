@@ -250,17 +250,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.current-value-label {
-  font-weight: 500;
-}
-
-.candidate-input {
-  margin: 20px 0;
-}
-
-.island p:last-child {
-  margin-bottom: 0;
-}
 
 .button-wrapper {
   display: flex;
@@ -269,10 +258,6 @@ export default {
 }
 
 dl > * > * {
-  height: 40px;
-}
-
-.select-input {
   height: 40px;
 }
 

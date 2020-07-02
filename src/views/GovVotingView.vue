@@ -14,7 +14,7 @@
       </Button>
     </div>
     <div class="result-wrapper">
-      <div :class="`result-head ${/*detail.status.toLowerCase()*/ ''}`">
+      <div class="result-head">
         <div class="result-head-left">
           <span class="title"># AIP-{{ detail.aip }}</span>
           <span class="category"> : {{ detail.title }}</span>
@@ -28,10 +28,9 @@
               SHA256 : <a :href="detail.url">{{ detail.hash }}</a>
             </span>
             <span>
-              🔗 :
-              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">
-                {{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}</a
-              >
+              🔗 : <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">
+                {{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}
+            </a>
             </span>
           </div>
           <div class="text-box">
@@ -165,22 +164,22 @@ export default {
       this.$store.commit('setLoading', false);
       const receipt = await this.$store.dispatch('getReceipt', hash.toString());
       switch (receipt.status) {
-        case 'SUCCESS':
-          this.errorMessage = {
-            type: 'success',
-            content: `Success Voting. Transaction hash : ${hash.toString()}`
-          };
-          this.reload();
-          return;
-        case 'ERROR':
-          this.errorMessage = {
-            type: 'danger',
-            content: receipt.result.split(/:[0-9]:/gi)[1].trim()
-          };
-          return;
-        default:
-          console.log('...');
-          return;
+      case 'SUCCESS':
+        this.errorMessage = {
+          type: 'success',
+          content: `Success Voting. Transaction hash : ${hash.toString()}`
+        };
+        this.reload();
+        return;
+      case 'ERROR':
+        this.errorMessage = {
+          type: 'danger',
+          content: receipt.result.split(/:[0-9]:/gi)[1].trim()
+        };
+        return;
+      default:
+        console.log('...');
+        return;
       }
     },
     reload() {

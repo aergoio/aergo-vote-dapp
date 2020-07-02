@@ -43,7 +43,6 @@
             placeholder: 'Start Date  -  End Date',
             readonly: true
           }"
-          :theme="{ datePickerInputDrag: { light: 'temp' } }"
           :popover="{ visibility: 'click' }"
         />
         <span @click="reload" class="reload" ref="refresh">
@@ -175,7 +174,6 @@ export default {
   },
   created() {
     this.reload();
-    this.$store.dispatch('isCouncilor');
   }
 };
 </script>
@@ -192,18 +190,6 @@ export default {
     height: fit-content;
   }
 }
-
-.vote-menu-wrapper {
-  > * {
-    height: 2rem;
-    display: inline-block;
-
-    & + * {
-      margin-left: 1rem;
-    }
-  }
-}
-
 .button-normal {
   color: white;
 }

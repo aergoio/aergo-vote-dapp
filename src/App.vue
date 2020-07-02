@@ -17,14 +17,14 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex"
+import { mapState } from 'vuex'
 import { LogoGeneric, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/templates';
 import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
 import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitalize';
 import voteDefinitions from './votes.json';
-import Loading from "./components/Loading";
+import Loading from './components/Loading';
 
 export default {
   name: 'App',
@@ -34,7 +34,7 @@ export default {
     LogoGeneric,
     LoginWithAergoConnect,
     Alert,
-      Loading
+    Loading
   },
   data() {
     return {
@@ -93,7 +93,7 @@ export default {
             to: { name: 'faq' },
           },
         },
-         {
+        {
           id: 'gov_voting',
           label: 'Governance Voting',
           routeAttrs: {
