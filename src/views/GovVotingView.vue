@@ -56,7 +56,7 @@
         <button
           type="button"
           class="component button button-primary"
-          @click="vote(true)"
+          @click="vote(1)"
           :disabled="showButton(activeAccount)"
         >
           YES
@@ -64,8 +64,8 @@
         <button
           type="button"
           class="component button button-primary"
-          @click="vote(false)"
-          :disabled="showButton(activeAccount)"
+          @click="vote(0)"
+          :disabled=" showButton(activeAccount)"
         >
           NO
         </button>
@@ -73,7 +73,7 @@
       <div class="vote-button-group">
         <button
           class="component button button-primary"
-          @click="onClickFinishAgenda()"
+          @click="vote(2)"
           v-if="isCouncilor"
           :disabled="detail.status !== 'open'"
         >
@@ -113,10 +113,6 @@ export default {
     },
     onClickBack() {
       this.$router.push({ name: 'GovernanceVoting' });
-    },
-    onClickFinishAgenda() {
-      this.$store.dispatch('finishAgenda', { hash: this.detail.hash });
-      this.reload();
     },
     showButton(activeAccount) {
       const temp = new Date().getTime() / 1000;
@@ -205,7 +201,8 @@ export default {
     return {
       errorMessage: null,
       voteAlready: false,
-      councilor: false
+      councilor: false,
+      scan_url:process.env.VUE_APP_SCAN_URL+'/transaction/'
     };
   }
 };

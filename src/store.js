@@ -249,6 +249,8 @@ export default new Vuex.Store({
       });
     },
     fetchVote({state, commit}, {hash, result}) {
+      const temp= ['confirmAgenda','rejectAgenda','closeAgenda'];
+
       return new Promise((resolve, reject) => {
         window.addEventListener('AERGO_SEND_TX_RESULT', function (event) {
           commit('setLoading', true)
@@ -270,7 +272,7 @@ export default new Vuex.Store({
             payload_json: {
               Name: 'invoke',
               Args: [
-                result ? 'confirmAgenda' : 'rejectAgenda',
+                temp[result],
                 hash]
             }
           }
@@ -290,35 +292,6 @@ export default new Vuex.Store({
       const queryReturn = await connectContract(state.aergo, ['isCouncilor', address])
       commit('setUserCouncilor',queryReturn)
     },
-    async finishAgenda({state}, {hash}) {
-      if (!state.activeAccount) {
-        return;
-      }
-      return new Promise((resolve, reject) => {
-        window.addEventListener('AERGO_SEND_TX_RESULT', function (event) {
-          if ('error' in event) {
-            reject(new Error('request was cancelled by user'));
-          } else {
-            resolve(event.detail.hash)
-          }
-        }, {once: true});
-
-        window.postMessage({
-          type: 'AERGO_REQUEST',
-          action: 'SEND_TX',
-          data: {
-            from: state.activeAccount.address,
-            to: process.env.VUE_APP_CONTRACT_ADDRESS,
-            amount: 0,
-            type: 3, // delegation fee
-            payload_json: {
-              Name: 'invoke',
-              Args: ['closeAgenda', hash.toString()]
-            }
-          }
-        });
-      });
-    }
   },
   getters: {
     govDetail: state => id => state.agora.find(i => i.hash === id),
