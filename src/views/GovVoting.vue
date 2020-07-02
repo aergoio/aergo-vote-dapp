@@ -218,7 +218,7 @@ export default {
 
   .number {
     font-size: 0.7rem;
-    background-color: #8FCFD1;
+    background-color: var(--color-primary);//#8FCFD1;
     color: white;
     padding: 0 0.5em;
     border-radius: 5px;
