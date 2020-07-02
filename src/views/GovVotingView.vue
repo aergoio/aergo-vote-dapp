@@ -24,28 +24,31 @@
       <div class="result-body">
         <div class="text-field">
           <div class="text-box">
-            <span>
-              SHA256 : <a :href="detail.url">{{ detail.hash }}</a>
-            </span>
-            <span>
-              🔗 : <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">
-                {{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}
-            </a>
-            </span>
+            <div class="text-detail-box">
+              <span>SHA256</span>
+              <a :href="detail.url">{{ detail.hash }}</a>
+            </div>
+            <div class="text-detail-box">
+              <span>🔗</span>
+              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}</a>
+
+            </div>
           </div>
           <div class="text-box">
-            <p>
-              <b>issuer</b>
-              {{ detail.issuer }}
-            </p>
-
-            <p>
-              start : {{ new Date(detail.startDate * 1000).toUTCString() }} end
-              : {{ new Date(detail.endDate * 1000).toUTCString() }}
-            </p>
+            <div class="text-detail-box">
+              <span>issuer</span>
+              <a :href="scan_url+detail.issuer">{{ detail.issuer }}</a>
+            </div>
+            <div class="text-detail-box">
+              <span>Start date ~ End date</span>
+              <p :style="{'margin':0,'whiteSpace': 'initial'}">
+                start : {{ new Date(detail.startDate * 1000).toUTCString() }}<br/>
+                end : {{ new Date(detail.endDate * 1000).toUTCString() }}
+              </p>
+            </div>
           </div>
         </div>
-        <VoteGraph :yes="detail.yes" :no="detail.no" display-number />
+        <VoteGraph :yes="detail.yes" :no="detail.no" display-number/>
       </div>
     </div>
     <div class="button-wrapper">
@@ -259,6 +262,22 @@ export default {
         white-space: pre-line;
         word-break: break-all;
         margin: auto;
+      }
+      .text-detail-box {
+        padding: 1em;
+        position: relative;
+        background-color: #f2f2f2;
+        border-radius: 3px;
+        & +.text-detail-box{
+          margin-top: 1em;
+        }
+        span {
+          position: absolute;
+          top: -.5em;
+          text-shadow: #ffffff;
+          /*background-color: white;*/
+          padding: 0 .5em;
+        }
       }
     }
   }
