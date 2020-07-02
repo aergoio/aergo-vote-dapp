@@ -57,13 +57,13 @@ export default new Vuex.Store({
         value: 'open',
       },
       {
-        label: 'closed',
-        value: 'closed',
+        label: 'finished',
+        value: 'finished',
 
       },
       {
-        label: 'finished',
-        value: 'finished',
+        label: 'closed',
+        value: 'closed',
 
       },
 
