@@ -77,7 +77,7 @@
           v-if="isCouncilor"
           :disabled="detail.status !== 'open'"
         >
-          Agenda CLOSE
+          CLOSE AGENDA
         </button>
         <button
           type="button"

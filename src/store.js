@@ -313,7 +313,7 @@ export default new Vuex.Store({
             type: 3, // delegation fee
             payload_json: {
               Name: 'invoke',
-              Args: ['finishAgenda', hash.toString()]
+              Args: ['closeAgenda', hash.toString()]
             }
           }
         });
