@@ -162,15 +162,15 @@ export default {
       const receipt = await this.$store.dispatch('getReceipt', hash.toString());
       this.$store.commit('setLoading', false);
       switch (receipt.status) {
-        case 'SUCCESS':
-          await this.$router.push(`/gov_voting?tx=${hash.toString()}`);
-          return;
-        case 'ERROR':
-          this.errorMessage = receipt.result.split(/:[0-9]:/gi)[1].trim();
-          return;
-        default:
-          console.log('...');
-          return;
+      case 'SUCCESS':
+        await this.$router.push(`/gov_voting?tx=${hash.toString()}`);
+        return;
+      case 'ERROR':
+        this.errorMessage = receipt.result.split(/:[0-9]:/gi)[1].trim();
+        return;
+      default:
+        console.log('...');
+        return;
       }
     },
     async onGetGithubUrlData() {
@@ -223,7 +223,7 @@ export default {
       this.agenda = Object.assign(this.agenda, {
         aip: githubData.aip,
         title: githubData.title,
-        url: process.env.VUE_APP_AGORA_URL + url, //TODO repo 확정되면 주소 바꿀것.
+        url: process.env.VUE_APP_AGORA_URL + url,
         category: githubData.category,
         startDate: datepicker_range.getTime() / 1000 - offsetTime + 28800,
         endDate: datepicker_range.getTime() / 1000 - offsetTime + 201599
