@@ -77,7 +77,7 @@ function _setAgenda(hash, agenda)
     end
 end
 
-function finishAgenda(hash)
+function closeAgenda(hash)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
     local sender = system.getSender()
@@ -139,7 +139,7 @@ end
 function checkDelegation(fname, ...)
     if fname == "addCouncilor" or fname == "removeCouncilor" then
         return system.getCreator() == system.getSender()
-    elseif fname == "issueAgenda" or fname == "finishAgenda" then
+    elseif fname == "issueAgenda" or fname == "closeAgenda" then
         return isCouncilor(system.getSender())
     elseif fname == "confirmAgenda" or fname == "rejectAgenda" then
         local hash = ...
@@ -187,7 +187,7 @@ end
 abi.register(
     init,
     addCouncilor, removeCouncilor,
-    issueAgenda, finishAgenda, confirmAgenda, rejectAgenda,
+    issueAgenda, closeAgenda, confirmAgenda, rejectAgenda,
     checkDelegation)
 
 abi.register_view(listAgendas, listStatus, alreadyVoted, isCouncilor, listCouncilors)
