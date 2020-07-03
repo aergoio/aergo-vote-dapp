@@ -6,7 +6,7 @@
     <div class="title-with-button">
       <ViewTitle>Gorvernanace Voting</ViewTitle>
       <Button
-        @click="onClickProposal()"
+        @click="onClickProposal"
         type="button"
         class="component button button-primary button-uppercase"
         v-if="isCouncilor"
@@ -195,7 +195,9 @@ export default {
     }
   },
   created() {
-    this.reload();
+    if(this.agora.length <=0){
+      this.reload();
+    }
   },
   data() {
     return {
