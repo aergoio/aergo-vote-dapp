@@ -148,7 +148,7 @@ export default {
       mask: {
         input: 'YYYY-MM-DD'
       },
-      scan_url: process.env.VUE_APP_SCAN_URL+'transaction/'
+      scan_url: process.env.VUE_APP_SCAN_URL+'/transaction/'
     };
   },
   methods: {

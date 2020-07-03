@@ -55,7 +55,7 @@
       <div class="vote-button-group">
         <button
           type="button"
-          class="component button button-primary"
+          :class="`component button button-primary ${activeAccount}`"
           @click="vote(0)"
           :disabled="showButton(activeAccount)"
         >
@@ -117,18 +117,6 @@ export default {
     showButton(activeAccount) {
       const temp = new Date().getTime() / 1000;
       if (!activeAccount) {
-        return true;
-      }
-      if (new Date(this.detail.startDate * 1000) > new Date()) {
-        return true;
-      }
-      if (new Date(this.detail.endDate * 1000) < new Date()) {
-        return true;
-      }
-      if (this.staked.split(' ')[0] <= 0) {
-        return true;
-      }
-      if (this.detail.status.toLowerCase() !== 'open') {
         return true;
       }
       if (
@@ -195,16 +183,14 @@ export default {
     }
   },
   created() {
-    if(this.agora.length <=0){
-      this.reload();
-    }
+    this.reload();
   },
   data() {
     return {
       errorMessage: null,
       voteAlready: false,
       councilor: false,
-      scan_url:process.env.VUE_APP_SCAN_URL+'/transaction/'
+      scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
     };
   }
 };
