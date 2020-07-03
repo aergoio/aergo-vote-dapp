@@ -6,14 +6,8 @@ import {Contract} from '@herajs/client';
 
 Vue.use(Vuex)
 
-async function connectContract(aergo, query) {
-  const address = process.env.VUE_APP_CONTRACT_ADDRESS;
-  const contract = Contract.atAddress(address);
-  contract.loadAbi(await aergo.getABI(address));
-  return await aergo.queryContract(contract.invoke(...query))
-}
 
-function getStatus({startDate,endDate,status}) {
+function getStatus({startDate, endDate, status}) {
   const current = new Date().getTime() / 1000;
 
   if (current < startDate && status.toLowerCase() === 'open') {
@@ -32,7 +26,7 @@ function toUTC(time) {
 export default new Vuex.Store({
   state: {
     aergo: null,
-    contract: null,
+    abi: null,
     systemVotings: Object.freeze(Object.keys(votes).map(key => ({id: key}))),
     blocksByHash: {},
     activeChainId: '',
@@ -106,6 +100,9 @@ export default new Vuex.Store({
     },
     setUserCouncilor(state, councilor) {
       state.isCouncilor = councilor;
+    },
+    setAergoAbi(state, abi) {
+      state.abi = abi
     }
   },
   actions: {
@@ -188,8 +185,16 @@ export default new Vuex.Store({
       commit('setUserCouncilor',false)
       return this.dispatch('getActiveAccount')
     },
-    async getAgoraList({state, commit}) {
-      const queryResult = await connectContract(state.aergo, ['listAgendas'])
+    async connectContract({commit, state}, query) {
+      if (!state.abi) {
+        await state.aergo.getABI(process.env.VUE_APP_CONTRACT_ADDRESS).then(res=>commit('setAergoAbi',res))
+      }
+      const contract = Contract.atAddress(process.env.VUE_APP_CONTRACT_ADDRESS);
+      await contract.loadAbi(state.abi);
+      return await state.aergo.queryContract(contract.invoke(...query))
+    },
+    async getAgoraList({dispatch, commit}) {
+      const queryResult = await dispatch('connectContract', ['listAgendas'])
       const data = queryResult.reduce((accm, curr) => {
 
         curr.yes = curr.confirm._bignum
@@ -201,13 +206,12 @@ export default new Vuex.Store({
           curr.leftTime = time < 60 ? (time < 1 ? '<1m' : Math.floor(time) + 'm') : Math.floor(time / 60) + 'h';
         }
 
-
         return [curr, ...accm]
       }, [])
-      commit('setAgora', data)
+      await commit('setAgora', data)
     },
-    async getStatus({state, commit}) {
-      const queryResult = await connectContract(state.aergo, ['listStatus'])
+    async getStatus({dispatch, commit}) {
+      const queryResult = await dispatch('connectContract',  ['listStatus'])
       commit('setStatus', queryResult)
     },
     fetchAgenda({state, commit}, agenda) {
@@ -282,15 +286,15 @@ export default new Vuex.Store({
     getReceipt({state}, hash) {
       return state.aergo.getTransactionReceipt(hash.toString());
     },
-    async alreadyVoted({state}, {hash}) {
+    async alreadyVoted({state,dispatch}, {hash}) {
       if (!state.activeAccount || hash === '') {
         return true;
       }
-      return await connectContract(state.aergo, ['alreadyVoted', hash, state.activeAccount.address]);
+      return await dispatch('connectContract',  ['alreadyVoted', hash, state.activeAccount.address]);
     },
-    async isCouncilor({state,commit},address) {
-      const queryReturn = await connectContract(state.aergo, ['isCouncilor', address])
-      commit('setUserCouncilor',queryReturn)
+    async isCouncilor({dispatch, commit}, address) {
+      const queryReturn = await dispatch('connectContract',  ['isCouncilor', address])
+      commit('setUserCouncilor', queryReturn)
     },
   },
   getters: {
@@ -311,8 +315,8 @@ export default new Vuex.Store({
           title: 'Search Result',
           data: state.agora.filter(i => {
             if ((category === 'all' || category === i.category.toLowerCase())
-                            && (status === 'all' || status === i.curStatus.toLowerCase())
-                            && (start === null || ((toUTC(start) <= i.startDate) && (toUTC(end) + 28800 >= i.endDate)))) {
+              && (status === 'all' || status === i.curStatus.toLowerCase())
+              && (start === null || ((toUTC(start) <= i.startDate) && (toUTC(end) + 28800 >= i.endDate)))) {
               return i;
             }
           })
