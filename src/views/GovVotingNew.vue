@@ -119,7 +119,7 @@ export default {
         .forEach((i) => (i.checked = false));
     },
     onClickBack() {
-      this.$router.push({ name: 'GovernanceVoting' });
+      this.$router.push({ name: 'GovernanaceVoting' });
     },
     onGetFocus() {
       this.url = null;
