@@ -6,7 +6,7 @@
     </Alert>
     <ViewTitle>
       <div class="title-with-button">
-        <span>Gorvernanace Voting</span>
+        <span>Governance Voting</span>
         <Button
           @click="onClickProposal()"
           :class="'button button-primary button-uppercase'"
