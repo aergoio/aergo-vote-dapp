@@ -95,9 +95,9 @@ export default {
         },
         {
           id: 'gov_voting',
-          label: 'Governanace Voting',
+          label: 'Governance Voting',
           routeAttrs: {
-            to: { name: 'GovernanaceVoting' },
+            to: { name: 'GovernanceVoting' },
           }
         },
       ];

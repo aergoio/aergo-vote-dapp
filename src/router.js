@@ -68,23 +68,23 @@ export default new Router({
     {
       path: '/gov_voting',
       component: GovVoting,
-      name: 'GovernanaceVoting',
+      name: 'GovernanceVoting',
     },
     {
       path: '/gov_voting/q',
       component: GovVoting,
-      name: 'GovernanaceVotingQuery',
+      name: 'GovernanceVotingQuery',
     },
     {
       path: '/gov_voting/:id',
       component: GovVotingView,
-      name: 'GovernanaceVotingView',
+      name: 'GovernanceVotingView',
       props: true
     },
     {
       path: '/gov_voting/proposal',
       component: GovVotingNew,
-      name: 'GovernanaceVotingNew'
+      name: 'GovernanceVotingNew'
     }
   ]
 })

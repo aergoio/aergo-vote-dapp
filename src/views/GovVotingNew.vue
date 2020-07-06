@@ -1,7 +1,7 @@
 <template>
   <Vertical base="fill">
     <Alert v-if="errorMessage" type="danger">{{ errorMessage }}</Alert>
-    <ViewTitle>Gorvernanace Voting</ViewTitle>
+    <ViewTitle>Governance Voting</ViewTitle>
     <Island>
       <IslandHeader title="New Proposal" />
       <KVTable>
@@ -119,7 +119,7 @@ export default {
         .forEach((i) => (i.checked = false));
     },
     onClickBack() {
-      this.$router.push({ name: 'GovernanaceVoting' });
+      this.$router.push({ name: 'GovernanceVoting' });
     },
     onGetFocus() {
       this.url = null;

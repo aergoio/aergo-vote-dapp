@@ -4,7 +4,7 @@
       errorMessage.content
     }}</Alert>
     <div class="title-with-button">
-      <ViewTitle>Gorvernanace Voting</ViewTitle>
+      <ViewTitle>Governance Voting</ViewTitle>
       <Button
         @click="onClickProposal"
         type="button"
@@ -109,10 +109,10 @@ export default {
   name: 'gov-voting-view',
   methods: {
     onClickProposal() {
-      this.$router.push({ name: 'GovernanaceVotingNew' });
+      this.$router.push({ name: 'GovernanceVotingNew' });
     },
     onClickBack() {
-      this.$router.push({ name: 'GovernanaceVoting' });
+      this.$router.push({ name: 'GovernanceVoting' });
     },
     showButton(activeAccount) {
       const temp = new Date().getTime() / 1000;
