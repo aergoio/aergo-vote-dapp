@@ -109,10 +109,10 @@ export default {
   name: 'gov-voting-view',
   methods: {
     onClickProposal() {
-      this.$router.push({ name: 'GovernanceVotingNew' });
+      this.$router.push({ name: 'GovernanaceVotingNew' });
     },
     onClickBack() {
-      this.$router.push({ name: 'GovernanceVoting' });
+      this.$router.push({ name: 'GovernanaceVoting' });
     },
     showButton(activeAccount) {
       const temp = new Date().getTime() / 1000;

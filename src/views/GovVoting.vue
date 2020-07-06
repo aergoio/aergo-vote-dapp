@@ -153,7 +153,7 @@ export default {
   },
   methods: {
     onClickProposal() {
-      this.$router.push({ name: 'GovernanceVotingNew' });
+      this.$router.push({ name: 'GovernanaceVotingNew' });
     },
     reload() {
       this.$store.dispatch('getAgoraList');
