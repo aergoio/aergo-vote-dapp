@@ -1,8 +1,8 @@
 <template>
   <Vertical base="fill">
-    <Alert v-if="errorMessage" :type="errorMessage.type">{{
-      errorMessage.content
-    }}</Alert>
+    <Alert v-if="errorMessage" :type="errorMessage.type">
+      {{errorMessage.content}}
+    </Alert>
     <div class="title-with-button">
       <ViewTitle>Governance Voting</ViewTitle>
       <Button
@@ -52,23 +52,25 @@
       </div>
     </div>
     <div class="button-wrapper">
-      <div class="vote-button-group">
+      <div class="vote-button-group" v-if="!!activeAccount">
         <button
-          type="button"
-          :class="`component button button-primary ${activeAccount}`"
+          class="component button button-primary"
           @click="vote(0)"
-          :disabled="showButton(activeAccount)"
+          :disabled="showButton"
         >
           YES
         </button>
         <button
-          type="button"
           class="component button button-primary"
           @click="vote(1)"
-          :disabled=" showButton(activeAccount)"
+          :disabled="showButton"
         >
           NO
         </button>
+      </div>
+      <div class="vote-button-group" v-else>
+        <button class="component button button-primary" disabled>YES</button>
+        <button class="component button button-primary" disabled>NO</button>
       </div>
       <div class="vote-button-group">
         <button
@@ -114,25 +116,7 @@ export default {
     onClickBack() {
       this.$router.push({ name: 'GovernanceVoting' });
     },
-    showButton(activeAccount) {
-      const temp = new Date().getTime() / 1000;
-      if (!activeAccount) {
-        return true;
-      }
-      if (
-        temp > this.detail.startDate &&
-        temp < this.detail.endDate &&
-        this.detail.status.toLowerCase() === 'open'
-      ) {
-        return this.voteAlready;
-      }
-      return true;
-    },
-    async alreadyVote() {
-      this.voteAlready = await this.$store.dispatch('alreadyVoted', {
-        hash: !this.detail ? '' : this.detail.hash.toString()
-      });
-    },
+
     async vote(result) {
       const that = this;
       const hash = await that.$store.dispatch('fetchVote', {
@@ -169,10 +153,13 @@ export default {
         return;
       }
     },
+    async voteCheck(){
+      this.isVote = await this.$store.dispatch('alreadyVoted', {
+        hash: !this.detail ? '' : this.detail.hash.toString()
+      })
+    },
     reload() {
-      this.alreadyVote();
       this.$store.dispatch('getAgoraList');
-      this.showButton();
     }
   },
   computed: {
@@ -180,7 +167,23 @@ export default {
     ...mapGetters(['govDetail']),
     detail() {
       return this.govDetail(this.$route.params.id);
-    }
+    },
+    showButton() {
+      const temp = new Date().getTime() / 1000;
+
+      if(this.staked === '...' || this.staked.split(' aergo')[0]==='0'){
+        return true;
+      }
+      if (
+        temp > this.detail.startDate &&
+        temp < this.detail.endDate &&
+        this.detail.status.toLowerCase() === 'open'
+      ) {
+        this.voteCheck()
+        return this.isVote;
+      }
+      return true;
+    },
   },
   created() {
     this.reload();
@@ -188,8 +191,8 @@ export default {
   data() {
     return {
       errorMessage: null,
-      voteAlready: false,
       councilor: false,
+      isVote:false,
       scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
     };
   }
