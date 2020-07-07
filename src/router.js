@@ -1,16 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import AccountDetail from './views/AccountDetail'
-import AccountStaking from './views/AccountStaking';
-import SystemVoting from './views/SystemVoting'
-import About from './views/About'
-import FAQ from './views/FAQ'
-import Login from './views/Login'
-import EmptyRoute from './views/EmptyRoute';
-import AccountHistory from './views/AccountHistory';
-import GovVoting from './views/GovVoting';
-import GovVotingView from './views/GovVotingView';
-import GovVotingNew from './views/GovVotingNew';
 
 Vue.use(Router)
 
@@ -20,19 +9,19 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: About,
+      component: ()=>import('./views/About'),
       name: 'about',
     },
     {
       path: '/voting/',
-      component: EmptyRoute,
+      component: ()=>import('./views/EmptyRoute'),
       name: 'voting-overview',
       redirect: '/voting/BP',
       children: [
         {
           path: ':id',
           name: 'voting',
-          component: SystemVoting,
+          component: ()=>import('./views/SystemVoting'),
           props: true
         },
       ]
@@ -40,50 +29,50 @@ export default new Router({
     {
       path: '/account/:address',
       name: 'account',
-      component: AccountDetail,
+      component: ()=>import('./views/AccountDetail'),
       props: true,
     },
     {
       path: '/account/:address/stake',
       name: 'staking',
-      component: AccountStaking,
+      component: ()=>import('./views/AccountStaking'),
       props: true
     },
     {
       path: '/account/:address/history',
       name: 'history',
-      component: AccountHistory,
+      component: ()=>import('./views/AccountHistory'),
       props: true
     },
     {
       path: '/login',
-      component: Login,
+      component: ()=>import('./views/Login'),
       name: 'login',
     },
     {
       path: '/faq',
-      component: FAQ,
+      component: ()=>import('./views/FAQ'),
       name: 'faq',
     },
     {
       path: '/gov_voting',
-      component: GovVoting,
+      component: ()=>import('./views/GovVoting'),
       name: 'GovernanceVoting',
     },
     {
       path: '/gov_voting/q',
-      component: GovVoting,
+      component: ()=>import('./views/GovVoting'),
       name: 'GovernanceVotingQuery',
     },
     {
       path: '/gov_voting/:id',
-      component: GovVotingView,
+      component: ()=>import('./views/GovVotingView'),
       name: 'GovernanceVotingView',
       props: true
     },
     {
       path: '/gov_voting/proposal',
-      component: GovVotingNew,
+      component: ()=>import('./views/GovVotingNew'),
       name: 'GovernanceVotingNew'
     }
   ]
