@@ -155,7 +155,16 @@ export default {
     onClickProposal() {
       this.$router.push({ name: 'GovernanceVotingNew' });
     },
-    reload() {
+    reload(e) {
+      if(e){
+        e.target.style.transformOrigin = 'center'
+        e.target.animate([
+          {transform: 'rotateZ(0deg)'},
+          {transform: 'rotateZ(360deg)'}], {
+          duration: 1000,
+          iterations: 3
+        })
+      }
       this.$store.dispatch('getAgoraList');
       this.category_selected = 'all';
       this.status_selected = 'all';
