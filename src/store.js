@@ -201,8 +201,11 @@ export default new Vuex.Store({
         curr.no = curr.reject._bignum
         curr.curStatus = getStatus(curr)
 
-        if (curr.curStatus === 'open') {
+        if (curr.curStatus === 'open' ) {
           const time = (new Date(curr.endDate * 1000).getTime() - new Date().getTime()) / 1000 / 60;
+          curr.leftTime = time < 60 ? (time < 1 ? '<1m' : Math.floor(time) + 'm') : Math.floor(time / 60) + 'h';
+        }else if(curr.curStatus === 'register'){
+          const time = (new Date(curr.startDate * 1000).getTime() - new Date().getTime()) / 1000 / 60;
           curr.leftTime = time < 60 ? (time < 1 ? '<1m' : Math.floor(time) + 'm') : Math.floor(time / 60) + 'h';
         }
 

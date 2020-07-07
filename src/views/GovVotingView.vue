@@ -25,13 +25,12 @@
         <div class="text-field">
           <div class="text-box">
             <div class="text-detail-box">
-              <span>SHA256</span>
-              <a :href="detail.url">{{ detail.hash }}</a>
+              <span>Draft Link</span>
+              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}</a>
             </div>
             <div class="text-detail-box">
-              <span>🔗</span>
-              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}</a>
-
+              <span>SHA256</span>
+              <a :href="detail.url">{{ detail.hash }}</a>
             </div>
           </div>
           <div class="text-box">
@@ -42,8 +41,11 @@
             <div class="text-detail-box">
               <span>Start date ~ End date</span>
               <p :style="{'margin':0,'whiteSpace': 'initial'}">
-                start : {{ new Date(detail.startDate * 1000).toUTCString() }}<br/>
-                end : {{ new Date(detail.endDate * 1000).toUTCString() }}
+                Start : {{ dateFormat(detail.startDate) }}{{detail.curStatus === 'register' ?`(left
+                ${detail.leftTime})`:''}}
+                <br/>
+                End : {{ dateFormat(detail.endDate) }}{{detail.curStatus === 'open' ?`(left
+                ${detail.leftTime})`:''}}
               </p>
             </div>
           </div>
@@ -94,13 +96,13 @@
 </template>
 
 <script>
-import { Alert, ViewTitle } from '@aergoenterprise/lib-components/src/basic';
-import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
-import { mapGetters, mapState } from 'vuex';
-import { VoteGraph } from '../components/VoteGraph';
+  import {Alert, ViewTitle} from '@aergoenterprise/lib-components/src/basic';
+  import {Vertical} from '@aergoenterprise/lib-components/src/layout';
+  import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
+  import {mapGetters, mapState} from 'vuex';
+  import {VoteGraph} from '../components/VoteGraph';
 
-export default {
+  export default {
   components: {
     Vertical,
     ViewTitle,
@@ -161,6 +163,14 @@ export default {
         })
       }
     },
+    dateFormat(date){
+      const utc= new Date(date*1000);
+      const {setZero} = this;
+      return `${utc.getUTCFullYear()}-${setZero(utc.getUTCMonth() + 1)}-${setZero(utc.getUTCDate())} ${setZero(utc.getUTCHours())}:${setZero(utc.getUTCMinutes())}:${setZero(utc.getUTCSeconds())} UTC`;
+    },
+    setZero(num){
+      return num<10?`0${num}`:num
+    },
     reload() {
       this.$store.dispatch('getAgoraList');
     }
@@ -200,6 +210,7 @@ export default {
       councilor: false,
       isVote:false,
       chk : false,
+      lan:navigator.language,
       scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
     };
   }
@@ -270,8 +281,12 @@ export default {
           position: absolute;
           top: -.5em;
           text-shadow: #ffffff;
+          font-weight: bold;
           /*background-color: white;*/
           padding: 0 .5em;
+        }
+        p,a{
+          font-weight: normal;
         }
       }
     }
