@@ -154,9 +154,12 @@ export default {
       }
     },
     async voteCheck(){
-      this.isVote = await this.$store.dispatch('alreadyVoted', {
-        hash: !this.detail ? '' : this.detail.hash.toString()
-      })
+      if(!this.chk){
+        this.chk = true;
+        this.isVote = await this.$store.dispatch('alreadyVoted', {
+          hash: !this.detail ? '' : this.detail.hash.toString()
+        })
+      }
     },
     reload() {
       this.$store.dispatch('getAgoraList');
@@ -171,6 +174,9 @@ export default {
     showButton() {
       const temp = new Date().getTime() / 1000;
 
+      if(!this.detail){
+        return true;
+      }
       if(this.staked === '...' || this.staked.split(' aergo')[0]==='0'){
         return true;
       }
@@ -193,6 +199,7 @@ export default {
       errorMessage: null,
       councilor: false,
       isVote:false,
+      chk : false,
       scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
     };
   }
