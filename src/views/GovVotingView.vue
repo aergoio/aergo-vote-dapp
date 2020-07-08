@@ -288,7 +288,6 @@ export default {
           top: -.5em;
           text-shadow: #ffffff;
           font-weight: bold;
-          /*background-color: white;*/
           padding: 0 .5em;
         }
         p,a{
