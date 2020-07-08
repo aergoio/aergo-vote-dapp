@@ -21,6 +21,7 @@ export default {
   display: flex;
   background-color: white;
   margin-bottom: 15px;
+  width: calc(100% + 20px);
   >span{
     margin: auto 0;
     font-size: 18px;
