@@ -27,6 +27,6 @@ export default {
 
 <style scoped lang="scss">
 .sidebar-menu{
-  margin-top: 65px;
+  margin-top: 40px;
 }
 </style>

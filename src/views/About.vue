@@ -9,7 +9,7 @@
         </p>
 
         <div class="portal-wrapper">
-          <router-link to="#">
+          <a href="https://swap.aergo.io/">
             <div class="card-top">
               <img src="../assets/icon/aergo-token-swap.png" alt="aergo token swap">
             </div>
@@ -17,8 +17,8 @@
               <img src="../assets/icon/token-swap-icon.svg" alt="">
               <img src="../assets/icon/enter-arrow-btn.svg" alt="">
             </div>
-          </router-link>
-          <router-link to="#">
+          </a>
+          <a href="https://aergoscan.io/">
             <div class="card-top">
               <img src="../assets/icon/aergo-scan.png" alt="aergo scan">
             </div>
@@ -26,8 +26,8 @@
               <img src="../assets/icon/scan-icon.svg" alt="">
               <img src="../assets/icon/enter-arrow-btn.svg" alt="">
             </div>
-          </router-link>
-          <router-link to="#">
+          </a>
+          <a href="https://www.aergo.io/resources">
             <div class="card-top">
               <img src="../assets/icon/aergo-report.png" alt="aergo report">
             </div>
@@ -35,7 +35,7 @@
               <img src="../assets/icon/report-icon.svg" alt="">
               <img src="../assets/icon/enter-arrow-btn.svg" alt="">
             </div>
-          </router-link>
+          </a>
         </div>
       </Island>
   </Vertical>

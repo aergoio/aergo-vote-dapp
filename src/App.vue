@@ -3,7 +3,7 @@
     <ViewWithSidebar class="fill-viewport">
       <template #sidebar>
         <router-link :to="{ name: 'about' }">
-          <LogoGeneric text="Portal" :size="18" />
+          <LogoGeneric text="Portal" :size="20" />
         </router-link>
         <SidebarMenu :items="menuItems" />
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
@@ -133,8 +133,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
-*{font-family: Spoqa Han Sans,sans-serif}
 :root {
   --color-primary-hue: 324;
 }
