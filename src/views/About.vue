@@ -3,8 +3,40 @@
     <ViewTitle>Home</ViewTitle>
       <slot></slot>
       <Island>
-        <p>Welcome to the Aergo Voting portal!</p>
-        <p>This is a Dapp that allows you to view the current status of votes and submit your own votes.</p>
+        <p>
+          <b>Welcome to the Aergo Voting portal!<br/></b>
+          This is a Dapp that allows you to view the current status of votes and submit your own votes.
+        </p>
+
+        <div class="portal-wrapper">
+          <router-link to="#">
+            <div class="card-top">
+              <img src="../assets/icon/aergo-token-swap.png" alt="aergo token swap">
+            </div>
+            <div class="card-bottom">
+              <img src="../assets/icon/token-swap-icon.svg" alt="">
+              <img src="../assets/icon/enter-arrow-btn.svg" alt="">
+            </div>
+          </router-link>
+          <router-link to="#">
+            <div class="card-top">
+              <img src="../assets/icon/aergo-scan.png" alt="aergo scan">
+            </div>
+            <div class="card-bottom">
+              <img src="../assets/icon/scan-icon.svg" alt="">
+              <img src="../assets/icon/enter-arrow-btn.svg" alt="">
+            </div>
+          </router-link>
+          <router-link to="#">
+            <div class="card-top">
+              <img src="../assets/icon/aergo-report.png" alt="aergo report">
+            </div>
+            <div class="card-bottom">
+              <img src="../assets/icon/report-icon.svg" alt="">
+              <img src="../assets/icon/enter-arrow-btn.svg" alt="">
+            </div>
+          </router-link>
+        </div>
       </Island>
   </Vertical>
 </template>
@@ -18,7 +50,40 @@ export default {
   components: {
     Island,
     ViewTitle,
-    Vertical,
+    Vertical
   },
 }
 </script>
+<style scoped lang="scss">
+  .portal-wrapper{
+    display: grid;
+    gap: 20px;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    grid-auto-rows: 250px;
+    -moz-box-align: start;
+    align-items: start;
+    padding: 10px;
+
+    a{
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      border-radius: 5px;
+      box-shadow: 0 2px 7px 0 #d1d6e2;
+      box-sizing: border-box;
+      padding: 20px;
+      display: flex;
+      flex-flow: column;
+    }
+    .card-top{
+      flex: 1;
+    }
+    .card-bottom{
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+
+</style>
