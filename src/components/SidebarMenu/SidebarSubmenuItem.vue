@@ -14,12 +14,12 @@ export default {
 @import "../../style/color.scss";
 .sidebar-submenu-item{
   box-sizing: border-box;
-  padding: 4px 4px 4px 50px;
+  padding: 8px 8px 8px 50px;
   width: 226px;
-  border-radius: 0 100px  100px 0;
   cursor: pointer;
+  color:$darkgrey;
   &.router-link-exact-active{
-    background-color: $lightgrey;
+    color:black;
   }
 }
 </style>

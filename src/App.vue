@@ -3,7 +3,7 @@
     <ViewWithSidebar class="fill-viewport">
       <template #sidebar>
         <router-link :to="{ name: 'about' }">
-          <LogoGeneric text="Voting" :size="18" />
+          <LogoGeneric text="Portal" :size="18" />
         </router-link>
         <SidebarMenu :items="menuItems" />
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
