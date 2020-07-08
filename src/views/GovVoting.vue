@@ -244,6 +244,7 @@ export default {
   grid-auto-rows: 240px;
   -moz-box-align: start;
   align-items: start;
+  padding: 1em 2em 1em 1em;
 
   .grid-item {
     background-color: white;
