@@ -1,15 +1,17 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>
-      <div class="title-with-button">
-        <span>Governance Voting</span>
+      <template #default>
+        Governance Voting
+      </template>
+      <template #button>
         <Button
-          @click="onClickProposal()"
-          :class="'button button-primary button-uppercase'"
-          v-if="isCouncilor"
-          >New Proposal
+                @click="onClickProposal()"
+                :class="'button button-primary button-uppercase'"
+                v-if="isCouncilor"
+        >New Proposal
         </Button>
-      </div>
+      </template>
     </ViewTitle>
     <Alert type="success" :style="{'margin-bottom':'15px'}" v-if="query.tx"
       >{{ 'success! : ' }}

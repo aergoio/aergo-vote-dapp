@@ -1,19 +1,23 @@
 <template>
   <Vertical base="fill">
-    <div class="title-with-button">
-      <ViewTitle>Governance Voting</ViewTitle>
+    <ViewTitle>
+    <template #default>
+      Governance Voting
+    </template>
+    <template #button>
       <Button
-        @click="onClickProposal"
-        type="button"
-        class="component button button-primary button-uppercase"
-        v-if="isCouncilor"
-        >New Proposal
+              @click="onClickProposal"
+              type="button"
+              class="component button button-primary button-uppercase"
+              v-if="isCouncilor"
+      >New Proposal
       </Button>
+    </template>
+    </ViewTitle>
     <Alert v-if="errorMessage" :type="errorMessage.type" :style="{'margin-bottom':'15px'}">
       {{errorMessage.content}}
     </Alert>
     <slot></slot>
-    </div>
     <div class="result-wrapper">
       <div class="result-head">
         <div class="result-head-left">
