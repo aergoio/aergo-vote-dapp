@@ -1,9 +1,5 @@
 <template>
   <Vertical base="fill">
-    <Alert type="success" v-if="query.tx"
-      >{{ 'success! : ' }}
-      <a :href="scan_url + query.tx">{{ query.tx }}</a>
-    </Alert>
     <ViewTitle>
       <div class="title-with-button">
         <span>Governance Voting</span>
@@ -15,6 +11,11 @@
         </Button>
       </div>
     </ViewTitle>
+    <Alert type="success" :style="{'margin-bottom':'15px'}" v-if="query.tx"
+      >{{ 'success! : ' }}
+      <a :href="scan_url + query.tx">{{ query.tx }}</a>
+    </Alert>
+    <slot></slot>
     <Island>
       <p>Aergo Argus : Argus...?</p>
       <p>Aergo Dodona : ??</p>
@@ -85,7 +86,8 @@
 </template>
 
 <script>
-import { Alert, ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import { Alert } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import {
   Vertical,
   Horizontal

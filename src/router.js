@@ -9,6 +9,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/about',
+      name: 'home',
+    },
+    {
+      path: '/about',
       component: ()=>import('./views/About'),
       name: 'about',
     },

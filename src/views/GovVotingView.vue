@@ -1,8 +1,5 @@
 <template>
   <Vertical base="fill">
-    <Alert v-if="errorMessage" :type="errorMessage.type">
-      {{errorMessage.content}}
-    </Alert>
     <div class="title-with-button">
       <ViewTitle>Governance Voting</ViewTitle>
       <Button
@@ -12,6 +9,10 @@
         v-if="isCouncilor"
         >New Proposal
       </Button>
+    <Alert v-if="errorMessage" :type="errorMessage.type" :style="{'margin-bottom':'15px'}">
+      {{errorMessage.content}}
+    </Alert>
+    <slot></slot>
     </div>
     <div class="result-wrapper">
       <div class="result-head">
@@ -96,13 +97,14 @@
 </template>
 
 <script>
-  import {Alert, ViewTitle} from '@aergoenterprise/lib-components/src/basic';
-  import {Vertical} from '@aergoenterprise/lib-components/src/layout';
-  import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
-  import {mapGetters, mapState} from 'vuex';
-  import {VoteGraph} from '../components/VoteGraph';
+import {Alert} from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
+import {Vertical} from '@aergoenterprise/lib-components/src/layout';
+import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
+import {mapGetters, mapState} from 'vuex';
+import {VoteGraph} from '../components/VoteGraph';
 
-  export default {
+export default {
   components: {
     Vertical,
     ViewTitle,
@@ -315,5 +317,8 @@
   .right-button {
     float: right;
   }
+}
+.button-primary{
+  background-color: #2F6F72 !important
 }
 </style>

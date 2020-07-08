@@ -1,7 +1,8 @@
 <template>
   <Vertical base="fill">
-    <Alert v-if="errorMessage" type="danger">{{ errorMessage }}</Alert>
     <ViewTitle>Governance Voting</ViewTitle>
+    <Alert v-if="errorMessage" type="danger" :style="{'margin-bottom':'15px'}">{{ errorMessage }}</Alert>
+    <slot></slot>
     <Island>
       <IslandHeader title="New Proposal" />
       <KVTable>
@@ -80,7 +81,8 @@
 </template>
 
 <script>
-import { Alert, ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import { Alert } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import {
   Island,

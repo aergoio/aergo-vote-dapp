@@ -1,7 +1,7 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>Frequently Asked Questions</ViewTitle>
-
+    <slot></slot>
     <Island>
       <p>For a step-by-step how-to guide, please start with this article:</p>
       <a target="_blank" href="https://medium.com/aergo/guide-to-aergo-dao-voting-1936b8b44e30">
@@ -45,7 +45,7 @@
 </template>
 <script>
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 
