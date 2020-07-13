@@ -59,18 +59,16 @@
       </div>
     </div>
     <div class="button-wrapper">
-      <div class="vote-button-group" v-if="!!activeAccount">
+      <div class="vote-button-group" v-if="!!activeAccount && !showButton && !isVote">
         <button
-          class="component button button-primary"
-          @click="vote(0)"
-          :disabled="showButton"
+                class="component button button-primary"
+                @click="vote(0)"
         >
           YES
         </button>
         <button
-          class="component button button-primary"
-          @click="vote(1)"
-          :disabled="showButton"
+                class="component button button-primary"
+                @click="vote(1)"
         >
           NO
         </button>
@@ -162,12 +160,10 @@ export default {
       }
     },
     async voteCheck(){
-      if(!this.chk){
-        this.chk = true;
-        this.isVote = await this.$store.dispatch('alreadyVoted', {
-          hash: !this.detail ? '' : this.detail.hash.toString()
-        })
-      }
+      this.isVote = await this.$store.dispatch('alreadyVoted', {
+        hash: !this.detail ? '' : this.detail.hash.toString()
+      })
+
     },
     dateFormat(date){
       const utc= new Date(date*1000);
@@ -178,6 +174,7 @@ export default {
       return num<10?`0${num}`:num
     },
     reload() {
+      this.voteCheck();
       this.$store.dispatch('getAgoraList');
     }
   },
@@ -196,15 +193,10 @@ export default {
       if(this.staked === '...' || this.staked.split(' aergo')[0]==='0'){
         return true;
       }
-      if (
-        temp > this.detail.startDate &&
+      return !(temp > this.detail.startDate &&
         temp < this.detail.endDate &&
-        this.detail.status.toLowerCase() === 'open'
-      ) {
-        this.voteCheck()
-        return this.isVote;
-      }
-      return true;
+        this.detail.status.toLowerCase() === 'open');
+
     },
   },
   created() {
@@ -214,8 +206,7 @@ export default {
     return {
       errorMessage: null,
       councilor: false,
-      isVote:false,
-      chk : false,
+      isVote:true,
       lan:navigator.language,
       scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
     };
