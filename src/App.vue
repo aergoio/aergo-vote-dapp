@@ -98,18 +98,18 @@ export default {
           subItems: votes,
         },
         {
-          id: 'faq',
-          label: 'FAQ',
-          routeAttrs: {
-            to: { name: 'faq' },
-          },
-        },
-        {
           id: 'gov_voting',
           label: 'Governance Voting',
           routeAttrs: {
             to: { name: 'GovernanceVoting' },
           }
+        },
+        {
+          id: 'faq',
+          label: 'FAQ',
+          routeAttrs: {
+            to: { name: 'faq' },
+          },
         },
       ];
     },

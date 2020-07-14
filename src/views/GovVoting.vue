@@ -2,7 +2,7 @@
   <Vertical base="fill">
     <ViewTitle>
       <template #default>
-        Governance Voting
+        Governance Voting (Aergo Agora)
       </template>
       <template #button>
         <Button
@@ -19,9 +19,7 @@
     </Alert>
     <slot></slot>
     <Island>
-      <p>Aergo Argus : Argus...?</p>
-      <p>Aergo Dodona : ??</p>
-      <p>Aergo Agora : ??</p>
+      <p>Aergo Agora is the new on-chain governance system that aims to be a business-minded DAO and decentralised decision-making framework. For more details, please refer to the <a href="https://github.com/aergoio/agora">link</a>.</p>
     </Island>
     <Island>
       <Horizontal :align="'start'">
