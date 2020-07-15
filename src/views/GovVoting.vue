@@ -24,11 +24,13 @@
     <Island>
       <Horizontal :align="'start'">
         <SelectInput
+          :style='{"height":"40px"}'
           placeholder="Category"
           :options="vote_category"
           v-model="category_selected"
         ></SelectInput>
         <SelectInput
+          :style='{"height":"40px"}'
           placeholder="Status"
           :options="status"
           v-model="status_selected"

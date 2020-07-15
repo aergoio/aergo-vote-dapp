@@ -19,7 +19,7 @@ Configure Aergo node:
 ```
 VUE_APP_AERGO_NODE=http://testnet-api.aergo.io:7845
 VUE_APP_CONTRACT_ADDRESS=Amho8hWFGxyJQQ7Uv1G2bNhX1KuvPXsdvchrtMqpyYHJZdD5LuLJ
-VUE_APP_AGORA_URL=https://raw.githubusercontent.com/aergoio/agora_testcase/
+VUE_APP_AGORA_URL=https://raw.githubusercontent.com/aergoio/agora/
 VUE_APP_SCAN_URL=https://testnet.aergoscan.io yarn serve
 ```
 
