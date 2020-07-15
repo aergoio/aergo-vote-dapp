@@ -1,7 +1,7 @@
 <template>
   <Vertical base="fill" class="view-login">
     <ViewTitle>My Account</ViewTitle>
-
+    <slot></slot>
     <Island>
       <p>To vote and view your current votes, please login with Aergo Connect.</p>
       <p>Please use an account for the chain with the id <strong>{{activeChainId ? activeChainId.chainid.magic : "..."}}</strong>.</p>
@@ -16,9 +16,9 @@
   </Vertical>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';

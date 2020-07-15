@@ -2,6 +2,7 @@
   <div>
     <Vertical base="fill">
       <ViewTitle>Vote: {{voteLabel}} ({{id}})</ViewTitle>
+      <slot></slot>
       <Island>
         <p>
           <span class="current-value-label">Current value: </span> 
@@ -37,7 +38,8 @@
 
 <script>
 import VoteTable from '../components/VoteTable';
-import { ViewTitle, Alert } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
+import { Alert } from '@aergoenterprise/lib-components/src/basic';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Filters/FilterItems.vue';

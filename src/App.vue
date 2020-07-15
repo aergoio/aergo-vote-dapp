@@ -3,26 +3,32 @@
     <ViewWithSidebar class="fill-viewport">
       <template #sidebar>
         <router-link :to="{ name: 'about' }">
-          <LogoGeneric text="Voting" :size="18" />
+          <LogoGeneric text="Portal" :size="20" />
         </router-link>
         <SidebarMenu :items="menuItems" />
         <LoginWithAergoConnect @click.native="connectAccount" :loggedInAddress="activeAccount ? activeAccount.address : ''" />
       </template>
       <template #default>
-        <Alert v-if="connectionError" type="danger">{{connectionError}}</Alert>
-        <router-view />
+        <Loading v-if="isLoading"/>
+
+        <router-view>
+          <Alert v-if="connectionError" type="danger"
+                 :style="{'margin-bottom':'15px','width':'calc(100% - 90px)'}">{{connectionError
+            }}</Alert>
+        </router-view>
       </template>
     </ViewWithSidebar>
   </div>
 </template>
 <script>
-import { mapState } from "vuex"
+import { mapState } from 'vuex'
 import { LogoGeneric, Alert } from '@aergoenterprise/lib-components/src/basic';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { ViewWithSidebar } from '@aergoenterprise/lib-components/src/composite/templates';
-import { SidebarMenu } from '@aergoenterprise/lib-components/src/composite/Sidebar';
 import { capitalize } from '@aergoenterprise/lib-components/src/filters/capitalize';
 import voteDefinitions from './votes.json';
+import Loading from './components/Loading';
+import {SidebarMenu} from './components/SidebarMenu/';
 
 export default {
   name: 'App',
@@ -32,14 +38,16 @@ export default {
     LogoGeneric,
     LoginWithAergoConnect,
     Alert,
+    Loading
   },
   data() {
     return {
       account: null,
+      isPending:this.pending
     };
   },
   computed: {
-    ...mapState(['systemVotings', 'activeChainId', 'activeAccount', 'connectionError']),
+    ...mapState(['systemVotings', 'activeChainId', 'activeAccount', 'connectionError','isLoading']),
     menuItems() {
       const votes = this.systemVotings.map((item, index) => {
         return {
@@ -51,6 +59,13 @@ export default {
         };
       });
       return [
+        {
+          id:'home',
+          label: 'Home',
+          routeAttrs :{
+            to: {name: 'about'}
+          }
+        },
         {
           id: 'account',
           label: 'My Account',
@@ -76,11 +91,18 @@ export default {
         },
         {
           id: 'votes',
-          label: 'Current Votes',
+          label: 'System Voting',
           routeAttrs: {
             to: { name: 'voting-overview' },
           },
           subItems: votes,
+        },
+        {
+          id: 'gov_voting',
+          label: 'Governance Voting',
+          routeAttrs: {
+            to: { name: 'GovernanceVoting' },
+          }
         },
         {
           id: 'faq',
@@ -88,7 +110,7 @@ export default {
           routeAttrs: {
             to: { name: 'faq' },
           },
-        }
+        },
       ];
     },
   },
@@ -110,7 +132,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 :root {
   --color-primary-hue: 324;
 }
@@ -125,9 +147,15 @@ export default {
 }
 .view-with-sidebar .view-sidebar {
   flex: 1 0 240px;
-  max-width: 240px;
+  max-width: 255px;
+  box-shadow: 5px 2px 8px 0 #e6e9f1;
+  z-index: 1;
 }
 .view-with-sidebar .view-sidebar .sidebar-inner-wrap {
-  width: 240px;
+  width: 255px;
 }
+.view-content-wrap{
+  padding: 0  0 0 20px !important;
+}
+
 </style>

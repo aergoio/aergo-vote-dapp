@@ -1,7 +1,7 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>Vote reward history</ViewTitle>
-
+    <slot></slot>
     <Island>
       <IslandHeader title="Total" />
 
@@ -22,10 +22,10 @@
 </template>
 <script>
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composite/tables';
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 import JSBI from 'jsbi';
 import { Amount } from '@herajs/client';
 import { formatDistance } from 'date-fns'

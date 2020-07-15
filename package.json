@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
-    "@herajs/client": "^0.16.4",
+    "@herajs/client": "^0.20.3",
     "core-js": "^2.6.5",
+    "crypto-js": "^4.0.0",
     "date-fns": "^2.8.1",
     "jsbi": "^3.1.1",
+    "v-calendar": "^1.0.6",
     "vue": "^2.6.10",
     "vue-analytics": "^5.18.0",
     "vue-router": "^3.0.3",
@@ -42,7 +44,10 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "quotes": ["error", "single"],
+      "indent": ["error", 2]
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

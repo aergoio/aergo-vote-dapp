@@ -1,7 +1,7 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>Account</ViewTitle>
-
+    <slot></slot>
     <Island>
       <IslandHeader title="Details" />
 
@@ -39,7 +39,7 @@
 </template>
 <script>
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { ViewTitle } from '@aergoenterprise/lib-components/src/basic';
+import ViewTitle from '../components/ViewTitle';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import VoteHistoryTable from '../components/VoteHistoryTable.vue';
 import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composite/tables';
