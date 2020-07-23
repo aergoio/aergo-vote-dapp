@@ -136,8 +136,8 @@ export default {
           e.originalEvent.clipboardData ||
           window.clipboardData
         ).getData('text');
-      const regex = /https:\/\/raw\.githubusercontent\.com\/aergoio\/\w+\/(?=[\d\w]{30,}\/AIP-\d+\.md)/gi;
-      const regex2 = /https:\/\/github\.com\/aergoio\/agora_testcase\/blob\//gi;
+      const regex = /https:\/\/raw\.githubusercontent\.com\/aergoio\/\w+\/(?=[\d\w]{30,}\/AIPs\/AIP-\d+\.md)/gi;
+      const regex2 = /https:\/\/github\.com\/aergoio\/agora\/blob\//gi;
       e.preventDefault();
 
       if (regex.test(url) || regex2.test(url)) {
