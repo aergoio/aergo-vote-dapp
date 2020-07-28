@@ -94,6 +94,10 @@ function rejectAgenda(hash)
     _voteAgenda(hash, "reject")
 end
 
+local _isSufficientStakingPeriod = function (agenda, lastBlockHeight)
+    return lastBlockHeight + (agenda.endDate - agenda.startDate) < system.getBlockheight()
+end
+
 function _voteAgenda(hash, key)
     local agenda = _getAgenda(hash)
     assert(agenda ~= nil, "not found the agenda: " .. hash)
@@ -102,11 +106,13 @@ function _voteAgenda(hash, key)
     assert(agenda.startDate <= now, "voting has not started: AIP-" .. agenda.aip)
     assert(agenda.endDate >= now, "voting has ended: AIP-" .. agenda.aip)
     local voter = system.getSender()
-    local stakingAmount = contract.balance(voter, "staking")
-    assert(stakingAmount > bignum.number(0), "staked amount is zero")
+    local stakedAmount, when = contract.balance(voter, "stakingandwhen")
+    assert(stakedAmount > bignum.number(0), "staked amount is zero")
+    assert(_isSufficientStakingPeriod(agenda, when),
+           string.format("cannot vote within %d seconds after staking", agenda.endDate - agenda.startDate + 1))
     assert(voters[hash][voter] == nil, "you voted: " .. voter)
     voters[hash][voter] = true
-    agenda[key] = agenda[key] + stakingAmount
+    agenda[key] = agenda[key] + stakedAmount
     _setAgenda(hash, agenda)
 end
 
@@ -158,7 +164,8 @@ function checkDelegation(fname, ...)
         if voters[hash][voter] ~= nil then
             return false
         end
-        return contract.balance(voter, "staking") > bignum.number(0)
+        local stakedAmount, when = contract.balance(voter, "stakingandwhen")
+        return stakedAmount > bignum.number(0) and _isSufficientStakingPeriod(agenda, when)
     end
     return false
 end
