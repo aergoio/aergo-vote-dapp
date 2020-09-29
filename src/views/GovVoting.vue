@@ -20,6 +20,7 @@
     <slot></slot>
     <Island>
       <p>Aergo Agora is the new on-chain governance system that aims to be a business-minded DAO and decentralised decision-making framework. For more details, please refer to the <a href="https://github.com/aergoio/agora">link</a>.</p>
+      <p>If you have staking and system voting, you can vote after 48 hours.</p>
     </Island>
     <Island>
       <Horizontal :align="'start'">
