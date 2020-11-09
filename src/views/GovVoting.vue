@@ -6,32 +6,37 @@
       </template>
       <template #button>
         <Button
-                @click="onClickProposal()"
-                :class="'button button-primary button-uppercase'"
-                v-if="isCouncilor"
-        >New Proposal
+          @click="onClickProposal()"
+          :class="'button button-primary button-uppercase'"
+          v-if="isCouncilor"
+          >New Proposal
         </Button>
       </template>
     </ViewTitle>
-    <Alert type="success" :style="{'margin-bottom':'15px'}" v-if="query.tx"
+    <Alert type="success" :style="{ 'margin-bottom': '15px' }" v-if="query.tx"
       >{{ 'success! : ' }}
       <a :href="scan_url + query.tx">{{ query.tx }}</a>
     </Alert>
     <slot></slot>
     <Island>
-      <p>Aergo Agora is the new on-chain governance system that aims to be a business-minded DAO and decentralised decision-making framework. For more details, please refer to the <a href="https://github.com/aergoio/agora">link</a>.</p>
+      <p>
+        Aergo Agora is the new on-chain governance system that aims to be a
+        business-minded DAO and decentralised decision-making framework. For
+        more details, please refer to the
+        <a href="https://github.com/aergoio/agora">link</a>.
+      </p>
       <p>If you have staking and system voting, you can vote after 48 hours.</p>
     </Island>
     <Island>
       <Horizontal :align="'start'">
         <SelectInput
-          :style='{"height":"40px"}'
+          :style="{ height: '40px' }"
           placeholder="Category"
           :options="vote_category"
           v-model="category_selected"
         ></SelectInput>
         <SelectInput
-          :style='{"height":"40px"}'
+          :style="{ height: '40px' }"
           placeholder="Status"
           :options="status"
           v-model="status_selected"
@@ -153,7 +158,7 @@ export default {
       mask: {
         input: 'YYYY-MM-DD'
       },
-      scan_url: process.env.VUE_APP_SCAN_URL+'/transaction/'
+      scan_url: process.env.VUE_APP_SCAN_URL + '/transaction/'
     };
   },
   methods: {
@@ -161,14 +166,15 @@ export default {
       this.$router.push({ name: 'GovernanceVotingNew' });
     },
     reload(e) {
-      if(e){
-        e.target.style.transformOrigin = 'center'
-        e.target.animate([
-          {transform: 'rotateZ(0deg)'},
-          {transform: 'rotateZ(360deg)'}], {
-          duration: 1000,
-          iterations: 3
-        })
+      if (e) {
+        e.target.style.transformOrigin = 'center';
+        e.target.animate(
+          [{ transform: 'rotateZ(0deg)' }, { transform: 'rotateZ(360deg)' }],
+          {
+            duration: 1000,
+            iterations: 3
+          }
+        );
       }
       this.$store.dispatch('getAgoraList');
       this.category_selected = 'all';
@@ -193,6 +199,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.component.island.padded {
+  overflow-x: visible !important;
+}
+
 .title-with-button {
   display: inline-flex;
   justify-content: space-between;
@@ -232,7 +242,7 @@ export default {
 
   .number {
     font-size: 0.7rem;
-    background-color: var(--color-primary);//#8FCFD1;
+    background-color: var(--color-primary); //#8FCFD1;
     color: white;
     padding: 0 0.5em;
     border-radius: 5px;
@@ -292,7 +302,7 @@ export default {
   letter-spacing: -0.01em;
   width: 13em;
 }
-  .button-primary{
-    background-color: #2F6F72 !important
-  }
+.button-primary {
+  background-color: #2f6f72 !important;
+}
 </style>

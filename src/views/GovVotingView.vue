@@ -1,21 +1,25 @@
 <template>
   <Vertical base="fill">
     <ViewTitle>
-    <template #default>
-      Governance Voting
-    </template>
-    <template #button>
-      <Button
-              @click="onClickProposal"
-              type="button"
-              class="component button button-primary button-uppercase"
-              v-if="isCouncilor"
-      >New Proposal
-      </Button>
-    </template>
+      <template #default>
+        Governance Voting
+      </template>
+      <template #button>
+        <Button
+          @click="onClickProposal"
+          type="button"
+          class="component button button-primary button-uppercase"
+          v-if="isCouncilor"
+          >New Proposal
+        </Button>
+      </template>
     </ViewTitle>
-    <Alert v-if="errorMessage" :type="errorMessage.type" :style="{'margin-bottom':'15px'}">
-      {{errorMessage.content}}
+    <Alert
+      v-if="errorMessage"
+      :type="errorMessage.type"
+      :style="{ 'margin-bottom': '15px' }"
+    >
+      {{ errorMessage.content }}
     </Alert>
     <slot></slot>
     <div class="result-wrapper">
@@ -31,7 +35,9 @@
           <div class="text-box">
             <div class="text-detail-box">
               <span>Draft Link</span>
-              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{ detail.url.replace(/[\w\d]{30,}/gi, 'master') }}</a>
+              <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{
+                detail.url.replace(/[\w\d]{30,}/gi, 'master')
+              }}</a>
             </div>
             <div class="text-detail-box">
               <span>SHA256</span>
@@ -41,35 +47,42 @@
           <div class="text-box">
             <div class="text-detail-box">
               <span>issuer</span>
-              <a :href="scan_url+detail.issuer">{{ detail.issuer }}</a>
+              <a :href="scan_url + detail.issuer">{{ detail.issuer }}</a>
             </div>
             <div class="text-detail-box">
               <span>Start date ~ End date</span>
-              <p :style="{'margin':0,'whiteSpace': 'initial'}">
-                Start : {{ dateFormat(detail.startDate) }}{{detail.curStatus === 'register' ?`(left
-                ${detail.leftTime})`:''}}
-                <br/>
-                End : {{ dateFormat(detail.endDate) }}{{detail.curStatus === 'open' ?`(left
-                ${detail.leftTime})`:''}}
+              <p :style="{ margin: 0, whiteSpace: 'initial' }">
+                Start : {{ dateFormat(detail.startDate)
+                }}{{
+                  detail.curStatus === 'register'
+                    ? `(left
+                ${detail.leftTime})`
+                    : ''
+                }}
+                <br />
+                End : {{ dateFormat(detail.endDate)
+                }}{{
+                  detail.curStatus === 'open'
+                    ? `(left
+                ${detail.leftTime})`
+                    : ''
+                }}
               </p>
             </div>
           </div>
         </div>
-        <VoteGraph :yes="detail.yes" :no="detail.no" display-number/>
+        <VoteGraph :yes="detail.yes" :no="detail.no" display-number />
       </div>
     </div>
     <div class="button-wrapper">
-      <div class="vote-button-group" v-if="!!activeAccount && !showButton && !isVote">
-        <button
-                class="component button button-primary"
-                @click="vote(0)"
-        >
+      <div
+        class="vote-button-group"
+        v-if="!!activeAccount && !showButton && !isVote"
+      >
+        <button class="component button button-primary" @click="vote(0)">
           YES
         </button>
-        <button
-                class="component button button-primary"
-                @click="vote(1)"
-        >
+        <button class="component button button-primary" @click="vote(1)">
           NO
         </button>
       </div>
@@ -99,12 +112,12 @@
 </template>
 
 <script>
-import {Alert} from '@aergoenterprise/lib-components/src/basic';
+import { Alert } from '@aergoenterprise/lib-components/src/basic';
 import ViewTitle from '../components/ViewTitle';
-import {Vertical} from '@aergoenterprise/lib-components/src/layout';
-import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
-import {mapGetters, mapState} from 'vuex';
-import {VoteGraph} from '../components/VoteGraph';
+import { Vertical } from '@aergoenterprise/lib-components/src/layout';
+import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
+import { mapGetters, mapState } from 'vuex';
+import { VoteGraph } from '../components/VoteGraph';
 
 export default {
   components: {
@@ -141,41 +154,52 @@ export default {
       this.$store.commit('setLoading', false);
       const receipt = await this.$store.dispatch('getReceipt', hash.toString());
       switch (receipt.status) {
-      case 'SUCCESS':
-        this.errorMessage = {
-          type: 'success',
-          content: `Success Voting. Transaction hash : ${hash.toString()}`
-        };
-        this.reload();
-        return;
-      case 'ERROR':
-        this.errorMessage = {
-          type: 'danger',
-          content: receipt.result.split(/:[0-9]:/gi)[1].trim()
-        };
-        return;
-      default:
-        console.log('...');
-        return;
+        case 'SUCCESS':
+          this.errorMessage = {
+            type: 'success',
+            content: `Success Voting. Transaction hash : ${hash.toString()}`
+          };
+          this.reload();
+          return;
+        case 'ERROR':
+          this.errorMessage = {
+            type: 'danger',
+            content: receipt.result.split(/:[0-9]:/gi)[1].trim()
+          };
+          return;
+        default:
+          console.log('...');
+          return;
       }
     },
-    async voteCheck(){
+    async voteCheck() {
       this.isVote = await this.$store.dispatch('alreadyVoted', {
         hash: !this.detail ? '' : this.detail.hash.toString()
-      })
-
+      });
     },
-    dateFormat(date){
-      const utc= new Date(date*1000);
-      const {setZero} = this;
-      return `${utc.getUTCFullYear()}-${setZero(utc.getUTCMonth() + 1)}-${setZero(utc.getUTCDate())} ${setZero(utc.getUTCHours())}:${setZero(utc.getUTCMinutes())}:${setZero(utc.getUTCSeconds())} UTC`;
+    dateFormat(date) {
+      const utc = new Date(date * 1000);
+      const { setZero } = this;
+      return `${utc.getUTCFullYear()}-${setZero(
+        utc.getUTCMonth() + 1
+      )}-${setZero(utc.getUTCDate())} ${setZero(utc.getUTCHours())}:${setZero(
+        utc.getUTCMinutes()
+      )}:${setZero(utc.getUTCSeconds())} UTC`;
     },
-    setZero(num){
-      return num<10?`0${num}`:num
+    setZero(num) {
+      return num < 10 ? `0${num}` : num;
     },
     reload() {
       this.voteCheck();
+      this.stakeDuplicateChk();
       this.$store.dispatch('getAgoraList');
+    },
+    stakeDuplicateChk() {
+      if (!this.activeAccount) {
+        return;
+      }
+      const temp = this.$store.dispatch('getStakeTime');
+      console.log(temp);
     }
   },
   computed: {
@@ -187,17 +211,18 @@ export default {
     showButton() {
       const temp = new Date().getTime() / 1000;
 
-      if(!this.detail){
+      if (!this.detail) {
         return true;
       }
-      if(this.staked === '...' || this.staked.split(' aergo')[0]==='0'){
+      if (this.staked === '...' || this.staked.split(' aergo')[0] === '0') {
         return true;
       }
-      return !(temp > this.detail.startDate &&
+      return !(
+        temp > this.detail.startDate &&
         temp < this.detail.endDate &&
-        this.detail.status.toLowerCase() === 'open');
-
-    },
+        this.detail.status.toLowerCase() === 'open'
+      );
+    }
   },
   created() {
     this.reload();
@@ -206,9 +231,9 @@ export default {
     return {
       errorMessage: null,
       councilor: false,
-      isVote:true,
-      lan:navigator.language,
-      scan_url:process.env.VUE_APP_SCAN_URL+'/account/'
+      isVote: true,
+      lan: navigator.language,
+      scan_url: process.env.VUE_APP_SCAN_URL + '/account/'
     };
   }
 };
@@ -271,17 +296,18 @@ export default {
         position: relative;
         background-color: #f2f2f2;
         border-radius: 3px;
-        & +.text-detail-box{
+        & + .text-detail-box {
           margin-top: 1em;
         }
         span {
           position: absolute;
-          top: -.5em;
+          top: -0.5em;
           text-shadow: #ffffff;
           font-weight: bold;
-          padding: 0 .5em;
+          padding: 0 0.5em;
         }
-        p,a{
+        p,
+        a {
           font-weight: normal;
         }
       }
@@ -312,7 +338,7 @@ export default {
     float: right;
   }
 }
-.button-primary{
-  background-color: #2F6F72 !important
+.button-primary {
+  background-color: #2f6f72 !important;
 }
 </style>

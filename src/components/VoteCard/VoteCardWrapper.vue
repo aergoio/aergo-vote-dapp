@@ -108,7 +108,7 @@ export default {
 
     .item-content {
       flex: 1;
-      word-break: break-all;
+      word-break: break-word;
     }
   }
 }
