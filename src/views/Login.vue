@@ -3,13 +3,36 @@
     <ViewTitle>My Account</ViewTitle>
     <slot></slot>
     <Island>
-      <p>To vote and view your current votes, please login with Aergo Connect.</p>
-      <p>Please use an account for the chain with the id <strong>{{activeChainId ? activeChainId.chainid.magic : "..."}}</strong>.</p>
+      <p>
+        To vote and view your current votes, please login with Aergo Connect.
+      </p>
+      <p>
+        Please use an account for the chain with the id
+        <strong>{{
+          activeChainId ? activeChainId.chainid.magic : '...'
+        }}</strong
+        >.
+      </p>
       <div class="row">
         <LoginWithAergoConnect @click.native="connectAccount" />
         <span>or</span>
-        <a target="_blank" href="https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc?hl=en">
-          <Button rounded type="simple" style="display: inline-block">Install from Chrome Webstore</Button>
+        <a href="#">
+          <Button
+            rounded
+            type="simple"
+            style="display: inline-block"
+            @click="$store.commit('setQRPopupOpen', true)"
+            >Mobile Wallet
+          </Button>
+        </a>
+        <span>or</span>
+        <a
+          target="_blank"
+          href="https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc?hl=en"
+        >
+          <Button rounded type="simple" style="display: inline-block"
+            >Install from Chrome Webstore</Button
+          >
         </a>
       </div>
     </Island>
@@ -19,28 +42,32 @@
 import { mapState } from 'vuex';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import ViewTitle from '../components/ViewTitle';
-import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
+import {
+  Island,
+  IslandHeader
+} from '@aergoenterprise/lib-components/src/composite';
 import { LoginWithAergoConnect } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 
 export default {
   components: {
     Island,
-    IslandHeader,
     ViewTitle,
     Vertical,
     LoginWithAergoConnect,
-    Button,
+    Button
   },
   computed: {
-    ...mapState(['activeChainId', 'activeAccount']),
+    ...mapState(['activeChainId', 'activeAccount'])
   },
   methods: {
-    async connectAccount () {
+    async connectAccount() {
       const account = await this.$store.dispatch('refreshActiveAccount');
       const chainId = this.activeChainId.chainid.magic;
       if (chainId != account.chainId) {
-        alert(`The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`);
+        alert(
+          `The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`
+        );
         return;
       }
     }
@@ -48,20 +75,25 @@ export default {
   watch: {
     activeAccount() {
       if (this.activeAccount) {
-        this.$router.push({ name: 'account', params: { address: this.activeAccount.address }});
+        this.$router.push({
+          name: 'account',
+          params: { address: this.activeAccount.address }
+        });
       }
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .view-login .login-with-aergo-connect {
   margin-left: -5px;
   width: 200px;
 }
+
 .view-login strong {
   font-weight: 500;
 }
+
 .row {
   display: flex;
   align-items: center;

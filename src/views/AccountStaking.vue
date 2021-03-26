@@ -6,11 +6,19 @@
       <IslandHeader title="Current status" />
 
       <KVTable>
-        <KVTableRow label="Address">{{ address }} <span v-if="activeChainId">({{ activeChainId.chainid.magic }})</span></KVTableRow>
-        <KVTableRow label="Last action" v-if="when">Block no. {{when}} ({{accountLastActionTime}})</KVTableRow>
+        <KVTableRow label="Address"
+          >{{ address }}
+          <span v-if="activeChainId">({{ activeChainId.chainid.magic }})</span>
+        </KVTableRow>
+        <KVTableRow label="Last action" v-if="when"
+          >Block no. {{ when }} ({{ accountLastActionTime }})</KVTableRow
+        >
         <KVTableRow label="Next action available" v-if="when">
           <span v-if="nextActionAvailable">now</span>
-          <span v-else>Block no. {{when + (60*60*24)}} (in {{nextActionRelativeString}})</span>
+          <span v-else
+            >Block no. {{ when + 60 * 60 * 24 }} (in
+            {{ nextActionRelativeString }})</span
+          >
         </KVTableRow>
       </KVTable>
     </Island>
@@ -22,35 +30,67 @@
         <LoginWithAergoConnect @click.native="connectAccount" />
       </div>
       <div v-else>
-
         <KVTable>
-          <KVTableRow label="Total balance" v-if="accountDetail">{{ currentTotalBalance.toUnit('aergo').toString() }}</KVTableRow>
-          <KVTableRow label="Stake before change" v-if="accountDetail">{{ accountDetail.staked.toUnit('aergo').toString() }}</KVTableRow>
+          <KVTableRow label="Total balance" v-if="accountDetail"
+            >{{ currentTotalBalance.toUnit('aergo').toString() }}
+          </KVTableRow>
+          <KVTableRow label="Stake before change" v-if="accountDetail">
+            {{ accountDetail.staked.toUnit('aergo').toString() }}
+          </KVTableRow>
           <KVTableRow label="Stake after change" v-if="accountDetail">
             <div class="amount-unit-input">
               <Input v-model="stakeAmount" size="small" /> aergo
-              <span v-if="stakedTooMuch" class="error"><Icon name="danger-circle" :size="18" /> Can't stake more than total balance.</span>
-              <span v-if="stakedTooLittle" class="error"><Icon name="danger-circle" :size="18" /> The minimum staking amount is {{this.activeChainId.stakingminimum | formatToken}}.</span>
+              <span v-if="stakedTooMuch" class="error"
+                ><Icon name="danger-circle" :size="18" /> Can't stake more than
+                total balance.</span
+              >
+              <span v-if="stakedTooLittle" class="error"
+                ><Icon name="danger-circle" :size="18" /> The minimum staking
+                amount is
+                {{ this.activeChainId.stakingminimum | formatToken }}.</span
+              >
             </div>
           </KVTableRow>
-          <KVTableRow label="Unstaked balance" v-if="accountDetail">{{ unstakedBalance.toUnit('aergo').toString() }}</KVTableRow>
+          <KVTableRow label="Unstaked balance" v-if="accountDetail"
+            >{{ unstakedBalance.toUnit('aergo').toString() }}
+          </KVTableRow>
           <KVTableRow label="Change from current" v-if="accountDetail">
             <div class="amount-unit-input">
-              <span>{{stakeChangeAmountSign}}{{ stakeChangeAmount.toUnit('aergo').toString() }}</span>
-              <Button type="primary" :disabled="!nextActionAvailable || stakeChangeAmount.equal(0)" @click="requestStakeChange">Change stake</Button>
-              <span v-if="!nextActionAvailable" class="error"><Icon name="danger-circle" :size="18" /> You need to wait for {{nextActionRelativeString}} before adjusting your stake.</span>
+              <span
+                >{{ stakeChangeAmountSign
+                }}{{ stakeChangeAmount.toUnit('aergo').toString() }}</span
+              >
+              <Button
+                type="primary"
+                :disabled="!nextActionAvailable || stakeChangeAmount.equal(0)"
+                @click="requestStakeChange"
+                >Change stake
+              </Button>
+              <span v-if="!nextActionAvailable" class="error"
+                ><Icon name="danger-circle" :size="18" /> You need to wait for
+                {{ nextActionRelativeString }} before adjusting your
+                stake.</span
+              >
             </div>
           </KVTableRow>
         </KVTable>
 
-        <Alert :type="message.type" v-if="message.text">{{message.text}}</Alert>
-
+        <Alert :type="message.type" v-if="message.text">{{
+          message.text
+        }}</Alert>
       </div>
     </Island>
 
     <Island>
       <IslandHeader title="Possible voting reward" />
-      <RewardCalc basis="stake" :totalVotes="activeChainId.stakingtotal" :accountVotes="stakeAmountAsAmount" :dailyTotalAmount="dailyReward" v-if="activeChainId" updating />
+      <RewardCalc
+        basis="stake"
+        :totalVotes="activeChainId.stakingtotal"
+        :accountVotes="stakeAmountAsAmount"
+        :dailyTotalAmount="dailyReward"
+        v-if="activeChainId"
+        updating
+      />
     </Island>
   </Vertical>
 </template>
@@ -58,13 +98,19 @@
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
 import ViewTitle from '../components/ViewTitle';
 import { Alert, Icon } from '@aergoenterprise/lib-components/src/basic';
-import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
+import {
+  Island,
+  IslandHeader
+} from '@aergoenterprise/lib-components/src/composite';
 import VoteHistoryTable from '../components/VoteHistoryTable.vue';
-import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composite/tables';
-import { mapState } from 'vuex'
+import {
+  KVTable,
+  KVTableRow
+} from '@aergoenterprise/lib-components/src/composite/tables';
+import { mapState } from 'vuex';
 import JSBI from 'jsbi';
 import { Amount } from '@herajs/client';
-import { formatDistance } from 'date-fns'
+import { formatDistance } from 'date-fns';
 import RewardCalc from '../components/RewardCalc';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
@@ -78,19 +124,24 @@ export default {
     ViewTitle,
     Vertical,
     VoteHistoryTable,
-    KVTable, KVTableRow,
+    KVTable,
+    KVTableRow,
     RewardCalc,
-    Button, Input,
-    Alert, Icon,
-    LoginWithAergoConnect,
+    Button,
+    Input,
+    Alert,
+    Icon,
+    LoginWithAergoConnect
   },
   computed: {
     ...mapState(['activeChainId', 'activeAccount']),
     dailyReward() {
-      return new Amount('0.16 aergo').mul(60*60*24);
+      return new Amount('0.16 aergo').mul(60 * 60 * 24);
     },
     nextActionAvailable() {
-      return !this.accountNextActionTime || this.accountNextActionTime < new Date();
+      return (
+        !this.accountNextActionTime || this.accountNextActionTime < new Date()
+      );
     },
     nextActionRelativeString() {
       if (!this.accountNextActionTime) {
@@ -115,78 +166,111 @@ export default {
       return this.currentTotalBalance.compare(this.stakeAmountAsAmount) < 0;
     },
     stakedTooLittle() {
-      if (!this.activeChainId && !this.activeChainId.stakingminimum) return false;
-      return !this.stakeAmountAsAmount.equal(0) && this.stakeAmountAsAmount.compare(this.activeChainId.stakingminimum) < 0;
+      if (!this.activeChainId && !this.activeChainId.stakingminimum)
+        return false;
+      return (
+        !this.stakeAmountAsAmount.equal(0) &&
+        this.stakeAmountAsAmount.compare(this.activeChainId.stakingminimum) < 0
+      );
     },
     stakeAmountAsAmount() {
       return new Amount(this.stakeAmount.replace(/[^\d\.]/g, ''), 'aergo');
     },
     when() {
       if (this.accountDetail && this.accountDetail.when) {
-        this.$store.dispatch('getBlock', { blockNoOrHash: this.accountDetail.when}).then((block) => {
-          this.accountLastActionTime = new Date(block.header.timestamp/1000000);
-          this.accountNextActionTime = new Date(block.header.timestamp/1000000 + (60*60*24*1000));
-        });
+        this.$store
+          .dispatch('getBlock', { blockNoOrHash: this.accountDetail.when })
+          .then(block => {
+            this.accountLastActionTime = new Date(
+              block.header.timestamp / 1000000
+            );
+            this.accountNextActionTime = new Date(
+              block.header.timestamp / 1000000 + 60 * 60 * 24 * 1000
+            );
+          });
         return this.accountDetail.when;
       }
       return '';
     }
   },
   methods: {
-    async connectAccount () {
+    async connectAccount() {
       const account = await this.$store.dispatch('refreshActiveAccount');
       const chainId = this.activeChainId.chainid.magic;
       if (chainId != account.chainId) {
-        alert(`The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`);
+        alert(
+          `The selected account's chain id does not match the expected chain id ${chainId}. Please select another account.`
+        );
         return;
       }
       if (account.address != this.address) {
-        this.$router.push({name: 'staking', params: {address: account.address}});
+        this.$router.push({
+          name: 'staking',
+          params: { address: account.address }
+        });
       }
     },
-    async loadAccountDetail () {
-      this.accountDetail = await this.$store.dispatch('getAccountDetail', { address: this.address });
-      this.stakeAmount = this.accountDetail.staked.toUnit('aergo').formatNumber();
+    async loadAccountDetail() {
+      this.accountDetail = await this.$store.dispatch('getAccountDetail', {
+        address: this.address
+      });
+      this.stakeAmount = this.accountDetail.staked
+        .toUnit('aergo')
+        .formatNumber();
     },
     onSendTxResult(event) {
       if ('error' in event.detail) {
-        this.message = {type: 'danger', text: 'An error occurred.'};
+        this.message = { type: 'danger', text: 'An error occurred.' };
         return;
       }
-      this.message = { type: 'success', text: 'Stake has been adjusted. Transaction hash: ' + event.detail.hash };
-      setTimeout(()=>{
+      this.message = {
+        type: 'success',
+        text: 'Stake has been adjusted. Transaction hash: ' + event.detail.hash
+      };
+      setTimeout(() => {
         this.loadAccountDetail();
-        this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE });
-      }, 2000)
+        this.$store.dispatch('getAergo', {
+          url: process.env.VUE_APP_AERGO_NODE
+        });
+      }, 2000);
     },
-    async requestStakeChange () {
+    async requestStakeChange() {
       console.log('Requesting stake change', this.stakeChangeAmount.toString());
       let account = await this.$store.dispatch('getActiveAccount');
       const addStake = this.stakeChangeAmount.compare(0) >= 0;
-      const amount = addStake ? this.stakeChangeAmount : this.stakeChangeAmount.mul(-1);
-      const tx = {
-        from: account.address,
-        to: 'aergo.system',
-        type: 1,
-        amount: `${amount}`,
-        payload_json: {
-          Name: addStake ? 'v1stake' : 'v1unstake',
-          Args: []
-        },
-      };
-      window.addEventListener('AERGO_SEND_TX_RESULT', this.onSendTxResult, { once: true });
-      window.postMessage({
+      const amount = addStake
+        ? this.stakeChangeAmount
+        : this.stakeChangeAmount.mul(-1);
+      const sendData = {
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
-        data: tx,
-      });
-    },
+        data: {
+          from: account.address,
+          to: 'aergo.system',
+          type: 1,
+          amount: `${amount}`,
+          payload_json: {
+            Name: addStake ? 'v1stake' : 'v1unstake',
+            Args: []
+          }
+        }
+      };
+      if (!this.$store.state.isMobile) {
+        window.addEventListener('AERGO_SEND_TX_RESULT', this.onSendTxResult, {
+          once: true
+        });
+        window.postMessage(sendData);
+      } else {
+        await this.$store.commit('setQRData', JSON.stringify(sendData));
+        await this.$store.commit('setQRPopupOpen', true);
+      }
+    }
   },
   watch: {
-    '$route' (to) {
+    $route(to) {
       this.accountDetail = null;
       this.stakeAmount = '0';
-      this.message = {type:'success'};
+      this.message = { type: 'success' };
       this.accountLastActionTime = null;
       this.accountNextActionTime = null;
       this.loadAccountDetail();
@@ -200,9 +284,9 @@ export default {
     stakeAmount: '0',
     accountLastActionTime: null,
     accountNextActionTime: null,
-    message: {type:'success'},
+    message: { type: 'success' }
   })
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -213,6 +297,7 @@ export default {
   > * {
     margin-right: 10px;
   }
+
   .error {
     margin-left: 20px;
     color: #ee4648;

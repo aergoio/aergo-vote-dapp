@@ -63,7 +63,7 @@
       v-for="list in agoraList(
         category_selected,
         status_selected,
-        datepicker_range || { start: null, end: null }
+        datepicker_range
       )"
       :key="list.title"
     >
@@ -214,6 +214,7 @@ export default {
     height: fit-content;
   }
 }
+
 .button-normal {
   color: white;
 }
@@ -302,6 +303,7 @@ export default {
   letter-spacing: -0.01em;
   width: 13em;
 }
+
 .button-primary {
   background-color: #2f6f72 !important;
 }

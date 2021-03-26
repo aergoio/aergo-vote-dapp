@@ -30,9 +30,7 @@ export default new Vuex.Store({
   state: {
     aergo: null,
     abi: null,
-    systemVotings: Object.freeze(
-      Object.keys(votes).map((key) => ({ id: key }))
-    ),
+    systemVotings: Object.freeze(Object.keys(votes).map(key => ({ id: key }))),
     blocksByHash: {},
     activeChainId: '',
     activeAccount: null,
@@ -64,7 +62,10 @@ export default new Vuex.Store({
         value: 'closed'
       }
     ],
-    isLoading: false
+    isLoading: false,
+    QRPopupOpen: false,
+    isMobile: false,
+    QRdata: null
   },
   mutations: {
     setAergo(state, url) {
@@ -105,6 +106,15 @@ export default new Vuex.Store({
     },
     setAergoAbi(state, abi) {
       state.abi = abi;
+    },
+    setQRPopupOpen(state, isOpen) {
+      state.QRPopupOpen = isOpen;
+    },
+    setDevice(state, isMobile) {
+      state.isMobile = isMobile;
+    },
+    setQRData(state, QRdata) {
+      state.QRdata = QRdata;
     }
   },
   actions: {
@@ -115,7 +125,7 @@ export default new Vuex.Store({
       commit('setConnectionError', false);
       state.aergo
         .getChainInfo()
-        .then((result) => {
+        .then(result => {
           commit('setActiveChainId', result);
         })
         .catch(() => {
@@ -128,7 +138,7 @@ export default new Vuex.Store({
     getBlock({ dispatch, state }, { blockNoOrHash }) {
       if (state.blocksByHash[blockNoOrHash]) {
         //console.log('return block from cache', blockNoOrHash)
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           resolve(state.blocksByHash[blockNoOrHash]);
         });
       }
@@ -148,32 +158,30 @@ export default new Vuex.Store({
     async getAccountVotes(context, { address }) {
       return this.state.aergo.getAccountVotes(address);
     },
-    getActiveAccount({ commit, state, dispatch }) {
+    async getActiveAccount({ commit, state, dispatch }) {
       if (state.activeAccount) {
-        return new Promise((resolve) => {
-          resolve(state.activeAccount);
-        });
+        return state.activeAccount;
       }
-      return new Promise((resolve, reject) => {
+      let returnVal;
+      if (!state.isMobile) {
         window.addEventListener(
           'AERGO_ACTIVE_ACCOUNT',
-          function (event) {
+          async event => {
             if ('error' in event) {
-              reject(new Error('request was cancelled by user'));
-              return;
+              throw new Error('request was cancelled by user');
             }
             commit('setActiveAccount', event.detail.account);
             state.aergo
               .getStaking(event.detail.account.address)
-              .then((staked) => {
+              .then(staked => {
                 commit('setWhen', staked.when);
                 commit('setStaked', staked.amount.toUnit('aergo').toString());
               });
-            state.aergo.getState(event.detail.account.address).then((as) => {
+            state.aergo.getState(event.detail.account.address).then(as => {
               commit('setBalance', as.balance.toUnit('aergo').toString());
             });
             dispatch('isCouncilor', event.detail.account.address);
-            resolve(event.detail.account);
+            returnVal = event.detail.account;
           },
           { once: true }
         );
@@ -181,7 +189,10 @@ export default new Vuex.Store({
           type: 'AERGO_REQUEST',
           action: 'ACTIVE_ACCOUNT'
         });
-      });
+      } else {
+        //TODO : 로그인 받아야함
+      }
+      return returnVal;
     },
     async getAccountDetail(context, { address }) {
       const [staked, state] = await Promise.all([
@@ -203,7 +214,7 @@ export default new Vuex.Store({
       if (!state.abi) {
         await state.aergo
           .getABI(process.env.VUE_APP_CONTRACT_ADDRESS)
-          .then((res) => commit('setAergoAbi', res));
+          .then(res => commit('setAergoAbi', res));
       }
       const contract = Contract.atAddress(process.env.VUE_APP_CONTRACT_ADDRESS);
       await contract.loadAbi(state.abi);
@@ -252,78 +263,94 @@ export default new Vuex.Store({
       if (!state.activeAccount) {
         return;
       }
-      return new Promise((resolve, reject) => {
+
+      const sendData = {
+        type: 'AERGO_REQUEST',
+        action: 'SEND_TX',
+        data: {
+          from: state.activeAccount.address,
+          to: process.env.VUE_APP_CONTRACT_ADDRESS,
+          amount: 0,
+          type: 3, // delegation fee
+          payload_json: {
+            Name: 'invoke',
+            Args: [
+              'issueAgenda',
+              agenda.hash,
+              agenda.aip,
+              agenda.title,
+              agenda.url,
+              agenda.category,
+              '',
+              agenda.startDate,
+              agenda.endDate
+            ]
+          }
+        }
+      };
+      let returnVal;
+      if (!state.isMobile) {
         window.addEventListener(
           'AERGO_SEND_TX_RESULT',
-          function (event) {
+          function(event) {
             commit('setLoading', true);
             if ('error' in event) {
-              reject(new Error('request was cancelled by user'));
+              throw new Error('request was cancelled by user');
             } else {
-              resolve(event.detail.hash);
+              returnVal = event.detail.hash;
             }
           },
           { once: true }
         );
 
-        window.postMessage({
-          type: 'AERGO_REQUEST',
-          action: 'SEND_TX',
-          data: {
-            from: state.activeAccount.address,
-            to: process.env.VUE_APP_CONTRACT_ADDRESS,
-            amount: 0,
-            type: 3, // delegation fee
-            payload_json: {
-              Name: 'invoke',
-              Args: [
-                'issueAgenda',
-                agenda.hash,
-                agenda.aip,
-                agenda.title,
-                agenda.url,
-                agenda.category,
-                '',
-                agenda.startDate,
-                agenda.endDate
-              ]
-            }
-          }
-        });
-      });
+        window.postMessage(sendData);
+      } else {
+        commit('setQRPopupOpen', true);
+        commit('setQRData', sendData);
+        //TODO : returnVal 받기
+      }
+
+      return returnVal;
     },
     fetchVote({ state, commit }, { hash, result }) {
       const temp = ['confirmAgenda', 'rejectAgenda', 'closeAgenda'];
 
-      return new Promise((resolve, reject) => {
+      const sendData = {
+        type: 'AERGO_REQUEST',
+        action: 'SEND_TX',
+        data: {
+          from: state.activeAccount.address,
+          to: process.env.VUE_APP_CONTRACT_ADDRESS,
+          type: 3,
+          amount: 0,
+          payload_json: {
+            Name: 'invoke',
+            Args: [temp[result], hash]
+          }
+        }
+      };
+      let returnVal;
+      if (!state.isMobile) {
         window.addEventListener(
           'AERGO_SEND_TX_RESULT',
-          function (event) {
+          function(event) {
             commit('setLoading', true);
             if ('error' in event) {
-              reject(new Error('request was cancelled by user'));
-            } else {
-              resolve(event.detail.hash);
+              throw new Error('request was cancelled by user');
             }
+            returnVal = event.detail.hash;
           },
           { once: true }
         );
 
-        window.postMessage({
-          type: 'AERGO_REQUEST',
-          action: 'SEND_TX',
-          data: {
-            from: state.activeAccount.address,
-            to: process.env.VUE_APP_CONTRACT_ADDRESS,
-            type: 3,
-            amount: 0,
-            payload_json: {
-              Name: 'invoke',
-              Args: [temp[result], hash]
-            }
-          }
-        });
-      });
+        window.postMessage(sendData);
+      } else {
+        commit('setQRPopupOpen', true);
+        commit('setQRData', sendData);
+        //TODO : returnVal 받기
+      }
+
+      return returnVal;
     },
     getReceipt({ state }, hash) {
       return state.aergo.getTransactionReceipt(hash.toString());
@@ -345,14 +372,13 @@ export default new Vuex.Store({
       ]);
       commit('setUserCouncilor', queryReturn);
     },
-    //TODO voter에 뭐가 들어가야하는지 확인받고 테스트할것
     getStakeTime({ state }) {
       return state.aergo.balance(state.activeAccount.address, 'stakingandwhen');
     }
   },
   getters: {
-    govDetail: (state) => (id) => state.agora.find((i) => i.hash === id),
-    agoraList: (state) => (category, status, { start, end }) => {
+    govDetail: state => id => state.agora.find(i => i.hash === id),
+    agoraList: state => (category, status, { start, end }) => {
       if (category === 'all' && status === 'all' && !start && !end) {
         const list = state.agora.reduce(
           (accm, curr) => {
@@ -370,7 +396,7 @@ export default new Vuex.Store({
         return [
           {
             title: 'Search Result',
-            data: state.agora.filter((i) => {
+            data: state.agora.filter(i => {
               if (
                 (category === 'all' || category === i.category.toLowerCase()) &&
                 (status === 'all' || status === i.curStatus.toLowerCase()) &&

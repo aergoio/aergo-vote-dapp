@@ -15,7 +15,8 @@
     "crypto-js": "^4.0.0",
     "date-fns": "^2.8.1",
     "jsbi": "^3.1.1",
-    "v-calendar": "^1.0.6",
+    "qrcode": "^1.4.4",
+    "v-calendar": "1.0.6",
     "vue": "^2.6.10",
     "vue-analytics": "^5.18.0",
     "vue-router": "^3.0.3",
@@ -46,8 +47,14 @@
       "eslint:recommended"
     ],
     "rules": {
-      "quotes": ["error", "single"],
-      "indent": ["error", 2]
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "indent": [
+        "error",
+        2
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"

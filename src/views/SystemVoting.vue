@@ -1,36 +1,60 @@
 <template>
   <div>
     <Vertical base="fill">
-      <ViewTitle>Vote: {{voteLabel}} ({{id}})</ViewTitle>
+      <ViewTitle>Vote: {{ voteLabel }} ({{ id }})</ViewTitle>
       <slot></slot>
       <Island>
         <p>
-          <span class="current-value-label">Current value: </span> 
-          <span v-if="id !== 'BP'">{{current}}</span> 
-          <span v-else>candidates 1-{{$store.state.activeChainId.bpnumber}}</span>
-          <span v-if="isVoteWithAmountValue"> ({{currentAsAmount | formatToken}})</span>
+          <span class="current-value-label">Current value: </span>
+          <span v-if="id !== 'BP'">{{ current }}</span>
+          <span v-else
+            >candidates 1-{{ $store.state.activeChainId.bpnumber }}</span
+          >
+          <span v-if="isVoteWithAmountValue">
+            ({{ currentAsAmount | formatToken }})</span
+          >
         </p>
-        <p>{{voteDescription}}</p>
+        <p>{{ voteDescription }}</p>
       </Island>
 
       <Island>
         <IslandHeader title="Candidates" />
-        <VoteTable :items="votesList" :isLoading="!votesLoad" @clickCandidate="toggleSelected" :selected="selected" />
+        <VoteTable
+          :items="votesList"
+          :isLoading="!votesLoad"
+          @clickCandidate="toggleSelected"
+          :selected="selected"
+        />
       </Island>
 
       <Island>
         <IslandHeader title="Cast your vote" />
         <p>Select candidate(s) from above or enter manually.</p>
 
-        <Alert :type="message.type" v-if="message.text">{{message.text}}</Alert>
-      
+        <Alert :type="message.type" v-if="message.text">{{
+          message.text
+        }}</Alert>
+
         <FilterItems :items="selected" :removeItem="removeSelected" />
 
         <div class="candidate-input">
-          <Input size="small" v-if="!fullSelected" v-model="candidate" placeholder="Enter candidate manually" />
+          <Input
+            size="small"
+            v-if="!fullSelected"
+            v-model="candidate"
+            placeholder="Enter candidate manually"
+          />
         </div>
 
-        <Button type="primary-alt" @click="addSelected(candidate); requestVote()" :disabled="!isButtonEnabled">Vote</Button>
+        <Button
+          type="primary-alt"
+          @click="
+            addSelected(candidate);
+            requestVote();
+          "
+          :disabled="!isButtonEnabled"
+          >Vote
+        </Button>
       </Island>
     </Vertical>
   </div>
@@ -41,12 +65,15 @@ import VoteTable from '../components/VoteTable';
 import ViewTitle from '../components/ViewTitle';
 import { Alert } from '@aergoenterprise/lib-components/src/basic';
 import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
+import {
+  Island,
+  IslandHeader
+} from '@aergoenterprise/lib-components/src/composite';
 import FilterItems from '@aergoenterprise/lib-components/src/composite/forms/Filters/FilterItems.vue';
 import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
 import { Input } from '@aergoenterprise/lib-components/src/composite/forms';
 import { Amount } from '@herajs/client';
-import bpmap from '../bpmap.json'
+import bpmap from '../bpmap.json';
 import votes from '../votes.json';
 
 const votesWithAmountValue = ['GASPRICE', 'NAMEPRICE', 'STAKINGMIN'];
@@ -54,25 +81,26 @@ const votesWithAmountValue = ['GASPRICE', 'NAMEPRICE', 'STAKINGMIN'];
 export default {
   components: {
     Vertical,
-    Island, IslandHeader, 
+    Island,
+    IslandHeader,
     ViewTitle,
     VoteTable,
     FilterItems,
     Button,
     Input,
-    Alert,
+    Alert
   },
   name: 'system-voting',
   props: ['id'],
   methods: {
-    toggleSelected (candidate) {
+    toggleSelected(candidate) {
       if (this.selected.indexOf(candidate) !== -1) {
         this.removeSelected(candidate);
       } else {
         this.addSelected(candidate);
       }
     },
-    addSelected (candidate) {
+    addSelected(candidate) {
       candidate = `${candidate}`.trim();
       if (!candidate) {
         return;
@@ -81,7 +109,10 @@ export default {
         return;
       }
       if (this.fullSelected) {
-        this.message = {type: 'danger', text: `Cannot select more than ${this.maxSelections} candidates`};
+        this.message = {
+          type: 'danger',
+          text: `Cannot select more than ${this.maxSelections} candidates`
+        };
         return;
       }
       this.selected.push(candidate);
@@ -91,61 +122,76 @@ export default {
     removeSelected(candidate) {
       this.selected = this.selected.filter(item => item !== candidate);
       if (!this.fullSelected) {
-        this.message = {type: 'success'};
+        this.message = { type: 'success' };
       }
     },
     onSendTxResult(event) {
       if (event.detail.hash) {
-        this.message = {type: 'success', text: 'Thanks for voting! Transaction hash: ' + event.detail.hash};
+        this.message = {
+          type: 'success',
+          text: 'Thanks for voting! Transaction hash: ' + event.detail.hash
+        };
       } else {
-        this.message = {type: 'danger', text: 'An error occurred.'};
+        this.message = { type: 'danger', text: 'An error occurred.' };
       }
-      setTimeout(()=>{
-        this.loadVotes()
-        this.$store.dispatch('getAergo', { url: process.env.VUE_APP_AERGO_NODE })
-      }, 5000)
+      setTimeout(() => {
+        this.loadVotes();
+        this.$store.dispatch('getAergo', {
+          url: process.env.VUE_APP_AERGO_NODE
+        });
+      }, 5000);
     },
-    async requestVote () {
+    async requestVote() {
       console.log('Requesting vote', this.selected);
       let account = await this.$store.dispatch('getActiveAccount');
-      this.tx.from = account.address
+      this.tx.from = account.address;
       if (this.id == 'BP') {
-        this.tx.payload_json.Name = "v1voteBP";
+        this.tx.payload_json.Name = 'v1voteBP';
         this.tx.payload_json.Args = [...this.selected];
       } else {
-        this.tx.payload_json.Name = "v1voteDAO";
+        this.tx.payload_json.Name = 'v1voteDAO';
         this.tx.payload_json.Args = [this.$props.id, ...this.selected];
       }
-      let data = this.tx;
-      window.addEventListener('AERGO_SEND_TX_RESULT', this.onSendTxResult, { once: true })
-      window.postMessage({
+      //테스트용임
+      const sendData = {
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
-        data
-      })
+        data: this.tx
+      };
+      if (!this.$store.state.isMobile) {
+        window.addEventListener('AERGO_SEND_TX_RESULT', this.onSendTxResult, {
+          once: true
+        });
+        window.postMessage(sendData);
+      } else {
+        await this.$store.commit('setQRData', JSON.stringify(sendData));
+        await this.$store.commit('setQRPopupOpen', true);
+      }
     },
-    async loadVotes () {
+    async loadVotes() {
       try {
-        const votesList = await this.$store.dispatch('getTopVotes', { count: 50, id: this.$props.id === 'BP' ? 'voteBP' : this.$props.id })
+        const votesList = await this.$store.dispatch('getTopVotes', {
+          count: 50,
+          id: this.$props.id === 'BP' ? 'voteBP' : this.$props.id
+        });
         for (let vote of votesList) {
           if (this.$props.id == 'BP') {
             if (bpmap[vote.candidate] != null) {
-              vote.url = bpmap[vote.candidate].url
-              vote.name = bpmap[vote.candidate].name
-            }
-            else {
-              vote.url = ''
-              vote.name = '?'
+              vote.url = bpmap[vote.candidate].url;
+              vote.name = bpmap[vote.candidate].name;
+            } else {
+              vote.url = '';
+              vote.name = '?';
             }
           }
-          vote.amount = Object.freeze(vote.amount) // prevent Vue from adding observer to Amount
+          vote.amount = Object.freeze(vote.amount); // prevent Vue from adding observer to Amount
         }
-        this.votesList = votesList
-        this.votesLoad = true
+        this.votesList = votesList;
+        this.votesLoad = true;
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
-    },
+    }
   },
   computed: {
     isVoteWithAmountValue() {
@@ -154,29 +200,35 @@ export default {
     currentAsAmount() {
       return new Amount(this.current);
     },
-    fullSelected () {
-      return this.selected.length >= this.maxSelections
+    fullSelected() {
+      return this.selected.length >= this.maxSelections;
     },
-    maxSelections () {
+    maxSelections() {
       if (this.id == 'BP') {
         return 30;
       }
       return 1;
     },
-    isButtonEnabled () {
+    isButtonEnabled() {
       return this.selected.length > 0 || this.candidate.trim().length > 0;
     },
     current() {
       if (this.$store.state.activeChainId) {
         switch (this.id) {
           case 'BPCOUNT':
-            return this.$store.state.activeChainId.bpnumber
+            return this.$store.state.activeChainId.bpnumber;
           case 'STAKINGMIN':
-            return this.$store.state.activeChainId.stakingminimum.toUnit('aer').toString()
+            return this.$store.state.activeChainId.stakingminimum
+              .toUnit('aer')
+              .toString();
           case 'GASPRICE':
-            return this.$store.state.activeChainId.gasprice.toUnit('aer').toString()
+            return this.$store.state.activeChainId.gasprice
+              .toUnit('aer')
+              .toString();
           case 'NAMEPRICE':
-            return this.$store.state.activeChainId.nameprice.toUnit('aer').toString()
+            return this.$store.state.activeChainId.nameprice
+              .toUnit('aer')
+              .toString();
         }
       }
       return this.$store.state.activeChainId;
@@ -191,23 +243,23 @@ export default {
     }
   },
   watch: {
-    '$route' (to) {
-      this.id = to.params.id
-      this.loadVotes()
-      this.candidate = ''
-      this.votesList = []
-      this.votesLoad = false
-      this.selected = []
-      this.message = {type: 'success'}
+    $route(to) {
+      this.id = to.params.id;
+      this.loadVotes();
+      this.candidate = '';
+      this.votesList = [];
+      this.votesLoad = false;
+      this.selected = [];
+      this.message = { type: 'success' };
     }
   },
-  mounted () {
-    this.loadVotes()
+  mounted() {
+    this.loadVotes();
   },
-  data () {
+  data() {
     return {
       candidate: '',
-      message: {type:'success'},
+      message: { type: 'success' },
       //votesList: [{candidate:'test'},{candidate:'test2'}],
       votesList: [],
       votesLoad: false,
@@ -223,18 +275,20 @@ export default {
       }`),
       txhash: '',
       selected: []
-    }
+    };
   }
-}
+};
 </script>
 
 <style scoped>
 .current-value-label {
   font-weight: 500;
 }
+
 .candidate-input {
   margin: 20px 0;
 }
+
 .island p:last-child {
   margin-bottom: 0;
 }
