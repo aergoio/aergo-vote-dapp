@@ -114,6 +114,8 @@ export default {
 
       .confirm {
         background-color: var(--color-primary);
+        cursor: pointer;
+        outline: none;
       }
 
       .cancel {
