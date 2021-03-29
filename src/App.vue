@@ -180,7 +180,7 @@ export default {
 .toggle-wrapper {
   height: 36px;
   box-sizing: border-box;
-  position: fixed;
+  position: absolute;
   right: 100px;
   top: 20px;
 
@@ -277,5 +277,14 @@ export default {
   &:hover {
     text-decoration: underline;
   }
+}
+
+.ViewTitle {
+  position: fixed;
+  top: 0;
+}
+
+.component.vertical.base-fill {
+  padding-top: 74px;
 }
 </style>
