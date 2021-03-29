@@ -20,7 +20,7 @@
     "vue": "^2.6.10",
     "vue-analytics": "^5.18.0",
     "vue-router": "^3.0.3",
-    "vuex": "^3.0.1"
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.4.1",
