@@ -77,7 +77,7 @@ export default {
           }
         };
       });
-      return [
+      const list = [
         {
           id: 'home',
           label: 'Home',
@@ -144,6 +144,13 @@ export default {
           }
         }
       ];
+      if (this.$store.state.isMobile) {
+        list.splice(
+          list.findIndex(i => i.id === 'account'),
+          1
+        );
+      }
+      return list;
     }
   },
   methods: {
