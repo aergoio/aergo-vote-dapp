@@ -8,12 +8,14 @@
         </router-link>
         <SidebarMenu :items="menuItems" />
         <LoginWithAergoConnect
+          v-if="!$store.state.isMobile"
           @click.native="connectAccount"
           :loggedInAddress="activeAccount ? activeAccount.address : ''"
         />
-        <span class="mobile" @click="$store.commit('setQRPopupOpen', true)"
-          >....OR Mobile Wallet</span
-        >
+        <div class="toggle-wrapper">
+          <input id="isMB" type="checkbox" @change="e => clickToggle(e)" />
+          <label for="isMB" />
+        </div>
       </template>
       <template #default>
         <Loading v-if="isLoading" />
@@ -156,6 +158,9 @@ export default {
       }
       this.account = account;
       console.log('Logged in', account);
+    },
+    clickToggle(e) {
+      this.$store.commit('setDevice', e.target.checked);
     }
   },
   created() {
@@ -163,6 +168,67 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.toggle-wrapper {
+  height: 36px;
+  box-sizing: border-box;
+  position: fixed;
+  right: 100px;
+  top: 20px;
+
+  label {
+    z-index: 9;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 30px;
+    margin: 3px;
+    transform: translateX(0);
+    transition: all 0.1s ease-in;
+  }
+
+  #isMB {
+    margin-left: -99999px;
+
+    &:before {
+      content: '';
+      width: 70px;
+      height: 30px;
+      border: 3px solid gray; //var(--color-primary);
+      background-color: gray;
+      border-radius: 30px;
+      bottom: 0;
+      position: absolute;
+      left: 0;
+      z-index: 1;
+    }
+
+    &:checked {
+      &:after {
+        content: '';
+        width: 70px;
+        height: 30px;
+        border: 3px solid var(--color-primary);
+        background-color: var(--color-primary);
+        border-radius: 30px;
+        bottom: 0;
+        position: absolute;
+        left: 0;
+        z-index: 1;
+      }
+
+      + label {
+        transform: translateX(40px);
+      }
+    }
+  }
+}
+</style>
 
 <style lang="scss">
 :root {

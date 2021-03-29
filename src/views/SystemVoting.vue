@@ -31,9 +31,9 @@
         <IslandHeader title="Cast your vote" />
         <p>Select candidate(s) from above or enter manually.</p>
 
-        <Alert :type="message.type" v-if="message.text">{{
-          message.text
-        }}</Alert>
+        <Alert :type="message.type" v-if="message.text"
+          >{{ message.text }}
+        </Alert>
 
         <FilterItems :items="selected" :removeItem="removeSelected" />
 
@@ -142,9 +142,8 @@ export default {
       }, 5000);
     },
     async requestVote() {
-      console.log('Requesting vote', this.selected);
       let account = await this.$store.dispatch('getActiveAccount');
-      this.tx.from = account.address;
+      this.tx.from = this.$store.state.isMobile ? '' : account.address;
       if (this.id == 'BP') {
         this.tx.payload_json.Name = 'v1voteBP';
         this.tx.payload_json.Args = [...this.selected];

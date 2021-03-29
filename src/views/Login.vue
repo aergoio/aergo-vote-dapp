@@ -16,16 +16,6 @@
       <div class="row">
         <LoginWithAergoConnect @click.native="connectAccount" />
         <span>or</span>
-        <a href="#">
-          <Button
-            rounded
-            type="simple"
-            style="display: inline-block"
-            @click="$store.commit('setQRPopupOpen', true)"
-            >Mobile Wallet
-          </Button>
-        </a>
-        <span>or</span>
         <a
           target="_blank"
           href="https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc?hl=en"

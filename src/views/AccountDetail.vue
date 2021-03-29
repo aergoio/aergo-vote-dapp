@@ -43,7 +43,7 @@ import ViewTitle from '../components/ViewTitle';
 import { Island, IslandHeader } from '@aergoenterprise/lib-components/src/composite';
 import VoteHistoryTable from '../components/VoteHistoryTable.vue';
 import { KVTable, KVTableRow } from '@aergoenterprise/lib-components/src/composite/tables';
-import { mapState } from "vuex"
+import { mapState } from 'vuex'
 import JSBI from 'jsbi';
 import { Amount } from '@herajs/client';
 import { formatDistance } from 'date-fns'
@@ -64,7 +64,7 @@ export default {
     ...mapState(['activeChainId']),
     totalVotingPower() {
       try {
-        return this.voteHistory.getVotingList().map(vote => 
+        return this.voteHistory.getVotingList().map(vote =>
           new Amount(vote.getAmount(), 'aer')
         ).reduce((a, b) => a.add(b), new Amount(0));
       } catch(e) {

@@ -260,7 +260,7 @@ export default new Vuex.Store({
       commit('setStatus', queryResult);
     },
     fetchAgenda({ state, commit }, agenda) {
-      if (!state.activeAccount) {
+      if (!state.activeAccount || !state.isMobile) {
         return;
       }
 
@@ -307,9 +307,7 @@ export default new Vuex.Store({
       } else {
         commit('setQRPopupOpen', true);
         commit('setQRData', sendData);
-        //TODO : returnVal 받기
       }
-
       return returnVal;
     },
     fetchVote({ state, commit }, { hash, result }) {

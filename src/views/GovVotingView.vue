@@ -22,7 +22,7 @@
       {{ errorMessage.content }}
     </Alert>
     <slot></slot>
-    <div class="result-wrapper">
+    <div class="result-wrapper" v-if="!!detail">
       <div class="result-head">
         <div class="result-head-left">
           <span class="title"># AIP-{{ detail.aip }}</span>
@@ -77,7 +77,7 @@
     <div class="button-wrapper">
       <div
         class="vote-button-group"
-        v-if="!!activeAccount && !showButton && !isVote"
+        v-if="(!!activeAccount || isMobile) && !showButton && !isVote"
       >
         <button class="component button button-primary" @click="vote(0)">
           YES
@@ -198,12 +198,17 @@ export default {
       if (!this.activeAccount) {
         return;
       }
-      const temp = this.$store.dispatch('getStakeTime');
-      console.log(temp);
+      this.$store.dispatch('getStakeTime');
     }
   },
   computed: {
-    ...mapState(['activeAccount', 'agora', 'staked', 'isCouncilor']),
+    ...mapState([
+      'activeAccount',
+      'agora',
+      'staked',
+      'isCouncilor',
+      'isMobile'
+    ]),
     ...mapGetters(['govDetail']),
     detail() {
       return this.govDetail(this.$route.params.id);
@@ -268,6 +273,14 @@ export default {
     font-size: 1.2em;
     font-weight: bold;
 
+    .result-head-left {
+      max-width: 700px;
+    }
+
+    .category {
+      word-break: break-all;
+    }
+
     &.open {
       background-color: rgb(44, 198, 143);
     }
@@ -291,14 +304,17 @@ export default {
         word-break: break-all;
         margin: auto;
       }
+
       .text-detail-box {
         padding: 1em;
         position: relative;
         background-color: #f2f2f2;
         border-radius: 3px;
+
         & + .text-detail-box {
           margin-top: 1em;
         }
+
         span {
           position: absolute;
           top: -0.5em;
@@ -306,6 +322,7 @@ export default {
           font-weight: bold;
           padding: 0 0.5em;
         }
+
         p,
         a {
           font-weight: normal;
@@ -338,6 +355,7 @@ export default {
     float: right;
   }
 }
+
 .button-primary {
   background-color: #2f6f72 !important;
 }
