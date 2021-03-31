@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "upload": "aws s3 sync ./dist/ s3://agora.aergo.io/ --acl public-read"
+    "upload": "aws s3 sync ./dist/ s3://test.portal.aergo.io/ --acl public-read"
   },
   "dependencies": {
     "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
