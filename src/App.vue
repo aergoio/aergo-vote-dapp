@@ -178,7 +178,7 @@ export default {
 
 <style lang="scss" scoped>
 .toggle-wrapper {
-  height: 36px;
+  height: 30px;
   box-sizing: border-box;
   position: absolute;
   right: 100px;
@@ -187,7 +187,7 @@ export default {
   label {
     z-index: 9;
     width: 30px;
-    height: 30px;
+    height: 24px;
     background-color: white;
     display: block;
     position: absolute;
@@ -197,14 +197,17 @@ export default {
     margin: 3px;
     transform: translateX(0);
     transition: all 0.1s ease-in;
+    &:active{
+      width: 70px;
+    }
   }
 
   #isMB {
     margin-left: -99999px;
 
     &:before {
-      content: '';
-      width: 70px;
+      content: 'mobile';
+      width: 76px;
       height: 30px;
       border: 3px solid gray; //var(--color-primary);
       background-color: gray;
@@ -213,12 +216,19 @@ export default {
       position: absolute;
       left: 0;
       z-index: 1;
+      padding-left: 33px;
+      box-sizing: border-box;
+      padding-top: 6px;
+      font-size: .8em;
+      color:white;
+      font-weight: bold;
     }
 
     &:checked {
       &:after {
         content: '';
-        width: 70px;
+        box-sizing: border-box;
+        width: 76px;
         height: 30px;
         border: 3px solid var(--color-primary);
         background-color: var(--color-primary);
@@ -231,6 +241,9 @@ export default {
 
       + label {
         transform: translateX(40px);
+        &:active{
+          width: 30px;
+        }
       }
     }
   }
