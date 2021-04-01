@@ -6,18 +6,18 @@
       </template>
       <template #button>
         <Button
-          @click="onClickProposal"
-          type="button"
-          class="component button button-primary button-uppercase"
-          v-if="isCouncilor"
-          >New Proposal
+            @click="onClickProposal"
+            type="button"
+            class="component button button-primary button-uppercase"
+            v-if="isCouncilor"
+        >New Proposal
         </Button>
       </template>
     </ViewTitle>
     <Alert
-      v-if="errorMessage"
-      :type="errorMessage.type"
-      :style="{ 'margin-bottom': '15px' }"
+        v-if="errorMessage"
+        :type="errorMessage.type"
+        :style="{ 'margin-bottom': '15px' }"
     >
       {{ errorMessage.content }}
     </Alert>
@@ -36,8 +36,8 @@
             <div class="text-detail-box">
               <span>Draft Link</span>
               <a :href="detail.url.replace(/[\w\d]{30,}/gi, 'master')">{{
-                detail.url.replace(/[\w\d]{30,}/gi, 'master')
-              }}</a>
+                  detail.url.replace(/[\w\d]{30,}/gi, 'master')
+                }}</a>
             </div>
             <div class="text-detail-box">
               <span>SHA256</span>
@@ -52,32 +52,34 @@
             <div class="text-detail-box">
               <span>Start date ~ End date</span>
               <p :style="{ margin: 0, whiteSpace: 'initial' }">
-                Start : {{ dateFormat(detail.startDate)
+                Start : {{
+                  dateFormat(detail.startDate)
                 }}{{
                   detail.curStatus === 'register'
-                    ? `(left
+                      ? `(left
                 ${detail.leftTime})`
-                    : ''
+                      : ''
                 }}
-                <br />
-                End : {{ dateFormat(detail.endDate)
+                <br/>
+                End : {{
+                  dateFormat(detail.endDate)
                 }}{{
                   detail.curStatus === 'open'
-                    ? `(left
+                      ? `(left
                 ${detail.leftTime})`
-                    : ''
+                      : ''
                 }}
               </p>
             </div>
           </div>
         </div>
-        <VoteGraph :yes="detail.yes" :no="detail.no" display-number />
+        <VoteGraph :yes="detail.yes" :no="detail.no" display-number/>
       </div>
     </div>
     <div class="button-wrapper">
       <div
-        class="vote-button-group"
-        v-if="(!!activeAccount || isMobile) && !showButton && !isVote"
+          class="vote-button-group"
+          v-if="(!!activeAccount && !showButton && !isVote) || (isMobile&& !showButton)"
       >
         <button class="component button button-primary" @click="vote(0)">
           YES
@@ -92,17 +94,17 @@
       </div>
       <div class="vote-button-group">
         <button
-          class="component button button-primary"
-          @click="vote(2)"
-          v-if="isCouncilor"
-          :disabled="detail.status !== 'open'"
+            class="component button button-primary"
+            @click="vote(2)"
+            v-if="isCouncilor"
+            :disabled="detail.status !== 'open'"
         >
           CLOSE AGENDA
         </button>
         <button
-          type="button"
-          @click="onClickBack()"
-          class="right-button component button button-uppercase"
+            type="button"
+            @click="onClickBack()"
+            class="right-button component button button-uppercase"
         >
           BACK
         </button>
@@ -112,12 +114,12 @@
 </template>
 
 <script>
-import { Alert } from '@aergoenterprise/lib-components/src/basic';
+import {Alert} from '@aergoenterprise/lib-components/src/basic';
 import ViewTitle from '../components/ViewTitle';
-import { Vertical } from '@aergoenterprise/lib-components/src/layout';
-import { Button } from '@aergoenterprise/lib-components/src/composite/buttons';
-import { mapGetters, mapState } from 'vuex';
-import { VoteGraph } from '../components/VoteGraph';
+import {Vertical} from '@aergoenterprise/lib-components/src/layout';
+import {Button} from '@aergoenterprise/lib-components/src/composite/buttons';
+import {mapGetters, mapState} from 'vuex';
+import {VoteGraph} from '../components/VoteGraph';
 
 export default {
   components: {
@@ -130,10 +132,10 @@ export default {
   name: 'gov-voting-view',
   methods: {
     onClickProposal() {
-      this.$router.push({ name: 'GovernanceVotingNew' });
+      this.$router.push({name: 'GovernanceVotingNew'});
     },
     onClickBack() {
-      this.$router.push({ name: 'GovernanceVoting' });
+      this.$router.push({name: 'GovernanceVoting'});
     },
 
     async vote(result) {
@@ -179,11 +181,11 @@ export default {
     },
     dateFormat(date) {
       const utc = new Date(date * 1000);
-      const { setZero } = this;
+      const {setZero} = this;
       return `${utc.getUTCFullYear()}-${setZero(
-        utc.getUTCMonth() + 1
+          utc.getUTCMonth() + 1
       )}-${setZero(utc.getUTCDate())} ${setZero(utc.getUTCHours())}:${setZero(
-        utc.getUTCMinutes()
+          utc.getUTCMinutes()
       )}:${setZero(utc.getUTCSeconds())} UTC`;
     },
     setZero(num) {
@@ -223,9 +225,9 @@ export default {
         return true;
       }
       return !(
-        temp > this.detail.startDate &&
-        temp < this.detail.endDate &&
-        this.detail.status.toLowerCase() === 'open'
+          temp > this.detail.startDate &&
+          temp < this.detail.endDate &&
+          this.detail.status.toLowerCase() === 'open'
       );
     }
   },

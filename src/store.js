@@ -158,41 +158,36 @@ export default new Vuex.Store({
     async getAccountVotes(context, { address }) {
       return this.state.aergo.getAccountVotes(address);
     },
-    async getActiveAccount({ commit, state, dispatch }) {
+    getActiveAccount({commit, state, dispatch}) {
       if (state.activeAccount) {
-        return state.activeAccount;
+        return new Promise((resolve) => {
+          resolve(state.activeAccount)
+        })
       }
-      let returnVal;
-      if (!state.isMobile) {
-        window.addEventListener(
-          'AERGO_ACTIVE_ACCOUNT',
-          async event => {
-            if ('error' in event) {
-              throw new Error('request was cancelled by user');
-            }
-            commit('setActiveAccount', event.detail.account);
-            state.aergo
-              .getStaking(event.detail.account.address)
-              .then(staked => {
-                commit('setWhen', staked.when);
-                commit('setStaked', staked.amount.toUnit('aergo').toString());
-              });
-            state.aergo.getState(event.detail.account.address).then(as => {
-              commit('setBalance', as.balance.toUnit('aergo').toString());
-            });
-            dispatch('isCouncilor', event.detail.account.address);
-            returnVal = event.detail.account;
-          },
-          { once: true }
-        );
+      return new Promise((resolve, reject) => {
+        window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
+          if ('error' in event) {
+            reject(new Error('request was cancelled by user'));
+            return;
+          }
+          commit('setActiveAccount', event.detail.account)
+          state.aergo.getStaking(event.detail.account.address)
+            .then((staked) => {
+              commit('setWhen', staked.when)
+              commit('setStaked', staked.amount.toUnit('aergo').toString())
+            })
+          state.aergo.getState(event.detail.account.address)
+            .then((as) => {
+              commit('setBalance', as.balance.toUnit('aergo').toString())
+            })
+          dispatch('isCouncilor',event.detail.account.address);
+          resolve(event.detail.account)
+        }, {once: true})
         window.postMessage({
           type: 'AERGO_REQUEST',
           action: 'ACTIVE_ACCOUNT'
-        });
-      } else {
-        //TODO : 로그인 받아야함
-      }
-      return returnVal;
+        })
+      })
     },
     async getAccountDetail(context, { address }) {
       const [staked, state] = await Promise.all([
@@ -306,7 +301,7 @@ export default new Vuex.Store({
         window.postMessage(sendData);
       } else {
         commit('setQRPopupOpen', true);
-        commit('setQRData', sendData);
+        commit('setQRData', JSON.stringify(sendData));
       }
       return returnVal;
     },
@@ -317,7 +312,7 @@ export default new Vuex.Store({
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
         data: {
-          from: state.activeAccount.address,
+          from: state.isMobile? '':state.activeAccount.address,
           to: process.env.VUE_APP_CONTRACT_ADDRESS,
           type: 3,
           amount: 0,
@@ -344,7 +339,7 @@ export default new Vuex.Store({
         window.postMessage(sendData);
       } else {
         commit('setQRPopupOpen', true);
-        commit('setQRData', sendData);
+        commit('setQRData', JSON.stringify(sendData));
         //TODO : returnVal 받기
       }
 
