@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "resolveJsonModule": true,
     "types": [
