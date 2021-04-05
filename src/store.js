@@ -2,11 +2,11 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import connectAergo from './provider';
 import votes from './votes.json';
-import { Contract } from '@herajs/client';
+import {Contract} from '@herajs/client';
 
 Vue.use(Vuex);
 
-function getStatus({ startDate, endDate, status }) {
+function getStatus({startDate, endDate, status}) {
   const current = new Date().getTime() / 1000;
 
   if (current < startDate && status.toLowerCase() === 'open') {
@@ -30,7 +30,7 @@ export default new Vuex.Store({
   state: {
     aergo: null,
     abi: null,
-    systemVotings: Object.freeze(Object.keys(votes).map(key => ({ id: key }))),
+    systemVotings: Object.freeze(Object.keys(votes).map(key => ({id: key}))),
     blocksByHash: {},
     activeChainId: '',
     activeAccount: null,
@@ -74,7 +74,7 @@ export default new Vuex.Store({
     setActiveChainId(state, chainId) {
       state.activeChainId = chainId;
     },
-    setBlockDetail(state, { block }) {
+    setBlockDetail(state, {block}) {
       state.blocksByHash[block.header.blockno] = block;
     },
     setActiveAccount(state, account) {
@@ -118,9 +118,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getAergo({ commit, state }, { url }) {
+    getAergo({commit, state}, {url}) {
       if (!state.aergo) {
-        commit('setAergo', { url });
+        commit('setAergo', {url});
       }
       commit('setConnectionError', false);
       state.aergo
@@ -135,61 +135,67 @@ export default new Vuex.Store({
           );
         });
     },
-    getBlock({ dispatch, state }, { blockNoOrHash }) {
+    getBlock({dispatch, state}, {blockNoOrHash}) {
       if (state.blocksByHash[blockNoOrHash]) {
         //console.log('return block from cache', blockNoOrHash)
         return new Promise(resolve => {
           resolve(state.blocksByHash[blockNoOrHash]);
         });
       }
-      return dispatch('fetchBlock', { blockNoOrHash });
+      return dispatch('fetchBlock', {blockNoOrHash});
     },
-    async fetchBlock({ commit }, { blockNoOrHash }) {
+    async fetchBlock({commit}, {blockNoOrHash}) {
       const block = Object.freeze(
         await this.state.aergo.getBlock(blockNoOrHash)
       );
-      commit('setBlockDetail', { block });
+      commit('setBlockDetail', {block});
       //console.log('return block', block)
       return block;
     },
-    async getTopVotes(context, { count, id }) {
+    async getTopVotes(context, {count, id}) {
       return this.state.aergo.getTopVotes(count, id);
     },
-    async getAccountVotes(context, { address }) {
+    async getAccountVotes(context, {address}) {
       return this.state.aergo.getAccountVotes(address);
     },
-    getActiveAccount({commit, state, dispatch}) {
-      if (state.activeAccount) {
-        return new Promise((resolve) => {
-          resolve(state.activeAccount)
-        })
-      }
-      return new Promise((resolve, reject) => {
-        window.addEventListener('AERGO_ACTIVE_ACCOUNT', function (event) {
-          if ('error' in event) {
-            reject(new Error('request was cancelled by user'));
-            return;
-          }
-          commit('setActiveAccount', event.detail.account)
-          state.aergo.getStaking(event.detail.account.address)
-            .then((staked) => {
-              commit('setWhen', staked.when)
-              commit('setStaked', staked.amount.toUnit('aergo').toString())
-            })
-          state.aergo.getState(event.detail.account.address)
-            .then((as) => {
-              commit('setBalance', as.balance.toUnit('aergo').toString())
-            })
-          dispatch('isCouncilor',event.detail.account.address);
-          resolve(event.detail.account)
-        }, {once: true})
+    async getActiveAccount({commit, state, dispatch}) {
+
+      let returnVal;
+      if (!state.isMobile) {
+        if (state.activeAccount) {
+          return state.activeAccount;
+        }
+        window.addEventListener(
+          'AERGO_ACTIVE_ACCOUNT',
+          async event => {
+            if ('error' in event) {
+              throw new Error('request was cancelled by user');
+            }
+            commit('setActiveAccount', event.detail.account);
+            state.aergo
+              .getStaking(event.detail.account.address)
+              .then(staked => {
+                commit('setWhen', staked.when);
+                commit('setStaked', staked.amount.toUnit('aergo').toString());
+              });
+            state.aergo.getState(event.detail.account.address).then(as => {
+              commit('setBalance', as.balance.toUnit('aergo').toString());
+            });
+            dispatch('isCouncilor', event.detail.account.address);
+            returnVal = event.detail.account;
+          },
+          {once: true}
+        );
         window.postMessage({
           type: 'AERGO_REQUEST',
           action: 'ACTIVE_ACCOUNT'
-        })
-      })
+        });
+      } else {
+        //TODO : 로그인 받아야함
+      }
+      return returnVal;
     },
-    async getAccountDetail(context, { address }) {
+    async getAccountDetail(context, {address}) {
       const [staked, state] = await Promise.all([
         this.state.aergo.getStaking(address),
         this.state.aergo.getState(address)
@@ -200,12 +206,12 @@ export default new Vuex.Store({
         balance: state.balance
       };
     },
-    refreshActiveAccount({ commit }) {
+    refreshActiveAccount({commit}) {
       commit('setActiveAccount', null);
       commit('setUserCouncilor', false);
       return this.dispatch('getActiveAccount');
     },
-    async connectContract({ commit, state }, query) {
+    async connectContract({commit, state}, query) {
       if (!state.abi) {
         await state.aergo
           .getABI(process.env.VUE_APP_CONTRACT_ADDRESS)
@@ -215,7 +221,7 @@ export default new Vuex.Store({
       await contract.loadAbi(state.abi);
       return await state.aergo.queryContract(contract.invoke(...query));
     },
-    async getAgoraList({ dispatch, commit }) {
+    async getAgoraList({dispatch, commit}) {
       const queryResult = await dispatch('connectContract', ['listAgendas']);
       const data = queryResult.reduce((accm, curr) => {
         curr.yes = curr.confirm._bignum;
@@ -230,8 +236,8 @@ export default new Vuex.Store({
           curr.leftTime =
             time < 60
               ? time < 1
-                ? '<1m'
-                : Math.floor(time) + 'm'
+              ? '<1m'
+              : Math.floor(time) + 'm'
               : Math.floor(time / 60) + 'h';
         } else if (curr.curStatus === 'register') {
           const time =
@@ -241,8 +247,8 @@ export default new Vuex.Store({
           curr.leftTime =
             time < 60
               ? time < 1
-                ? '<1m'
-                : Math.floor(time) + 'm'
+              ? '<1m'
+              : Math.floor(time) + 'm'
               : Math.floor(time / 60) + 'h';
         }
 
@@ -250,11 +256,11 @@ export default new Vuex.Store({
       }, []);
       await commit('setAgora', data);
     },
-    async getStatus({ dispatch, commit }) {
+    async getStatus({dispatch, commit}) {
       const queryResult = await dispatch('connectContract', ['listStatus']);
       commit('setStatus', queryResult);
     },
-    fetchAgenda({ state, commit }, agenda) {
+    fetchAgenda({state, commit}, agenda) {
       if (!state.activeAccount || !state.isMobile) {
         return;
       }
@@ -287,7 +293,7 @@ export default new Vuex.Store({
       if (!state.isMobile) {
         window.addEventListener(
           'AERGO_SEND_TX_RESULT',
-          function(event) {
+          function (event) {
             commit('setLoading', true);
             if ('error' in event) {
               throw new Error('request was cancelled by user');
@@ -295,7 +301,7 @@ export default new Vuex.Store({
               returnVal = event.detail.hash;
             }
           },
-          { once: true }
+          {once: true}
         );
 
         window.postMessage(sendData);
@@ -305,14 +311,14 @@ export default new Vuex.Store({
       }
       return returnVal;
     },
-    fetchVote({ state, commit }, { hash, result }) {
+    fetchVote({state, commit}, {hash, result}) {
       const temp = ['confirmAgenda', 'rejectAgenda', 'closeAgenda'];
 
       const sendData = {
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
         data: {
-          from: state.isMobile? '':state.activeAccount.address,
+          from: state.isMobile ? '' : state.activeAccount.address,
           to: process.env.VUE_APP_CONTRACT_ADDRESS,
           type: 3,
           amount: 0,
@@ -326,14 +332,14 @@ export default new Vuex.Store({
       if (!state.isMobile) {
         window.addEventListener(
           'AERGO_SEND_TX_RESULT',
-          function(event) {
+          function (event) {
             commit('setLoading', true);
             if ('error' in event) {
               throw new Error('request was cancelled by user');
             }
             returnVal = event.detail.hash;
           },
-          { once: true }
+          {once: true}
         );
 
         window.postMessage(sendData);
@@ -345,10 +351,10 @@ export default new Vuex.Store({
 
       return returnVal;
     },
-    getReceipt({ state }, hash) {
+    getReceipt({state}, hash) {
       return state.aergo.getTransactionReceipt(hash.toString());
     },
-    async alreadyVoted({ state, dispatch }, { hash }) {
+    async alreadyVoted({state, dispatch}, {hash}) {
       if (!state.activeAccount || hash === '') {
         return true;
       }
@@ -358,32 +364,32 @@ export default new Vuex.Store({
         state.activeAccount.address
       ]);
     },
-    async isCouncilor({ dispatch, commit }, address) {
+    async isCouncilor({dispatch, commit}, address) {
       const queryReturn = await dispatch('connectContract', [
         'isCouncilor',
         address
       ]);
       commit('setUserCouncilor', queryReturn);
     },
-    getStakeTime({ state }) {
+    getStakeTime({state}) {
       return state.aergo.balance(state.activeAccount.address, 'stakingandwhen');
     }
   },
   getters: {
     govDetail: state => id => state.agora.find(i => i.hash === id),
-    agoraList: state => (category, status, { start, end }) => {
+    agoraList: state => (category, status, {start, end}) => {
       if (category === 'all' && status === 'all' && !start && !end) {
         const list = state.agora.reduce(
           (accm, curr) => {
             accm[curr.curStatus === 'open' ? 'Active' : 'InActive'].push(curr);
             return accm;
           },
-          { Active: [], InActive: [] }
+          {Active: [], InActive: []}
         );
 
         return [
-          { title: 'Active', data: list['Active'] },
-          { title: 'InActive', data: list['InActive'] }
+          {title: 'Active', data: list['Active']},
+          {title: 'InActive', data: list['InActive']}
         ];
       } else {
         return [
