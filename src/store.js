@@ -269,7 +269,7 @@ export default new Vuex.Store({
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
         data: {
-          from: state.activeAccount.address,
+          from: state.isMobile ? '' : state.activeAccount.address,
           to: process.env.VUE_APP_CONTRACT_ADDRESS,
           amount: 0,
           type: 3, // delegation fee
