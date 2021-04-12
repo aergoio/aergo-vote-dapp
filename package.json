@@ -7,7 +7,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "upload": "aws s3 sync ./dist/ s3://test.portal.aergo.io/ --acl public-read"
+    "upload:test": "aws s3 sync ./dist/ s3://portal-sandbox.aergo.io/ --acl public-read",
+    "upload:prod": "aws s3 sync ./dist/ s3://portal.aergo.io/ --acl public-read",
+    "deploy:test": "aws cloudfront create-invalidation --distribution-id E2VNOQMARJFI48 --paths '/*'",
+    "deploy:prod": "aws cloudfront create-invalidation --distribution-id E1CMD3U3ROBQ2M --paths '/*'"
   },
   "dependencies": {
     "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
