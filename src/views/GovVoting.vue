@@ -202,6 +202,14 @@ export default {
 .component.island.padded {
   overflow-x: visible !important;
 }
+.ViewTitle{
+  position: absolute!important;
+}
+.fix-position{
+  position: fixed;
+  right: 90px;
+  top:18px;
+}
 
 .title-with-button {
   display: inline-flex;

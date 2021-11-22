@@ -261,7 +261,7 @@ export default new Vuex.Store({
       commit('setStatus', queryResult);
     },
     fetchAgenda({state, commit}, agenda) {
-      if (!state.activeAccount || !state.isMobile) {
+      if (!state.activeAccount) {
         return;
       }
 
