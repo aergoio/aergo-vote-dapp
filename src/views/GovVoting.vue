@@ -7,7 +7,7 @@
       <template #button>
         <Button
           @click="onClickProposal()"
-          :class="'button button-primary button-uppercase'"
+          :class="'button button-primary button-uppercase fix-position'"
           v-if="isCouncilor"
           >New Proposal
         </Button>

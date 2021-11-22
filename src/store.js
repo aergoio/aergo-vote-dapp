@@ -260,12 +260,12 @@ export default new Vuex.Store({
       const queryResult = await dispatch('connectContract', ['listStatus']);
       commit('setStatus', queryResult);
     },
-    fetchAgenda({state, commit}, agenda) {
+    fetchAgenda({ state, commit }, agenda) {
       if (!state.activeAccount) {
         return;
       }
 
-      const sendData = {
+      const data = {
         type: 'AERGO_REQUEST',
         action: 'SEND_TX',
         data: {
@@ -289,27 +289,28 @@ export default new Vuex.Store({
           }
         }
       };
-      let returnVal;
-      if (!state.isMobile) {
-        window.addEventListener(
-          'AERGO_SEND_TX_RESULT',
-          function (event) {
-            commit('setLoading', true);
-            if ('error' in event) {
-              throw new Error('request was cancelled by user');
-            } else {
-              returnVal = event.detail.hash;
-            }
-          },
-          {once: true}
-        );
+      if(!state.isMobile){
+        return new Promise((resolve, reject) => {
+          window.addEventListener(
+            'AERGO_SEND_TX_RESULT',
+            function (event) {
+              commit('setLoading', true);
+              if ('error' in event) {
+                reject(new Error('request was cancelled by user'));
+              } else {
+                resolve(event.detail.hash);
+              }
+            },
+            {once: true}
+          );
 
-        window.postMessage(sendData);
-      } else {
+          window.postMessage(data);
+        });
+
+      }else{
         commit('setQRPopupOpen', true);
-        commit('setQRData', JSON.stringify(sendData));
+        commit('setQRData', JSON.stringify(data));
       }
-      return returnVal;
     },
     fetchVote({state, commit}, {hash, result}) {
       const temp = ['confirmAgenda', 'rejectAgenda', 'closeAgenda'];

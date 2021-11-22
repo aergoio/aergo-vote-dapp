@@ -79,7 +79,7 @@
     <div class="button-wrapper">
       <div
           class="vote-button-group"
-          v-if="(!!activeAccount && !showButton && !isVote) || (isMobile&& !showButton)"
+          v-if="(!!activeAccount && !showButton && !isVote) || isMobile"
       >
         <button class="component button button-primary" @click="vote(0)">
           YES
