@@ -1,12 +1,12 @@
 {
-    "chains": {
-        "aergo.io": {
-            "api_endpoint": "https://api.aergoscan.io/main",
-            "explorer_url": "https://mainnet.aergoscan.io"
-        },
-        "testnet.aergo.io": {
-            "api_endpoint": "https://api.aergoscan.io/testnet",
-            "explorer_url": "https://testnet.aergoscan.io"
-        }
+  "chains": {
+    "aergo.io": {
+      "api_endpoint": "https://api2-mainnet.aergoscan.io/v2",
+      "explorer_url": "https://mainnet.aergoscan.io"
+    },
+    "testnet.aergo.io": {
+      "api_endpoint": "https://api2-testnet.aergoscan.io/v2",
+      "explorer_url": "https://testnet.aergoscan.io"
     }
+  }
 }
