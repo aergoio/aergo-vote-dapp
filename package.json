@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aergoenterprise/lib-components": "file:./aergo-enterprise-library/packages/lib-components",
-    "@herajs/client": "^0.20.3",
+    "@herajs/client": "^2.0.1",
     "core-js": "^2.6.5",
     "crypto-js": "^4.0.0",
     "date-fns": "^2.8.1",
@@ -46,8 +46,14 @@
       "eslint:recommended"
     ],
     "rules": {
-      "quotes": ["error", "single"],
-      "indent": ["error", 2]
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "indent": [
+        "error",
+        2
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"
