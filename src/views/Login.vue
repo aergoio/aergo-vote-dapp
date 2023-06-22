@@ -8,7 +8,7 @@
       <div class="row">
         <LoginWithAergoConnect @click.native="connectAccount" />
         <span>or</span>
-        <a target="_blank" href="https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc?hl=en">
+        <a target="_blank" href="https://chrome.google.com/webstore/detail/aergo-connect-30/mcijhnoalllmbiehiebonblllpimlnle">
           <Button rounded type="simple" style="display: inline-block">Install from Chrome Webstore</Button>
         </a>
       </div>
