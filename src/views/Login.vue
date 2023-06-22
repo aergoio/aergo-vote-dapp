@@ -3,7 +3,7 @@
     <ViewTitle>My Account</ViewTitle>
     <slot></slot>
     <Island>
-      <p>To vote and view your current votes, please login with Aergo Connect.</p>
+      <p>To vote and view your current votes, please login with Aergo Connect 3.0.</p>
       <p>Please use an account for the chain with the id <strong>{{activeChainId ? activeChainId.chainid.magic : "..."}}</strong>.</p>
       <div class="row">
         <LoginWithAergoConnect @click.native="connectAccount" />
